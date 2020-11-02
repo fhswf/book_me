@@ -1,16 +1,21 @@
 import React from 'react';
-import { signout } from './helpers/auth';
-import Button from 'react-bootstrap/Button';
-import {Link} from 'react-router-dom';
+import { signout, isAuthenticated } from './helpers/auth';
+import { Link, Redirect } from 'react-router-dom';
+
 import './styles/app.css'
+
 
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
-import Jumbotron from 'react-bootstrap/Jumbotron'
+import ListGroup from 'react-bootstrap/ListGroup'
+import Table from 'react-bootstrap/Table'
+import Button from 'react-bootstrap/Button';
+
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons'
+
 const iconCal = <FontAwesomeIcon icon={faCalendar} />
 
 
@@ -23,31 +28,62 @@ const App = ({ history, component: Component, ...rest }) => {
     history.push('/landing');
   }
   return (
-    <div className="App">
-      <div className="wrap-app">
-        <div className="app-navbar">
-          <Navbar>
-            <Navbar.Brand as={Link} href="/app">{iconCal} Sprechstundenbuchung</Navbar.Brand>
-            <Nav className="mr-auto">
-              <Nav.Link as={Link} href="/app">Startseite</Nav.Link>
+    <div className="page">
+      {!isAuthenticated() ? <Redirect to='/landing' /> : null}
+      <div className="wrap-top-navbar">
+        <Navbar sticky="top">
+          <Navbar.Brand as={Link} to="/app">{iconCal} Bookme </Navbar.Brand>
+          <div className="content-end">
+            <Nav>
+              <Nav.Link as={Link} to="/landing">Startseite</Nav.Link>
             </Nav>
-            <NavDropdown title="Account" id="basic-nav-dropdown">
-              <NavDropdown.Divider />
-              <NavDropdown.Item >
-                <Button onClick={handleOnSubmit}>
-                  Logout
-              </Button>
-              </NavDropdown.Item>
-            </NavDropdown>
-          </Navbar>
-        </div>
-        <Jumbotron>
-        <div className="card1">
-                    <h1>Hier kommt die Startseite der App hin </h1>
-                </div>
-        </Jumbotron>
+
+            <Nav>
+              <NavDropdown title="Account">
+                <NavDropdown.Item><Button>Accountsettings</Button></NavDropdown.Item>
+                <NavDropdown.Item><Button>Share your link</Button></NavDropdown.Item>
+                <NavDropdown.Divider/>
+                <NavDropdown.Item >
+                  <Button onClick={handleOnSubmit}>
+                    Logout
+                  </Button>
+                </NavDropdown.Item>
+              </NavDropdown>
+            </Nav>
+
+          </div>
+        </Navbar>
       </div>
-    </div>
+
+      <div className="wrap-homebar">
+          <Navbar bsPrefix="homebar">
+            <Navbar.Brand>Eventtypes</Navbar.Brand>
+              <Nav>
+                <Nav.Link as={Link} to="/app"> <div className="buttontxt">Eventtypes</div> </Nav.Link>
+                <Nav.Link as={Link} to="/app"> <div className="buttontxt">Test</div> </Nav.Link>
+              </Nav>
+          </Navbar>
+      </div>
+          <div className="wrap-event-list">
+            <div className="event-list">
+              <Table bsPrefix="table-list">
+                <tbody>
+                  <tr>
+                    <td>Name</td>
+                    <td><Button>Add Event</Button></td>
+                  </tr>
+                </tbody>
+              </Table>
+              <ListGroup>
+                <ListGroup.Item as={Link} to="/edit" >Event</ListGroup.Item>
+                <ListGroup.Item>Event</ListGroup.Item>
+                <ListGroup.Item>Event</ListGroup.Item>
+                <ListGroup.Item>Event</ListGroup.Item>
+                <ListGroup.Item>Event</ListGroup.Item>
+              </ListGroup>
+            </div>
+          </div>
+        </div>
   );
 }
 

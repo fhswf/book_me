@@ -1,16 +1,81 @@
-.wrap-app > *{
-    position: relative;
-    z-index: 0;
-}
-
-.wrap-app > .app-navbar {
-    position: fixed;
-    z-index: 1;
+.wrap-top-navbar{
     width: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    box-sizing: border-box;
-    background-color: #b2f5ea;
+    position: relative;
+    background-color: #251431;
 }
 
+.navbar{
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.navbar .navbar-brand{
+    color: white;
+    font-size: 25px;
+    padding: 10px 0 10px 0;
+}
+
+.navbar .navbar-brand:hover{
+    color: white;
+}
+
+.navbar .navbar-nav .nav-link{
+    color: white;
+}
+
+.navbar .navbar-nav .nav-link:hover{
+    color: white;
+}
+
+
+.navbar-top-brand{
+
+}
+
+.content-end{
+    margin-right: 15px;
+    margin-left: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+}
+
+.nav-element{
+
+}
+.wrap-homebar{
+    position: relative;
+    padding-top: 30px;
+    background-color: white;
+    box-shadow: 0 15px 15px -15px rgba(0, 0, 0, 0.15);
+}
+
+.homebar{
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+
+.wrap-event-list{
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 20px;
+    padding-left: 20px;
+    max-width: 1020px;
+    margin-top: 20px;
+    margin-bottom: 100px;
+}
+
+.table-list{
+    display: table;
+    border-collapse: separate;
+    box-sizing: border-box;
+    border-spacing: 2px;
+    border-color: #251431;
+}
