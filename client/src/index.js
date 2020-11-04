@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {BrowserRouter,Redirect,Route,Switch} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {BrowserRouter,Redirect,Route,Switch} from 'react-router-dom';
+
 
 import App from './App';
-import Register from './screens/register';
-import Activate from './screens/activate';
-import Login from './screens/login';
-import Landing from './screens/landing';
-import Edit from './screens/editeventtype'
+import Register from './pages/register';
+import Activate from './pages/activate';
+import Login from './pages/login';
+import Landing from './pages/landing';
+
 
 import PrivateRoute from './routes/privateRoute';
 
@@ -23,7 +24,6 @@ ReactDOM.render(
       <Route path='/login' exact render={props => <Login {...props} />} />
       <Route path='/landing' exact render={props => <Landing {...props} />} />
       <Route path='/users/activate/:token' exact render={props => <Activate {...props} />} />
-      <Route path='/edit' exact render={props => <Edit {...props} />} />
       <Route path="/"> <Redirect to='/app' /></Route>
     </Switch>
     </BrowserRouter>

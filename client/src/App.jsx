@@ -1,26 +1,58 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { signout, isAuthenticated } from './helpers/auth';
 import { Link, Redirect } from 'react-router-dom';
 
 import './styles/app.css'
 
+import {
+  Navbar,
+  Nav,
+  NavDropdown,
+  ListGroup,
+  Table,
+  Button,
+  ListGroupItem,
 
-import Navbar from 'react-bootstrap/Navbar'
-import Nav from 'react-bootstrap/Nav'
-import NavDropdown from 'react-bootstrap/NavDropdown'
-import ListGroup from 'react-bootstrap/ListGroup'
-import Table from 'react-bootstrap/Table'
-import Button from 'react-bootstrap/Button';
+} from 'react-bootstrap'
 
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons'
+import axios from 'axios';
+import List from './components/eventlist'
 
 const iconCal = <FontAwesomeIcon icon={faCalendar} />
 
 
 
-const App = ({ history, component: Component, ...rest }) => {
+const App = ({ history }) => {
+  
+
+  const addEventPressed = event => {
+    event.preventDefault();
+
+    const test = localStorage.getItem('user');
+    var result = JSON.parse(test)
+    var user = result._id;
+    const name = "New Event";
+    const location = "Zuhause";
+    const duration = "30";
+    const description = "Test event zum testen"
+    axios.post(`${process.env.REACT_APP_API_URI}/addEvent`, {
+      user,
+      name,
+      location,
+      duration,
+      description
+    }).then(res => {
+      console.log("axiosOK")
+    }).catch(err => {
+      console.log(err)
+    })
+
+  }
+
+
 
   const handleOnSubmit = event => {
     event.preventDefault();
@@ -28,10 +60,11 @@ const App = ({ history, component: Component, ...rest }) => {
     history.push('/landing');
   }
   return (
-    <div className="page">
+
+    <div className="app">
       {!isAuthenticated() ? <Redirect to='/landing' /> : null}
       <div className="wrap-top-navbar">
-        <Navbar sticky="top">
+        <Navbar sticky="top" className="top-navbar">
           <Navbar.Brand as={Link} to="/app">{iconCal} Bookme </Navbar.Brand>
           <div className="content-end">
             <Nav>
@@ -42,7 +75,7 @@ const App = ({ history, component: Component, ...rest }) => {
               <NavDropdown title="Account">
                 <NavDropdown.Item><Button>Accountsettings</Button></NavDropdown.Item>
                 <NavDropdown.Item><Button>Share your link</Button></NavDropdown.Item>
-                <NavDropdown.Divider/>
+                <NavDropdown.Divider />
                 <NavDropdown.Item >
                   <Button onClick={handleOnSubmit}>
                     Logout
@@ -50,40 +83,39 @@ const App = ({ history, component: Component, ...rest }) => {
                 </NavDropdown.Item>
               </NavDropdown>
             </Nav>
-
           </div>
         </Navbar>
       </div>
 
       <div className="wrap-homebar">
-          <Navbar bsPrefix="homebar">
-            <Navbar.Brand>Eventtypes</Navbar.Brand>
-              <Nav>
-                <Nav.Link as={Link} to="/app"> <div className="buttontxt">Eventtypes</div> </Nav.Link>
-                <Nav.Link as={Link} to="/app"> <div className="buttontxt">Test</div> </Nav.Link>
-              </Nav>
-          </Navbar>
-      </div>
-          <div className="wrap-event-list">
-            <div className="event-list">
-              <Table bsPrefix="table-list">
-                <tbody>
-                  <tr>
-                    <td>Name</td>
-                    <td><Button>Add Event</Button></td>
-                  </tr>
-                </tbody>
-              </Table>
-              <ListGroup>
-                <ListGroup.Item as={Link} to="/edit" >Event</ListGroup.Item>
-                <ListGroup.Item>Event</ListGroup.Item>
-                <ListGroup.Item>Event</ListGroup.Item>
-                <ListGroup.Item>Event</ListGroup.Item>
-                <ListGroup.Item>Event</ListGroup.Item>
-              </ListGroup>
-            </div>
-          </div>
+        <div className="menu-wrapper">
+          {iconCal} Bookme
         </div>
+
+        <Navbar className="homebar">
+          <Nav>
+            <Nav.Link as={Link} to="/app">Startseite</Nav.Link>
+          </Nav>
+
+        </Navbar>
+
+      </div>
+      <div className="wrap-event-list">
+        <div className="event-list">
+          <Table bsPrefix="table-list">
+            <tbody>
+              <tr>
+                <td>Name</td>
+                <td><Button onClick={addEventPressed}>Add Event</Button></td>
+              </tr>
+            </tbody>
+          </Table>
+          <List>
+            
+          </List>
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -13,6 +13,13 @@ const transporter = mailer.createTransport({
     }
 })
 
+function validateUrl(userUrl){
+  var reg = new RegExp(/[~\/]/g);
+  var newUrl = userUrl.toLowerCase().replace(/[\. ,:]+/g, "-");
+  newUrl = newUrl.replace(reg,"-")
+  return newUrl;
+}
+
 // Handles the register and sending activation Email
 exports.registerController = (req, res) => {
 
@@ -82,8 +89,9 @@ exports.activationController = (req, res) => {
       {
         //Decode the jwt for User information
         const { name, email, password } = jwt.decode(token);
+        const user_url = validateUrl(name);
         //Create a new User 
-        const userToSave = new User({name,email,password});
+        const userToSave = new User({name,email,password,user_url});
         //Save the new created User to the DB
         userToSave.save((err, userToSave) => {
           if (err)
@@ -92,6 +100,7 @@ exports.activationController = (req, res) => {
           } 
           else
           {
+            console.log(userToSave);
             return res.json({success: true,message: userToSave,message: 'You successfully signed up!'});
           }
         });

@@ -1,19 +1,6 @@
-.wrap-landing > *{
-    position: relative;
-    z-index: 0;
-}
-
-.wrap-landing > .navbar {
-    position: fixed;
-    z-index: 1;
+.wrap-navbar{
     width: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    box-sizing: border-box;
-    background-color: #b2f5ea;
+    position: relative;
+    background-color: #326980;
 }
 
-.card1{
-    padding: 75px 20px;
-}

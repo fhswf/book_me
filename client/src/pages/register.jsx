@@ -26,8 +26,7 @@ const iconCal = <FontAwesomeIcon icon={faCalendar} />
 
 
 const Register = ({ history }) => {
-
-
+    
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -92,7 +91,7 @@ const Register = ({ history }) => {
     }
 
     return (
-        <div className="limiter">
+        <div className="register">
             {isAuthenticated() ? <Redirect to='/app' /> : null}
             <ToastContainer />
             <div className="register-container">

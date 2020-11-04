@@ -117,7 +117,7 @@ const Login = ({ history }) => {
     }
 }
   return (
-    <div className="limiter">
+    <div className="login">
       {isAuthenticated() ? <Redirect to='/app' /> : null}
       <ToastContainer />
       <div className="login-container">

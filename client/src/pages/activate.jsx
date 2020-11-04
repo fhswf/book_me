@@ -26,6 +26,7 @@ const Activate = ({ match, history }) => {
     token: '',
     show: true
   });
+
   const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
   }
@@ -38,7 +39,7 @@ const Activate = ({ match, history }) => {
       setFormData({ ...formData, name, token });
     }
   //  console.log(token, name);
-  }, [match.params]);
+  },[match.params]);
 
   const { name, token } = formData;
 
@@ -67,7 +68,7 @@ const Activate = ({ match, history }) => {
   };
 
   return (
-    <div className="limiter">
+    <div className="activate">
       {isAuthenticated() ? <Redirect to='/app' /> : null}
       <ToastContainer
         autoClose={2500} />
