@@ -15,7 +15,6 @@ const Landing = () => {
     return (
         <div className="landing">
             <div className="wrap-navbar">
-            
             <Navbar sticky="top" expand="lg">
                 <Navbar.Brand as={Link} to="/landing">{iconCal} Bookme </Navbar.Brand>
                 <Nav className="content-end">

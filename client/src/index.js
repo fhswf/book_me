@@ -9,6 +9,7 @@ import Register from './pages/register';
 import Activate from './pages/activate';
 import Login from './pages/login';
 import Landing from './pages/landing';
+import AddEvent from './pages/addEvent';
 
 
 import PrivateRoute from './routes/privateRoute';
@@ -24,6 +25,7 @@ ReactDOM.render(
       <Route path='/login' exact render={props => <Login {...props} />} />
       <Route path='/landing' exact render={props => <Landing {...props} />} />
       <Route path='/users/activate/:token' exact render={props => <Activate {...props} />} />
+      <Route path='/addevent' exact render={props => <AddEvent {...props} />} />
       <Route path="/"> <Redirect to='/app' /></Route>
     </Switch>
     </BrowserRouter>
