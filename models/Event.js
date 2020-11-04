@@ -20,6 +20,13 @@ const eventSchema = new mongoose.Schema(
             required:true,
             default: '15'
         },
+
+        url: String,
+
+        isActive:{
+            type: Boolean,
+            default: false,
+        }
         /*
         range:{
             workingdays: {type:Boolean},

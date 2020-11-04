@@ -1,24 +1,22 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import { signout } from '../helpers/auth';
+import { ToastContainer } from 'react-toastify';
 
 import '../styles/appNavbar.css';
-import { Navbar, Nav, NavDropdown, Button } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown} from 'react-bootstrap';
 
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons'
 const iconCal = <FontAwesomeIcon icon={faCalendar} />
 
-const AppNavbar = ({ history }) => {
+const AppNavbar = ({useHistory}) => {
 
-    const handleOnSubmit = event => {
-        event.preventDefault();
-        signout(localStorage.getItem('user'));
-        history.push('/landing');
-    }
+
     return (
         <div className="appnavbar">
+            <ToastContainer></ToastContainer>
             <div className="wrap-top-navbar">
                 <Navbar sticky="top" className="top-navbar">
                     <Navbar.Brand as={Link} to="/app">{iconCal} Bookme </Navbar.Brand>
@@ -28,14 +26,10 @@ const AppNavbar = ({ history }) => {
                         </Nav>
                         <Nav>
                             <NavDropdown title="Account">
-                                <NavDropdown.Item><Button>Accountsettings</Button></NavDropdown.Item>
-                                <NavDropdown.Item><Button>Share your link</Button></NavDropdown.Item>
+                                <NavDropdown.Item>test1</NavDropdown.Item>
+                                <NavDropdown.Item>test2</NavDropdown.Item>
                                 <NavDropdown.Divider />
-                                <NavDropdown.Item >
-                                    <Button onClick={handleOnSubmit}>
-                                        Logout
-                                     </Button>
-                                </NavDropdown.Item>
+                                <NavDropdown.Item onClick={signout} as={Link} to="/landing"> Logout </NavDropdown.Item>
                             </NavDropdown>
                         </Nav>
                     </div>

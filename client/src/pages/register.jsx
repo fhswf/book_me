@@ -83,11 +83,7 @@ const Register = ({ history }) => {
         }
     }
     const onIconClick = () => {
-        if (isAuthenticated()) {
-            history.push("/app");
-        } else {
-            history.push("/landing");
-        }
+        history.push("/landing");
     }
 
     return (

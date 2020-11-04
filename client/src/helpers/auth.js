@@ -40,9 +40,9 @@ export const authenticate = (response,next) =>{
 }
 
 export const signout = next => {
-    deleteCookie('token')
-    removeLocalStorage('user')
-}
+    deleteCookie('token');
+    removeLocalStorage('user');
+};
 
 export const isAuthenticated =() =>{
     if(window !== 'undefined'){

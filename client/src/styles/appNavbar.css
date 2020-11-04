@@ -30,6 +30,12 @@
 .top-navbar .navbar-nav .nav-link:hover{
     color: rgb(99, 236, 87);
 }
+.dropdown-item{
+    color: rgb(63, 60, 60);
+}
+.dropdown-item:hover{
+    color: black;
+}
 
 .content-end{
     margin-right: 15px;

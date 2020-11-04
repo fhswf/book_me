@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { signout, isAuthenticated } from './helpers/auth';
+import React from 'react';
+import { isAuthenticated } from './helpers/auth';
 import { Link, Redirect } from 'react-router-dom';
 
 import './styles/app.css'
@@ -14,46 +14,18 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons'
-import axios from 'axios';
 import EventList from './components/eventlist';
 import AppNavbar from './components/appNavbar';
 const iconCal = <FontAwesomeIcon icon={faCalendar} />
 
 
 
-const App = ({ history }) => {
-  
-
-  const addEventPressed = event => {
-    event.preventDefault();
-
-    const test = localStorage.getItem('user');
-    var result = JSON.parse(test)
-    var user = result._id;
-    const name = "New Event";
-    const location = "Zuhause";
-    const duration = "30";
-    const description = "Test event zum testen"
-    axios.post(`${process.env.REACT_APP_API_URI}/addEvent`, {
-      user,
-      name,
-      location,
-      duration,
-      description
-    }).then(res => {
-      console.log("axiosOK")
-    }).catch(err => {
-      console.log(err)
-    })
-
-  }
-
-
+const App = () => {
+ 
   return (
-
     <div className="app">
       {!isAuthenticated() ? <Redirect to='/landing' /> : null}
-      <AppNavbar/>
+      <AppNavbar />
       <div className="wrap-homebar">
         <div className="menu-wrapper">
           {iconCal} Bookme

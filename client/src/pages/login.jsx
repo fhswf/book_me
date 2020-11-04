@@ -110,11 +110,7 @@ const Login = ({ history }) => {
   };
 
   const onIconClick = () => {
-    if (isAuthenticated()) {
-        history.push("/app");
-    } else {
         history.push("/landing");
-    }
 }
   return (
     <div className="login">

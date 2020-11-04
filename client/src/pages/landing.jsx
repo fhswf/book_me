@@ -5,7 +5,8 @@ import Nav from 'react-bootstrap/Nav'
 import Jumbotron from 'react-bootstrap/Jumbotron'
 import '../styles/landing.css'
 
-import { Link } from 'react-router-dom';
+import {isAuthenticated} from '../helpers/auth'
+import { Link, Redirect } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons'
@@ -14,6 +15,7 @@ const iconCal = <FontAwesomeIcon icon={faCalendar} />
 const Landing = () => {
     return (
         <div className="landing">
+            {isAuthenticated() ? <Redirect to='/app' /> : null}
             <div className="wrap-navbar">
             <Navbar sticky="top" expand="lg">
                 <Navbar.Brand as={Link} to="/landing">{iconCal} Bookme </Navbar.Brand>

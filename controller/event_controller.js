@@ -2,7 +2,7 @@ const Event = require('../models/Event');
 
 exports.addEventController = (req, res) => {
 
-    const { user, name, location, duration, description } = req.body;
+    const { user, name, location, duration, description,url,isActive } = req.body;
     const eventToSave = new Event(
         {
             user: user,
@@ -10,10 +10,9 @@ exports.addEventController = (req, res) => {
             location: location,
             duration: duration,
             description: description,
+            url: url,
+            isActive: isActive,
         });
-
-    console.log(eventToSave)
-
     eventToSave.save((err, eventToSave) => {
         if (err) {
             console.log(err);

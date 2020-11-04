@@ -20,12 +20,12 @@ ReactDOM.render(
   <React.StrictMode>  
     <BrowserRouter basename="bookme">
     <Switch>
-      <PrivateRoute path="/app" exact component={App} />
+      <PrivateRoute path="/app" exact component={App}/>
+      <PrivateRoute path='/addevent' exact component={AddEvent}/>
       <Route path ='/register' exact render = {props => <Register {...props}/>}/>
       <Route path='/login' exact render={props => <Login {...props} />} />
       <Route path='/landing' exact render={props => <Landing {...props} />} />
       <Route path='/users/activate/:token' exact render={props => <Activate {...props} />} />
-      <Route path='/addevent' exact render={props => <AddEvent {...props} />} />
       <Route path="/"> <Redirect to='/app' /></Route>
     </Switch>
     </BrowserRouter>

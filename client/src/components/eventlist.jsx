@@ -9,15 +9,17 @@ function EventList() {
 
     const [events,setEvents] = useState([]);
 
-    useEffect(()=>{
+    useEffect( ()=>{
+
         axios.get(`${process.env.REACT_APP_API_URI}/getEvents/`, {params: {user: userid}})
         .then(res =>{
-            setEvents(res.data);
+                setEvents(res.data);  
         })
-        .catch(err=>{
+        .catch(err =>{
             console.log(err);
         })
-    })
+    },[userid])
+
     return(
         <div>
             <ul>
