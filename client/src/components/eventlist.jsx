@@ -1,6 +1,9 @@
 import React,{useState,useEffect} from 'react'
 import axios from 'axios'
 
+
+import Dropdown from './eventDropdownMenu';
+
 function EventList() {
 
     const localuser = localStorage.getItem('user');
@@ -10,8 +13,7 @@ function EventList() {
     const [events,setEvents] = useState([]);
 
     useEffect( ()=>{
-
-        axios.get(`${process.env.REACT_APP_API_URI}/getEvents/`, {params: {user: userid}})
+        axios.get(`${process.env.REACT_APP_API_URI}/getEvents`, {params: {user: userid}})
         .then(res =>{
                 setEvents(res.data);  
         })
@@ -20,11 +22,13 @@ function EventList() {
         })
     },[userid])
 
+
+
     return(
         <div>
             <ul>
                 {
-                    events.map( events => <li key={events._id}>{events.name}</li>)
+                    events.map( events => <li key={events._id}>{events.name}<Dropdown options={events._id}/></li>)
                 }
             </ul>
         </div>

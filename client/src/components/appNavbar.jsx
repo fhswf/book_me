@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons'
 const iconCal = <FontAwesomeIcon icon={faCalendar} />
 
-const AppNavbar = ({useHistory}) => {
+const AppNavbar = () => {
 
 
     return (

@@ -11,12 +11,12 @@ const AddEvent = ({history}) => {
     var user = result._id;
 
     const [formData, setFormData] = useState({
-        name:'',
-        location:'',
-        description:'',
-        duration:'',
-        url: '',
-        isActive: false
+            name:'',
+            location:'',
+            description:'',
+            duration:'',
+            url: '',
+            isActive: false
     });
 
     const testing = event  =>{
@@ -55,7 +55,7 @@ const AddEvent = ({history}) => {
             <h1>Add event Page</h1>
             <div className="addeventbox">
             <Form onSubmit={handleOnSubmit}>
-            <FormGroup controlId = "name">
+            <FormGroup controlId="name">
                 <InputGroup>
                 <FormControl
                 type="name"
@@ -65,7 +65,7 @@ const AddEvent = ({history}) => {
                 />
                 </InputGroup>
             </FormGroup>
-            <FormGroup>
+            <FormGroup controlId="locaiton"> 
                 <InputGroup>
                 <FormControl
                 type="location"
@@ -75,7 +75,7 @@ const AddEvent = ({history}) => {
                 />
                 </InputGroup>
             </FormGroup>
-            <FormGroup>
+            <FormGroup controlId="description">
                 <InputGroup>
                 <FormControl
                 type="description"
@@ -85,7 +85,7 @@ const AddEvent = ({history}) => {
                 />
                 </InputGroup>
             </FormGroup>
-            <FormGroup>
+            <FormGroup controlId="duration">
                 <InputGroup>
                 <FormControl as="textarea"
                 type="duration"

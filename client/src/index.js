@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter,Redirect,Route,Switch} from 'react-router-dom';
 
@@ -13,6 +14,7 @@ import AddEvent from './pages/addEvent';
 
 
 import PrivateRoute from './routes/privateRoute';
+import EditEvent from './pages/editevent';
 
 
 ReactDOM.render(
@@ -22,6 +24,7 @@ ReactDOM.render(
     <Switch>
       <PrivateRoute path="/app" exact component={App}/>
       <PrivateRoute path='/addevent' exact component={AddEvent}/>
+      <PrivateRoute path='/editevent/:id' exact component={EditEvent}/>
       <Route path ='/register' exact render = {props => <Register {...props}/>}/>
       <Route path='/login' exact render={props => <Login {...props} />} />
       <Route path='/landing' exact render={props => <Landing {...props} />} />
