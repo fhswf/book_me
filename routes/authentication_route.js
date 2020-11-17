@@ -1,37 +1,49 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-
-const { 
-    registerController,
-    activationController,
-    loginController,
-    googleController,
-} = require('../controller/authentication_controller');
+const {
+  registerController,
+  activationController,
+  loginController,
+  googleController,
+  generateAuthUrl,
+  googleCallback,
+} = require("../controller/authentication_controller");
 
 const {
-    addEventController,
-    getEventListController,
-    deleteEventController,
-    getEventByIdController,
-    updateEventController
-} = require('../controller/event_controller')
+  addEventController,
+  getEventListController,
+  deleteEventController,
+  getEventByIdController,
+  updateEventController,
+  getActiveEventsController,
+} = require("../controller/event_controller");
 
 const {
-    validateRegister,
-    validateLogin
-} = require('../handlers/validation');
+  getUserController,
+  getUserByUrl,
+} = require("../controller/user_controller");
 
-router.post('/register', validateRegister, registerController);
-router.post('/login', validateLogin, loginController);
-router.post('/activate', activationController);
-router.post('/googlelogin', googleController);
-router.post('/addEvent', addEventController);
-router.post('/deleteEvent', deleteEventController);
+const { validateRegister, validateLogin } = require("../handlers/validation");
 
-router.post('/updateEvent',updateEventController)
-router.get('/getEvents',getEventListController);
+//POST Routes
+router.post("/register", validateRegister, registerController);
+router.post("/login", validateLogin, loginController);
+router.post("/activate", activationController);
+router.post("/googlelogin", googleController);
 
-router.get('/getEventByID',getEventByIdController);
+router.post("/addEvent", addEventController);
+router.post("/deleteEvent", deleteEventController);
+router.post("/updateEvent", updateEventController);
+
+//GET Routes
+router.get("/getActiveEvents", getActiveEventsController);
+router.get("/getEvents", getEventListController);
+router.get("/getUser", getUserController);
+router.get("/getEventByID", getEventByIdController);
+router.get("/findUserByUrl", getUserByUrl);
+
+router.get("/generateAuthUrl", generateAuthUrl);
+router.get("/oauthcallback", googleCallback);
 
 module.exports = router;

@@ -1,61 +1,78 @@
-import React from 'react';
-import { isAuthenticated } from './helpers/auth';
-import { Link, Redirect } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
-import './styles/app.css'
+import EventList from "./components/eventlist";
+import AppNavbar from "./components/appNavbar";
 
-import {
-  Navbar,
-  Nav,
-  Table,
-  Button,
-} from 'react-bootstrap'
+import "./styles/app.css";
+import { Navbar, Nav, Table, Button } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCalendar } from '@fortawesome/free-solid-svg-icons'
-import EventList from './components/eventlist';
-import AppNavbar from './components/appNavbar';
-const iconCal = <FontAwesomeIcon icon={faCalendar} />
-
-
+const iconPlus = <FontAwesomeIcon icon={faPlus} size="xs" />;
 
 const App = () => {
- 
+  const test = localStorage.getItem("user");
+  var result = JSON.parse(test);
+  var userID = result._id;
+
+  const [user, setUser] = useState("");
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URI}/getUser`, {
+        params: { user: userID },
+      })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [userID]);
+
   return (
     <div className="app">
-      {!isAuthenticated() ? <Redirect to='/landing' /> : null}
       <AppNavbar />
       <div className="wrap-homebar">
-        <div className="menu-wrapper">
-          {iconCal} Bookme
-        </div>
-
+        <div className="menu-wrapper">Personal Site</div>
         <Navbar className="homebar">
           <Nav>
-            <Nav.Link as={Link} to="/app">Startseite</Nav.Link>
+            <Nav.Link as={Link} to="/app">
+              Events
+            </Nav.Link>
           </Nav>
-
         </Navbar>
-
       </div>
       <div className="wrap-event-list">
         <div className="event-list">
-          <Table bsPrefix="table-list">
+          <Table className="table-list">
             <tbody>
               <tr>
-                <td>Name</td>
-                <td><Button as={Link} to="/addevent">Add Event</Button></td>
+                <td className="profileinfo">
+                  {user.name}
+                  <br></br>
+
+                  <a href={process.env.REACT_APP_URL + user.user_url}>
+                    Your Link: {user.user_url}
+                  </a>
+                </td>
+                <td className="addeventbtn">
+                  <div className="wrap-button">
+                    <Button className="mybtn" as={Link} to="/addevent">
+                      {iconPlus} Add Event
+                    </Button>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </Table>
-          <EventList>
-            
-          </EventList>
+          <EventList></EventList>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default App;

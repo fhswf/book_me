@@ -1,51 +1,108 @@
-.wrap-homebar{
-    padding-top: 30px;
-    background-color: white;
-    box-shadow: 0 15px 15px -15px rgba(0, 0, 0, 0.15);
+ul {
+  list-style-type: none;
 }
 
-.wrap-homebar .menu-wrapper{
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    min-height: 50px;
-}
-.menu-wrapper{
-    margin-right: auto;
-    margin-left: auto;
-    max-width: 1200px;
-    justify-content: center;
-    font-size: larger;
+.app {
+  color: var(--text-color, #4d5055);
+  font-family: sans-serif;
 }
 
-.homebar{
-    max-width: 1200px;
-    margin-right: auto;
-    margin-left: auto;
-    flex-direction: column;
-    padding: 0;
+.wrap-homebar {
+  padding-top: 30px;
+  background-color: white;
+  box-shadow: 0 15px 15px -15px rgba(0, 0, 0, 0.15);
 }
 
-.homebar .navbar-nav{
-    margin-right: auto;
-    margin-left: 0;
-    padding: 0;
+.wrap-homebar .menu-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+
+  min-height: 50px;
+}
+.menu-wrapper {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 1200px;
+  font-size: larger;
 }
 
-.wrap-event-list{
-    margin-right: auto;
-    margin-left: auto;
-    padding-right: 20px;
-    padding-left: 20px;
-    max-width: 1020px;
-    margin-top: 20px;
-    margin-bottom: 100px;
+.homebar {
+  max-width: 1200px;
+  margin-right: auto;
+  margin-left: auto;
+  flex-direction: column;
+  padding: 0;
 }
 
-.table-list{
-    display: table;
-    border-collapse: separate;
-    box-sizing: border-box;
-    border-spacing: 2px;
-    border-color: #251431;
+.homebar .navbar-nav {
+  margin-right: auto;
+  margin-left: 0;
+  padding: 0;
+}
+
+.wrap-event-list {
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 20px;
+  padding-left: 20px;
+  max-width: 1020px;
+  margin-top: 20px;
+  margin-bottom: 100px;
+}
+
+.table-list {
+  width: 100%;
+  font-size: 20px;
+  border-color: grey;
+  border-spacing: 0;
+  margin-bottom: 25px;
+  margin-top: 25px;
+}
+
+.table-list tbody {
+  display: table-row-group;
+  vertical-align: middle;
+  border-color: inherit;
+}
+
+.table-list .mybtn {
+  color: var(--primary-color, rgb(0, 162, 255));
+  border-color: var(--primary-color, rgb(0, 162, 255));
+  min-height: 32px;
+  cursor: pointer;
+  font-size: 15px;
+  background-color: transparent;
+}
+.wrap-button {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.profileinfo {
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+}
+
+.userurl {
+  cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+  .spalte {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+  }
+  .app td {
+    float: left;
+    display: inline-block;
+    width: 100%;
+  }
+  .app td:nth-child(2) {
+    clear: both;
+  }
+  .mybtn {
+    width: 100%;
+  }
 }
