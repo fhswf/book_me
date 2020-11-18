@@ -20,7 +20,7 @@ function EventList() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URI}/getEvents`, {
+      .get(`${process.env.REACT_APP_API_URI}/events/getEvents`, {
         params: { user: userid },
       })
       .then((res) => {

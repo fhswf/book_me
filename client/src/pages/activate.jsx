@@ -32,7 +32,7 @@ const Activate = (match) => {
     e.preventDefault();
 
     axios
-      .post(`${process.env.REACT_APP_API_URI}/activate`, {
+      .post(`${process.env.REACT_APP_API_URI}/auth/activate`, {
         withCredentials: true,
       })
       .then((res) => {

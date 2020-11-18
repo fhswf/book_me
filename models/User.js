@@ -12,8 +12,8 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
     },
     access_token: {
-      type: String,
-      default: "",
+      type: Object,
+      default: null,
     },
     name: {
       type: String,

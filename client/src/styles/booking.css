@@ -13,12 +13,15 @@
   border-radius: 12px;
   margin-top: 66px;
   margin-bottom: 30px;
+  flex-direction: column;
+}
+.booking-header {
+  text-align: center;
 }
 .booking-container {
   display: flex;
   flex: 1 1 auto;
   min-width: 900px;
-  max-width: 1060px;
   min-height: 550px;
   transition: all 0.22s ease-out;
   border: 2px solid var(--text-color-level3, rgba(77, 80, 85, 0.1));

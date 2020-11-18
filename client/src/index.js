@@ -49,9 +49,13 @@ ReactDOM.render(
           exact
           render={(props) => <Activate {...props} />}
         />
-        <Route path="/:url" exact render={(props) => <Planing {...props} />} />
         <Route
-          path="/:user/:name"
+          path="/users/:user_url"
+          exact
+          render={(props) => <Planing {...props} />}
+        />
+        <Route
+          path="/users/:user_url/:url"
           exact
           render={(props) => <Booking {...props} />}
         />

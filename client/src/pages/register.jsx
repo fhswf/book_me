@@ -52,7 +52,7 @@ const Register = ({ history }) => {
         setFormData({ ...formData, changeBtnTxt: iconSpinner });
         axios
           .post(
-            `${process.env.REACT_APP_API_URI}/register`,
+            `${process.env.REACT_APP_API_URI}/auth/register`,
             {
               name,
               email,

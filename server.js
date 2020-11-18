@@ -31,10 +31,15 @@ if (process.env.NODE_ENV === "development") {
 
 //Load routes
 const authenticationRouter = require("./routes/authentication_route");
-const { cookie } = require("express-validator");
+const eventRouter = require("./routes/event_routes");
+const googleRouter = require("./routes/google_routes");
+const userRouter = require("./routes/user_routes");
 
 //Use routes
-app.use("/api/", authenticationRouter);
+app.use("/auth/", authenticationRouter);
+app.use("/events/", eventRouter);
+app.use("/google/", googleRouter);
+app.use("/users/", userRouter);
 
 const PORT = process.env.PORT || 5000;
 

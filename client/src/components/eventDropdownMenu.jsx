@@ -13,7 +13,9 @@ const EventDropdownMenu = ({ options }) => {
 
   const handleOnDelete = (event) => {
     event.preventDefault();
-    axios.post(`${process.env.REACT_APP_API_URI}/deleteEvent`, { eventid });
+    axios.delete(`${process.env.REACT_APP_API_URI}/events/deleteEvent`, {
+      eventid,
+    });
     window.location.reload(false);
   };
 

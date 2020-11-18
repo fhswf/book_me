@@ -21,7 +21,7 @@ const App = () => {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URI}/getUser`, {
+      .get(`${process.env.REACT_APP_API_URI}/users/getUser`, {
         params: { user: userID },
       })
       .then((res) => {
@@ -54,7 +54,9 @@ const App = () => {
                   {user.name}
                   <br></br>
 
-                  <a href={process.env.REACT_APP_URL + user.user_url}>
+                  <a
+                    href={process.env.REACT_APP_URL + "users/" + user.user_url}
+                  >
                     Your Link: {user.user_url}
                   </a>
                 </td>

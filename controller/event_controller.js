@@ -1,41 +1,35 @@
 const Event = require("../models/Event");
-
-const SCOPES = ["https://www.googleapis.com/auth/calendar"];
+const { validationResult } = require("express-validator");
 
 exports.addEventController = (req, res) => {
-  const eventToSave = new Event({
-    user: req.body.user,
-    name: req.body.name,
-    location: req.body.location,
-    duration: req.body.duration,
-    description: req.body.description,
-    url: req.body.user_url,
-    isActive: req.body.isActive,
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const newError = errors.array().map((error) => error.msg)[0];
+    return res.status(422).json({ errors: newError });
+  } else {
+    const eventToSave = new Event({
+      user: req.body.user,
+      name: req.body.name,
+      location: req.body.location,
+      description: req.body.description,
+      url: req.body.eventurl,
+      isActive: req.body.isActive,
+    });
 
-    available: {
-      mon: req.body.mon,
-      tue: req.body.tue,
-      wen: req.body.wen,
-      thu: req.body.thu,
-      fri: req.body.fri,
-      sat: req.body.sat,
-      sun: req.body.sun,
-    },
-  });
-  eventToSave.save((err, eventToSave) => {
-    if (err) {
-      console.log(err);
-      return res
-        .status(401)
-        .json({ errors: "Could not save the Event to the Database" });
-    } else {
-      return res.json({
-        success: true,
-        message: eventToSave,
-        message: "Event Saved",
-      });
-    }
-  });
+    eventToSave.save((err, eventToSave) => {
+      if (err) {
+        return res
+          .status(400)
+          .json({ errors: "Could not save the Event to the Database" });
+      } else {
+        return res.json({
+          success: true,
+          message: eventToSave,
+          msg: "Successfully saved event!",
+        });
+      }
+    });
+  }
 };
 
 exports.deleteEventController = (req, res) => {
@@ -81,6 +75,21 @@ exports.getEventByIdController = (req, res) => {
   query.exec(function (err, event) {
     if (err) {
       return res.json(null);
+    } else {
+      return res.json(event);
+    }
+  });
+};
+
+exports.getEventByUrl = (req, res) => {
+  const userid = req.query.user;
+  const url = req.query.url;
+  console.log(req.query);
+
+  const query = Event.findOne({ url: url, user: userid });
+  query.exec(function (err, event) {
+    if (err) {
+      return err;
     } else {
       return res.json(event);
     }

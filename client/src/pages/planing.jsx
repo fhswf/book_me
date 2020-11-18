@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, useHistory, Redirect } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 
 import "../styles/planing.css";
 
@@ -12,41 +12,48 @@ const iconArrowRight = <FontAwesomeIcon icon={faArrowRight} />;
 const Planing = () => {
   const history = useHistory();
 
-  let { url } = useParams();
+  let { user_url } = useParams();
 
   const [events, setEvents] = useState([]);
   const [user, setUser] = useState({
-    name: "No User under that Link",
+    name: "",
   });
 
   useEffect(() => {
+    console.log("effect");
     axios
-      .get(`${process.env.REACT_APP_API_URI}/findUserByUrl`, {
-        params: { user: url },
+      .get(`${process.env.REACT_APP_API_URI}/users/findUserByUrl`, {
+        params: { user: user_url },
       })
       .then((res) => {
-        setUser(res.data);
-        console.log(res.data);
         if (res.data.length === 0) {
           history.push("/notfound");
         } else {
+          setUser(res.data);
           axios
-            .get(`${process.env.REACT_APP_API_URI}/getActiveEvents`, {
+            .get(`${process.env.REACT_APP_API_URI}/events/getActiveEvents`, {
               params: { user: res.data._id },
             })
             .then((res) => {
-              setEvents(res.data);
+              if (res.data.length === 0) {
+                history.push("/notfound");
+              } else {
+                setEvents(res.data);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
             });
         }
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [user._id]);
+  }, [user_url, history]);
 
   function handleOnClick(bookingEvent) {
     history.push({
-      pathname: `/${url}/${bookingEvent.name}`,
+      pathname: `/users/${user_url}/${bookingEvent.url}`,
       state: { bookingEvent, user },
     });
   }

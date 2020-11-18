@@ -5,34 +5,15 @@ const { validationResult } = require("express-validator");
 const mailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 
-/*---------Google Cal API-----------*/
+/*---------Google -----------*/
 const { google } = require("googleapis");
 const { OAuth2 } = google.auth;
-const SCOPES = ["https://www.googleapis.com/auth/calendar"];
+
 const oAuth2Client = new OAuth2({
   clientId: process.env.GOOGLE_ID,
   clientSecret: process.env.GOOGLE_SECRET,
   redirectUri: `${process.env.API_URL}/oauthcallback`,
 });
-
-exports.generateAuthUrl = (req, res) => {
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: "offline",
-    scope: SCOPES,
-  });
-
-  return res.json({ url: authUrl });
-};
-
-exports.googleCallback = (req, res) => {
-  const code = req.query.code;
-  oAuth2Client.getToken(code, (err, tokens) => {
-    if (err) {
-      return console.error("Error retrieving access token", err);
-    } else {
-    }
-  });
-};
 
 const transporter = mailer.createTransport({
   service: "gmail",
@@ -143,7 +124,7 @@ exports.activationController = (req, res) => {
 exports.loginController = (req, res) => {
   const { email, password } = req.body;
   const errors = validationResult(req);
-
+  console.log(errors);
   if (!errors.isEmpty()) {
     const newError = errors.array().map((error) => error.msg)[0];
     return res.status(422).json({ errors: newError });
@@ -215,8 +196,9 @@ exports.googleController = (req, res) => {
           } else {
             let randompw = makePassword(15);
             let password = randompw + process.env.JWT_SECRET_TOKEN;
+            const user_url = validateUrl(email);
 
-            user = new User({ name, email, password });
+            user = new User({ name, email, password, user_url });
             user.save((err, data) => {
               if (err) {
                 return res.status(400).json({

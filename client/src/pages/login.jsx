@@ -37,7 +37,7 @@ const Login = ({ history }) => {
   /*- Google Login -*/
   const sendGoogleToken = (tokenId) => {
     axios
-      .post(`${process.env.REACT_APP_API_URI}/googlelogin`, {
+      .post(`${process.env.REACT_APP_API_URI}/auth/googlelogin`, {
         idToken: tokenId,
       })
       .then((res) => {
@@ -81,7 +81,7 @@ const Login = ({ history }) => {
     if (email && password) {
       setFormData({ ...formData, changeBtnTxt: iconSpinner });
       axios
-        .post(`${process.env.REACT_APP_API_URI}/login`, {
+        .post(`${process.env.REACT_APP_API_URI}/auth/login`, {
           email,
           password: password,
         })
@@ -105,17 +105,17 @@ const Login = ({ history }) => {
             password: "",
             changeBtnTxt: "Sign In",
           });
-          console.log(err.response);
           toast.error(err.response.data.errors);
         });
     } else {
-      toast.error("Please fill all fields");
+      toast.error("Please fill in all fields");
     }
   };
 
   const onIconClick = () => {
     history.push("/landing");
   };
+
   return (
     <div className="login">
       {isAuthenticated() ? <Redirect to="/app" /> : null}

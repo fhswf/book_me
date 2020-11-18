@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import Datepicker from "../components/datepicker";
-
+import axios from "axios";
 import "../styles/booking.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,15 +9,65 @@ import {
   faArrowLeft,
   faMapMarkerAlt,
   faHourglass,
+  faCalendar,
 } from "@fortawesome/free-solid-svg-icons";
 const iconArrowLeft = <FontAwesomeIcon icon={faArrowLeft} />;
 const iconLocation = <FontAwesomeIcon icon={faMapMarkerAlt} />;
 const iconTime = <FontAwesomeIcon icon={faHourglass} />;
+const iconCal = <FontAwesomeIcon icon={faCalendar} />;
 
 const Booking = () => {
-  const data = useLocation();
-  console.log(data);
+  const data = useParams();
   const history = useHistory();
+
+  console.log(data);
+
+  const [user, setUser] = useState({
+    name: "No User under that Link",
+  });
+  const [event, setEvent] = useState({
+    name: "",
+    location: "",
+    duration: "",
+  });
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URI}/users/findUserByUrl`, {
+        params: { user: data.user_url },
+      })
+      .then((res) => {
+        if (res.data.length === 0) {
+          history.push("/notfound");
+        } else {
+          setUser(res.data);
+          console.log(res.data._id);
+          axios
+            .get(`${process.env.REACT_APP_API_URI}/events/getEventByUrl`, {
+              params: { user: res.data._id, url: data.url },
+            })
+            .then((res) => {
+              if (res.data == null) {
+                setEvent({
+                  name: "test",
+                });
+                history.push("/notfound");
+              } else {
+                setEvent(res.data);
+              }
+            })
+            .catch((err) => {
+              return err;
+            });
+        }
+      })
+      .catch((err) => {
+        return err;
+      });
+    return () => {
+      console.log("Cleaned that shit up");
+    };
+  }, [data.user, data.name, history]);
 
   const handleBackClick = (event) => {
     event.preventDefault();
@@ -28,6 +78,9 @@ const Booking = () => {
     <div>
       <div className="booking">
         <div className="bookingwrapper">
+          <div className="booking-header">
+            <h1>{iconCal} Bookme</h1>
+          </div>
           <div className="booking-container">
             <div className="leftpanel">
               <div className="leftpanelcontent">
@@ -35,15 +88,15 @@ const Booking = () => {
                   {iconArrowLeft}
                 </a>
                 <div className="profileinfo">
-                  <h4 className="username">{data.state.user.name}</h4>
-                  <h1 className="eventname">{data.state.bookingEvent.name}</h1>
+                  <h4 className="username">{user.name}</h4>
+                  <h1 className="eventname">{event.name}</h1>
                 </div>
                 <div className="eventinfo">
                   <p className="eventdata">
-                    {iconTime} {data.state.bookingEvent.duration}
+                    {iconTime} {event.duration}
                   </p>
                   <p className="eventdata">
-                    {iconLocation} {data.state.bookingEvent.location}
+                    {iconLocation} {event.location}
                   </p>
                 </div>
               </div>

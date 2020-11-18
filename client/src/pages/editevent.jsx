@@ -24,7 +24,7 @@ const EditEvent = ({ match, history }) => {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URI}/getEventByID`, {
+      .get(`${process.env.REACT_APP_API_URI}/events/getEventByID`, {
         params: { event: eventID },
       })
       .then((res) => {

@@ -1,5 +1,4 @@
 const User = require("../models/User");
-const jwt = require("jsonwebtoken");
 
 exports.getUserController = (req, res) => {
   const userid = req.query.user;

@@ -1,15 +1,18 @@
 const mongoose = require("mongoose");
 
 const eventSchema = new mongoose.Schema({
-  user: String,
+  user: {
+    type: String,
+    required: true,
+  },
   name: {
     type: String,
     required: true,
     trim: true,
   },
-
   location: {
     type: String,
+    default: "No explizit Location",
     trim: true,
   },
 
@@ -25,7 +28,10 @@ const eventSchema = new mongoose.Schema({
     default: 15,
   },
 
-  url: String,
+  url: {
+    type: String,
+    required: true,
+  },
 
   isActive: {
     type: Boolean,
@@ -37,9 +43,13 @@ const eventSchema = new mongoose.Schema({
     default: 30,
   },
 
-  workingdays: {
+  calendardays: {
     type: Boolean,
     default: true,
+  },
+  buffer: {
+    type: Number,
+    default: 0,
   },
   available: {
     mon: [
