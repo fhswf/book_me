@@ -21,5 +21,5 @@ exports.validateLogin = [
 ];
 
 exports.validateAddEvent = [
-  check("duration").isNumeric().withMessage("Duration needs to be a Number!"),
+  check("name").notEmpty().withMessage("Name cant be empty"),
 ];

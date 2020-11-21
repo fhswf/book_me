@@ -41,9 +41,14 @@
   width: 100%;
 }
 .react-datepicker__day-names {
-  padding: 5px 10px 5px 10px;
   font-size: 20px;
   font-weight: bold;
+}
+.react-datepicker__day-name {
+  position: relative;
+  margin-right: 20px;
+  margin-left: 20px;
+  font-size: 18px;
 }
 
 .react-datepicker__month {
@@ -70,4 +75,8 @@
 .react-datepicker__day:not(.react-datepicker__day--disabled) {
   color: var(--primary-color, rgb(0, 162, 255));
   border-radius: 50%;
+}
+
+.react-datepicker__time-container {
+  min-width: 25%;
 }

@@ -1,5 +1,4 @@
 const { google } = require("googleapis");
-
 const User = require("../models/User");
 const { OAuth2 } = google.auth;
 
@@ -16,16 +15,17 @@ const oAuth2Client = new OAuth2({
 
 exports.revokeScopes = (req, res) => {
   const userid = req.query.user;
-  User.findOneAndUpdate({ _id: userid }, { access_token: null }).then((res) => {
-    console.log(res);
-  });
+
+  User.findOneAndUpdate(
+    { _id: userid },
+    { access_token: null }
+  ).then((res) => {});
 };
 exports.generateAuthUrl = (req, res) => {
   const user = req.query.user;
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES,
-    include_granted_scopes: true,
     state: user,
   });
 
@@ -35,15 +35,21 @@ exports.generateAuthUrl = (req, res) => {
 exports.googleCallback = (req, res) => {
   const code = req.query.code;
   const user = req.query.state;
-  oAuth2Client.getToken(code, (err, token) => {
-    if (err) {
-      return console.error("Error retrieving access token", err);
-    } else {
-      saveTokens(user, token);
-      res.redirect("http://localhost:3000/integration");
-    }
-  });
+  if (code) {
+    oAuth2Client.getToken(code, (err, token) => {
+      if (err) {
+        return console.error("Error retrieving access token", err);
+      } else {
+        saveTokens(user, token);
+        res.redirect(`${process.env.CLIENT_URL}/app`);
+      }
+    });
+  } else {
+    return res.json({ err: "Error Google API request" });
+  }
 };
+
+exports.googleFreeBusy = (req, res) => {};
 
 function saveTokens(user, token) {
   User.findOneAndUpdate({ _id: user }, { access_token: token })

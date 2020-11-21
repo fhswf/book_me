@@ -38,7 +38,7 @@ const eventSchema = new mongoose.Schema({
     default: false,
   },
 
-  range_days: {
+  rangedays: {
     type: Number,
     default: 30,
   },
@@ -47,95 +47,47 @@ const eventSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  buffer: {
+  bufferbefore: {
     type: Number,
     default: 0,
   },
+  bufferafter: {
+    type: Number,
+    default: 0,
+  },
+
   available: {
-    mon: [
-      {
-        starttime: {
-          type: Number,
-          default: 800,
-        },
-        endtime: {
-          type: Number,
-          default: 1700,
-        },
-      },
-    ],
-    tue: [
-      {
-        starttime: {
-          type: Number,
-          default: 800,
-        },
-        endtime: {
-          type: Number,
-          default: 1700,
-        },
-      },
-    ],
-    wen: [
-      {
-        starttime: {
-          type: Number,
-          default: 800,
-        },
-        endtime: {
-          type: Number,
-          default: 1700,
-        },
-      },
-    ],
-    thu: [
-      {
-        starttime: {
-          type: Number,
-          default: 800,
-        },
-        endtime: {
-          type: Number,
-          default: 1700,
-        },
-      },
-    ],
-    fri: [
-      {
-        starttime: {
-          type: Number,
-          default: 800,
-        },
-        endtime: {
-          type: Number,
-          default: 1700,
-        },
-      },
-    ],
-    sat: [
-      {
-        starttime: {
-          type: Number,
-          default: 800,
-        },
-        endtime: {
-          type: Number,
-          default: 1700,
-        },
-      },
-    ],
-    sun: [
-      {
-        starttime: {
-          type: Number,
-          default: 800,
-        },
-        endtime: {
-          type: Number,
-          default: 1700,
-        },
-      },
-    ],
+    mon: {
+      type: Array,
+      default: [{ starttime: "08:00", endtime: "17:00" }],
+    },
+    tue: {
+      type: Array,
+      default: [{ starttime: "08:00", endtime: "17:00" }],
+    },
+    wen: {
+      type: Array,
+      default: [{ starttime: "08:00", endtime: "17:00" }],
+    },
+    thu: {
+      type: Array,
+      default: [{ starttime: "08:00", endtime: "17:00" }],
+    },
+    fri: {
+      type: Array,
+      default: [{ starttime: "08:00", endtime: "17:00" }],
+    },
+    sat: {
+      type: Array,
+      default: [{ starttime: "08:00", endtime: "17:00" }],
+    },
+    sun: {
+      type: Array,
+      default: [{ starttime: "08:00", endtime: "17:00" }],
+    },
   },
 });
+
+eventSchema.index({ name: 1, url: 1 }, { unique: true });
+
 module.exports = mongoose.model("Event", eventSchema);

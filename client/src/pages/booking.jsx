@@ -11,6 +11,7 @@ import {
   faHourglass,
   faCalendar,
 } from "@fortawesome/free-solid-svg-icons";
+import { Button } from "react-bootstrap";
 const iconArrowLeft = <FontAwesomeIcon icon={faArrowLeft} />;
 const iconLocation = <FontAwesomeIcon icon={faMapMarkerAlt} />;
 const iconTime = <FontAwesomeIcon icon={faHourglass} />;
@@ -19,8 +20,6 @@ const iconCal = <FontAwesomeIcon icon={faCalendar} />;
 const Booking = () => {
   const data = useParams();
   const history = useHistory();
-
-  console.log(data);
 
   const [user, setUser] = useState({
     name: "No User under that Link",
@@ -41,18 +40,18 @@ const Booking = () => {
           history.push("/notfound");
         } else {
           setUser(res.data);
-          console.log(res.data._id);
           axios
             .get(`${process.env.REACT_APP_API_URI}/events/getEventByUrl`, {
               params: { user: res.data._id, url: data.url },
             })
             .then((res) => {
               if (res.data == null) {
-                setEvent({
-                  name: "test",
-                });
+                history.push("/notfound");
+              }
+              if (res.data.isActive === false) {
                 history.push("/notfound");
               } else {
+                console.log(res.data);
                 setEvent(res.data);
               }
             })
@@ -64,10 +63,7 @@ const Booking = () => {
       .catch((err) => {
         return err;
       });
-    return () => {
-      console.log("Cleaned that shit up");
-    };
-  }, [data.user, data.name, history]);
+  }, []);
 
   const handleBackClick = (event) => {
     event.preventDefault();
@@ -104,7 +100,7 @@ const Booking = () => {
             <div className="panel">
               <div className="wrappanel">
                 <h2 className="pickertitel">Datum wählen</h2>
-                <Datepicker></Datepicker>
+                <Datepicker options={data.url}></Datepicker>
               </div>
             </div>
           </div>

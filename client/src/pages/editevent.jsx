@@ -10,6 +10,7 @@ import {
   Button,
 } from "react-bootstrap";
 import Switch from "@material-ui/core/Switch";
+import { toast } from "react-toastify";
 
 const EditEvent = ({ match, history }) => {
   const eventID = match.params.id;
@@ -23,12 +24,12 @@ const EditEvent = ({ match, history }) => {
   });
 
   useEffect(() => {
+    console.log("effect");
     axios
       .get(`${process.env.REACT_APP_API_URI}/events/getEventByID`, {
         params: { event: eventID },
       })
       .then((res) => {
-        // eslint-disable-next-line eqeqeq
         if (res.data === null /*|| res.data.user != user*/) {
           history.push("/notfound");
         } else {
@@ -41,15 +42,26 @@ const EditEvent = ({ match, history }) => {
           });
         }
       });
-  });
+  }, []);
 
-  const { name, location, description, duration, isActive } = formData;
+  const {
+    name,
+    location,
+    description,
+    eventurl,
+    rangedays,
+    duration,
+    calendardays,
+    bufferafter,
+    bufferbefore,
+    isActive,
+  } = formData;
 
   const handleOnSubmit = (event) => {
     event.preventDefault();
     setFormData({ ...formData });
     axios
-      .post(`${process.env.REACT_APP_API_URI}/updateEvent`, {
+      .post(`${process.env.REACT_APP_API_URI}/events/updateEvent`, {
         eventID,
         name,
         location,
@@ -58,7 +70,7 @@ const EditEvent = ({ match, history }) => {
         isActive,
       })
       .then((res) => {
-        return res.json("Success update");
+        toast.success(res.data.msg);
       })
       .catch((err) => {});
   };

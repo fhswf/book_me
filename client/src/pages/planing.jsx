@@ -5,8 +5,8 @@ import { useParams, useHistory } from "react-router-dom";
 import "../styles/planing.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-
+import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+const iconArrowLeft = <FontAwesomeIcon icon={faArrowLeft} />;
 const iconArrowRight = <FontAwesomeIcon icon={faArrowRight} />;
 
 const Planing = () => {
@@ -17,6 +17,7 @@ const Planing = () => {
   const [events, setEvents] = useState([]);
   const [user, setUser] = useState({
     name: "",
+    welcome: "",
   });
 
   useEffect(() => {
@@ -36,7 +37,10 @@ const Planing = () => {
             })
             .then((res) => {
               if (res.data.length === 0) {
-                history.push("/notfound");
+                setUser({
+                  name: [...user.name],
+                  welcome: "No active Events",
+                });
               } else {
                 setEvents(res.data);
               }
@@ -57,6 +61,10 @@ const Planing = () => {
       state: { bookingEvent, user },
     });
   }
+  const handleBackClick = (event) => {
+    event.preventDefault();
+    history.push("/app");
+  };
 
   return (
     <div className="planing">
@@ -65,6 +73,9 @@ const Planing = () => {
           <h1>{user.name}</h1>
           <h3>{user.welcome}</h3>
         </div>
+        <a className="btn-back" onClick={handleBackClick}>
+          {iconArrowLeft}
+        </a>
         <div className="eventlist">
           <ul>
             {events.map((events) => (

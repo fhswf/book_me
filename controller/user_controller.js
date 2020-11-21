@@ -14,13 +14,13 @@ exports.getUserController = (req, res) => {
 
 exports.getUserByUrl = (req, res) => {
   const userurl = req.query.user;
-  const query = User.find({ user_url: userurl });
+  const query = User.findOne({ user_url: userurl });
 
   query.exec(function (err, user) {
     if (err) {
       return res.json(err);
     } else {
-      return res.json(user[0]);
+      return res.json(user);
     }
   });
 };

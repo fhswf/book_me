@@ -43,7 +43,7 @@ const AppNavbar = () => {
                 <NavDropdown.Item as={Link} to="/integration">
                   Calendar Integration
                 </NavDropdown.Item>
-                <NavDropdown.Item>test2</NavDropdown.Item>
+                <NavDropdown.Item>Share your Link!</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogout}>
                   Logout

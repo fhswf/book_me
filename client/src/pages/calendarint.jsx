@@ -14,10 +14,12 @@ const Calendarintegration = () => {
 
   const revokeScopes = (event) => {
     event.preventDefault();
-    console.log(user);
+
     axios.get(`${process.env.REACT_APP_API_URI}/google/revoke`, {
       params: { user: user },
     });
+
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -33,7 +35,6 @@ const Calendarintegration = () => {
           setConnected(true);
         }
       });
-    console.log(setConnected);
   }, []);
 
   useEffect(() => {
@@ -42,7 +43,6 @@ const Calendarintegration = () => {
         params: { user: user },
       })
       .then((res) => {
-        console.log(res.data);
         setGoogle(res.data);
       });
   }, []);

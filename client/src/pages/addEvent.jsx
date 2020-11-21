@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 import {
   Form,
@@ -8,7 +9,6 @@ import {
   InputGroup,
   Button,
   FormControl,
-  Table,
   Accordion,
   Card,
 } from "react-bootstrap";
@@ -22,7 +22,7 @@ import {
   faArrowLeft,
   faCalendarCheck,
 } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
+
 const iconArrowLeft = <FontAwesomeIcon icon={faArrowLeft} />;
 const calendarCheck = <FontAwesomeIcon icon={faCalendarCheck} />;
 
@@ -37,15 +37,31 @@ const AddEvent = () => {
     name: "",
     location: "",
     description: "",
-    duration: "10",
+    calendardays: "true",
+    duration: "15",
+    rangedays: "30",
     eventurl: "",
-    isActive: false,
+    isActive: "false",
+    bufferafter: 0,
+    bufferbefore: 0,
+    startimemon: "",
   });
-  const { name, location, description, eventurl } = formData;
+  const {
+    name,
+    location,
+    description,
+    eventurl,
+    rangedays,
+    duration,
+    calendardays,
+    bufferafter,
+    bufferbefore,
+  } = formData;
 
   const handleOnSubmit = (event) => {
     event.preventDefault();
     setFormData({ ...formData });
+    console.log(formData.calendardays);
     axios
       .post(`${process.env.REACT_APP_API_URI}/events/addEvent`, {
         user,
@@ -54,6 +70,11 @@ const AddEvent = () => {
         description,
         isActive: true,
         eventurl,
+        rangedays,
+        calendardays,
+        bufferbefore,
+        bufferafter,
+        duration,
       })
       .then((res) => {
         toast.success(res.data.msg);
@@ -63,17 +84,15 @@ const AddEvent = () => {
       });
   };
 
-  const handleOnChange = (text) => (event) => {
-    if (text === "name") {
+  const handleOnChange = (type) => (event) => {
+    if (type === "name") {
       setFormData({
         ...formData,
         name: event.target.value,
         eventurl: event.target.value,
       });
-
-      //  setFormData({ ...formData, url: name });
     } else {
-      setFormData({ ...formData, [text]: event.target.value });
+      setFormData({ ...formData, [type]: event.target.value });
     }
   };
   const handleBackClick = (event) => {
@@ -101,9 +120,8 @@ const AddEvent = () => {
         <Accordion defaultActiveKey="0" className="addeventaccordion">
           <Card>
             <Accordion.Toggle as={Card.Header} variant="link" eventKey="0">
-              Event Details {calendarCheck}
+              Add a new Event {calendarCheck}
             </Accordion.Toggle>
-
             <Accordion.Collapse eventKey="0">
               <Card.Body>
                 <Form onSubmit={handleOnSubmit} className="form">
@@ -117,17 +135,22 @@ const AddEvent = () => {
                         value={name}
                       />
                     </InputGroup>
+                    <Form.Text className="text-muted">
+                      The displayed name of the event.
+                    </Form.Text>
                   </FormGroup>
-                  <FormGroup controlId="locaiton">
+                  <FormGroup>
                     <Form.Label>Location</Form.Label>
                     <InputGroup>
                       <FormControl
-                        type="location"
                         placeholder="Location"
                         onChange={handleOnChange("location")}
                         value={location}
                       />
                     </InputGroup>
+                    <Form.Text className="text-muted">
+                      Where does this event happen.
+                    </Form.Text>
                   </FormGroup>
 
                   <FormGroup controlId="description">
@@ -152,9 +175,104 @@ const AddEvent = () => {
                         value={eventurl}
                       />
                     </InputGroup>
+                    <Form.Text className="text-muted">
+                      The link where you can book this event.
+                    </Form.Text>
                   </FormGroup>
+                  <FormGroup controlId="rangedays">
+                    <Form.Label>Daterange</Form.Label>
+                    <div className="displayrow">
+                      <InputGroup className="rangedays">
+                        <FormControl
+                          type="rangedays"
+                          onChange={handleOnChange("rangedays")}
+                          value={rangedays}
+                        />
+                      </InputGroup>
+                      <InputGroup>
+                        <Form.Control
+                          as="select"
+                          type="calendardays"
+                          onChange={handleOnChange("calendardays")}
+                          value={calendardays}
+                        >
+                          <option value={true}>Calendar days</option>
+                          <option value={false}>Workingdays</option>
+                        </Form.Control>
+                      </InputGroup>
+                    </div>
+
+                    <Form.Text className="text-muted">
+                      Set a daterange for the event.
+                    </Form.Text>
+                  </FormGroup>
+                  <FormGroup controlId="duration">
+                    <Form.Label>Duration</Form.Label>
+                    <div className="displayrow">
+                      <InputGroup className="minutes">
+                        <FormControl
+                          type="duration"
+                          onChange={handleOnChange("duration")}
+                          value={duration}
+                        />
+                      </InputGroup>
+                      <InputGroup.Prepend>
+                        <InputGroup.Text>Minutes</InputGroup.Text>
+                      </InputGroup.Prepend>
+                    </div>
+                    <Form.Text className="text-muted">
+                      How long does this event go.
+                    </Form.Text>
+                  </FormGroup>
+                  <FormGroup controlId="buffer">
+                    <Form.Label>Buffer Before</Form.Label>
+                    <Form.Label className="labelbuffer">
+                      Buffer After
+                    </Form.Label>
+
+                    <div className="displayrow">
+                      <InputGroup>
+                        <FormControl
+                          as="select"
+                          type="buffer before"
+                          onChange={handleOnChange("bufferbefore")}
+                          value={bufferbefore}
+                        >
+                          <option value="0">0 Min</option>
+                          <option value="5">5 Min</option>
+                          <option value="10">10 Min</option>
+                          <option value="15">15 Min</option>
+                          <option value="30">30 Min</option>
+                          <option value="45">45 Min</option>
+                          <option value="60">1 h</option>
+                          <option value="90">1h 30min</option>
+                          <option value="120">2h</option>
+                        </FormControl>
+                      </InputGroup>
+                      <InputGroup className="bufferafter">
+                        <FormControl
+                          as="select"
+                          type="duration"
+                          onChange={handleOnChange("bufferafter")}
+                          value={bufferafter}
+                        >
+                          <option value="0">0 Min</option>
+                          <option value="5">5 Min</option>
+                          <option value="10">10 Min</option>
+                          <option value="15">15 Min</option>
+                          <option value="30">30 Min</option>
+                          <option value="45">45 Min</option>
+                          <option value="60">1 h</option>
+                          <option value="90">1h 30min</option>
+                          <option value="120">2h</option>
+                        </FormControl>
+                      </InputGroup>
+                    </div>
+                  </FormGroup>
+                  <FormGroup></FormGroup>
+
                   <Button variant="primary" type="submit">
-                    Speichern
+                    Save
                   </Button>
                 </Form>
               </Card.Body>
