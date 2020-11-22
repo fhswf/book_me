@@ -28,7 +28,6 @@ const Calendarintegration = () => {
         params: { user: user },
       })
       .then((res) => {
-        console.log(res.data);
         if (!res.data.access_token) {
           setConnected(false);
         } else {
@@ -47,7 +46,7 @@ const Calendarintegration = () => {
       });
   }, []);
 
-  const renderAuthButton = () => {
+  const renderConnectButton = () => {
     if (connected) {
       return <Button onClick={revokeScopes}>Disconnect from Google</Button>;
     } else {
@@ -58,7 +57,7 @@ const Calendarintegration = () => {
   return (
     <div className="integration">
       <AppNavbar />
-      {renderAuthButton()}
+      {renderConnectButton()}
     </div>
   );
 };

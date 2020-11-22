@@ -22,4 +22,46 @@ exports.validateLogin = [
 
 exports.validateAddEvent = [
   check("name").notEmpty().withMessage("Name cant be empty"),
+  check("starttimemon")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("starttimetue")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("starttimewen")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("starttimethu")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("starttimefri")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("starttimesat")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("starttimesun")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("endtimemon")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("endtimetue")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("endtimewen")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("endtimethu")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("endtimefri")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("endtimesat")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
+  check("endtimesun")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("Not a time"),
 ];

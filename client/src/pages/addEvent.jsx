@@ -17,6 +17,8 @@ import "../styles/addevent.css";
 
 import AppNavbar from "../components/appNavbar";
 
+import Available from "../components/available";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
@@ -44,7 +46,9 @@ const AddEvent = () => {
     isActive: "false",
     bufferafter: 0,
     bufferbefore: 0,
-    startimemon: "",
+    starttimemon: "",
+    starttimefri: "",
+    endtimesun: "",
   });
   const {
     name,
@@ -56,12 +60,27 @@ const AddEvent = () => {
     calendardays,
     bufferafter,
     bufferbefore,
+    starttimemon,
+    endtimemon,
+    starttimetue,
+    endtimetue,
+    starttimewen,
+    endtimewen,
+    starttimethu,
+    endtimethu,
+    starttimefri,
+    endtimefri,
+    starttimesat,
+    endtimesat,
+    starttimesun,
+    endtimesun,
   } = formData;
 
   const handleOnSubmit = (event) => {
     event.preventDefault();
     setFormData({ ...formData });
-    console.log(formData.calendardays);
+    console.log({ ...formData });
+
     axios
       .post(`${process.env.REACT_APP_API_URI}/events/addEvent`, {
         user,
@@ -75,9 +94,24 @@ const AddEvent = () => {
         bufferbefore,
         bufferafter,
         duration,
+        starttimemon,
+        endtimemon,
+        starttimetue,
+        endtimetue,
+        starttimewen,
+        endtimewen,
+        starttimethu,
+        endtimethu,
+        starttimefri,
+        endtimefri,
+        starttimesat,
+        endtimesat,
+        starttimesun,
+        endtimesun,
       })
       .then((res) => {
         toast.success(res.data.msg);
+        history.push("/app");
       })
       .catch((err) => {
         toast.error(err.response.data.errors);
@@ -93,6 +127,7 @@ const AddEvent = () => {
       });
     } else {
       setFormData({ ...formData, [type]: event.target.value });
+      console.log(starttimemon);
     }
   };
   const handleBackClick = (event) => {
@@ -269,7 +304,182 @@ const AddEvent = () => {
                       </InputGroup>
                     </div>
                   </FormGroup>
-                  <FormGroup></FormGroup>
+                  <FormGroup>
+                    <Form.Label>available</Form.Label>
+
+                    <ul>
+                      <li>
+                        Set ur availabillty for this Event. In the Format: HH:mm
+                        or H:mm
+                      </li>
+                      <li className="listrow">
+                        <InputGroup>
+                          <InputGroup.Prepend className="availableprep">
+                            <InputGroup.Text id="basic-addon3">
+                              Mon
+                            </InputGroup.Text>
+                          </InputGroup.Prepend>
+                          <FormControl
+                            type="starttimemon"
+                            placeholder="Starttime"
+                            onChange={handleOnChange("starttimemon")}
+                            value={starttimemon}
+                          />
+                        </InputGroup>
+                        <InputGroup>
+                          <FormControl
+                            type="endtimemon"
+                            placeholder="Endtime"
+                            onChange={handleOnChange("endtimemon")}
+                            value={endtimemon}
+                          />
+                        </InputGroup>
+                      </li>
+                      <li className="listrow">
+                        <InputGroup>
+                          <InputGroup.Prepend className="availableprep">
+                            <InputGroup.Text id="basic-addon3">
+                              Tue
+                            </InputGroup.Text>
+                          </InputGroup.Prepend>
+                          <FormControl
+                            type="starttimetue"
+                            placeholder="Starttime"
+                            onChange={handleOnChange("starttimetue")}
+                            value={starttimetue}
+                          />
+                        </InputGroup>
+                        <InputGroup>
+                          <FormControl
+                            type="endtimetue"
+                            placeholder="Endtime"
+                            onChange={handleOnChange("endtimetue")}
+                            value={endtimetue}
+                          />
+                        </InputGroup>
+                      </li>
+                      <li className="listrow">
+                        <InputGroup>
+                          <InputGroup.Prepend className="availableprep">
+                            <InputGroup.Text id="basic-addon3">
+                              Wen
+                            </InputGroup.Text>
+                          </InputGroup.Prepend>
+                          <FormControl
+                            type="starttimewen"
+                            placeholder="Starttime"
+                            onChange={handleOnChange("starttimewen")}
+                            value={starttimewen}
+                          />
+                        </InputGroup>
+                        <InputGroup>
+                          <FormControl
+                            type="endtimewen"
+                            placeholder="Endtime"
+                            onChange={handleOnChange("endtimewen")}
+                            value={endtimewen}
+                          />
+                        </InputGroup>
+                      </li>
+                      <li className="listrow">
+                        {" "}
+                        <InputGroup>
+                          <InputGroup.Prepend className="availableprep">
+                            <InputGroup.Text id="basic-addon3">
+                              Thu
+                            </InputGroup.Text>
+                          </InputGroup.Prepend>
+                          <FormControl
+                            type="starttimethu"
+                            placeholder="Starttime"
+                            onChange={handleOnChange("starttimethu")}
+                            value={starttimethu}
+                          />
+                        </InputGroup>
+                        <InputGroup>
+                          <FormControl
+                            type="endtimethu"
+                            placeholder="Endtime"
+                            onChange={handleOnChange("endtimethu")}
+                            value={endtimethu}
+                          />
+                        </InputGroup>
+                      </li>
+                      <li className="listrow">
+                        {" "}
+                        <InputGroup>
+                          <InputGroup.Prepend className="availableprep">
+                            <InputGroup.Text id="basic-addon3">
+                              Fri
+                            </InputGroup.Text>
+                          </InputGroup.Prepend>
+                          <FormControl
+                            type="starttimefri"
+                            placeholder="Starttime"
+                            onChange={handleOnChange("starttimefri")}
+                            value={starttimefri}
+                          />
+                        </InputGroup>
+                        <InputGroup>
+                          <FormControl
+                            type="endtimefri"
+                            placeholder="Endtime"
+                            onChange={handleOnChange("endtimefri")}
+                            value={endtimefri}
+                          />
+                        </InputGroup>
+                      </li>
+                      <li className="listrow">
+                        {" "}
+                        <InputGroup>
+                          <InputGroup.Prepend className="availableprep">
+                            <InputGroup.Text id="basic-addon3">
+                              Sat
+                            </InputGroup.Text>
+                          </InputGroup.Prepend>
+                          <FormControl
+                            type="starttimesat"
+                            placeholder="Starttime"
+                            onChange={handleOnChange("starttimesat")}
+                            value={starttimesat}
+                          />
+                        </InputGroup>
+                        <InputGroup>
+                          <FormControl
+                            type="endtimesat"
+                            placeholder="Endtime"
+                            onChange={handleOnChange("endtimesat")}
+                            value={endtimesat}
+                          />
+                        </InputGroup>
+                      </li>
+                      <li className="listrow">
+                        <InputGroup>
+                          <InputGroup.Prepend className="availableprep">
+                            <InputGroup.Text id="basic-addon3">
+                              Sun
+                            </InputGroup.Text>
+                          </InputGroup.Prepend>
+                          <FormControl
+                            type="starttimesun"
+                            placeholder="Starttime"
+                            onChange={handleOnChange("starttimesun")}
+                            value={starttimesun}
+                          />
+                        </InputGroup>
+                        <InputGroup>
+                          <FormControl
+                            type="endtimesun"
+                            placeholder="Endtime"
+                            onChange={handleOnChange("endtimesun")}
+                            value={endtimesun}
+                          />
+                        </InputGroup>
+                      </li>
+                    </ul>
+                  </FormGroup>
+
+                  <Available />
 
                   <Button variant="primary" type="submit">
                     Save

@@ -18,6 +18,7 @@ const App = () => {
   var userID = result._id;
 
   const [user, setUser] = useState("");
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
     axios
@@ -26,11 +27,28 @@ const App = () => {
       })
       .then((res) => {
         setUser(res.data);
+        if (!res.data.access_token) {
+          setConnected(false);
+        } else {
+          setConnected(true);
+        }
       })
       .catch((err) => {
         console.log(err);
       });
   }, [userID]);
+
+  const renderConnectButton = () => {
+    if (connected) {
+      return (
+        <Button className="mybtn" as={Link} to="/addevent">
+          {iconPlus} Add Event
+        </Button>
+      );
+    } else {
+      return <h4>Please connect your Calendar first!</h4>;
+    }
+  };
 
   return (
     <div className="app">
@@ -61,11 +79,8 @@ const App = () => {
                   </a>
                 </td>
                 <td className="addeventbtn">
-                  <div className="wrap-button">
-                    <Button className="mybtn" as={Link} to="/addevent">
-                      {iconPlus} Add Event
-                    </Button>
-                  </div>
+                  <div className="wrap-button"></div>
+                  {renderConnectButton()}
                 </td>
               </tr>
             </tbody>

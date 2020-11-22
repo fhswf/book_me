@@ -13,7 +13,7 @@ const Planing = () => {
   const history = useHistory();
 
   let { user_url } = useParams();
-
+  const [connected, setConnected] = useState(false);
   const [events, setEvents] = useState([]);
   const [user, setUser] = useState({
     name: "",
@@ -31,6 +31,11 @@ const Planing = () => {
           history.push("/notfound");
         } else {
           setUser(res.data);
+          if (!res.data.access_token) {
+            setConnected(false);
+          } else {
+            setConnected(true);
+          }
           axios
             .get(`${process.env.REACT_APP_API_URI}/events/getActiveEvents`, {
               params: { user: res.data._id },
@@ -65,6 +70,27 @@ const Planing = () => {
     event.preventDefault();
     history.push("/app");
   };
+  const renderEventlist = () => {
+    if (!connected) {
+      return <h4>No Events to book</h4>;
+    } else {
+      return (
+        <ul>
+          {events.map((events) => (
+            <li
+              key={events._id}
+              onClick={function (event) {
+                event.preventDefault();
+                handleOnClick(events);
+              }}
+            >
+              {events.name} {iconArrowRight}
+            </li>
+          ))}
+        </ul>
+      );
+    }
+  };
 
   return (
     <div className="planing">
@@ -76,21 +102,8 @@ const Planing = () => {
         <a className="btn-back" onClick={handleBackClick}>
           {iconArrowLeft}
         </a>
-        <div className="eventlist">
-          <ul>
-            {events.map((events) => (
-              <li
-                key={events._id}
-                onClick={function (event) {
-                  event.preventDefault();
-                  handleOnClick(events);
-                }}
-              >
-                {events.name} {iconArrowRight}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <div className="eventlist"></div>
+        {renderEventlist()}
       </div>
     </div>
   );

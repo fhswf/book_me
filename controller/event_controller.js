@@ -26,6 +26,16 @@ exports.addEventController = (req, res) => {
     calendarday = true;
   }
 
+  let available = {
+    mon: [req.body.starttimemon, req.body.endtimemon],
+    tue: [req.body.starttimetue, req.body.endtimetue],
+    wen: [req.body.starttimewen, req.body.endtimewen],
+    thu: [req.body.starttimethu, req.body.endtimethu],
+    fri: [req.body.starttimefri, req.body.endtimefri],
+    sat: [req.body.starttimesat, req.body.endtimesat],
+    sun: [req.body.starttimesun, req.body.endtimesun],
+  };
+
   if (!errors.isEmpty()) {
     const newError = errors.array().map((error) => error.msg)[0];
     return res.status(422).json({ errors: newError });
@@ -42,7 +52,7 @@ exports.addEventController = (req, res) => {
       bufferbefore: parseInt(req.body.bufferbefore),
       bufferafter: parseInt(req.body.bufferafter),
       calendarday: calendarday,
-      available: req.body.starttimemon,
+      available: available,
     });
 
     eventToSave.save((err, eventToSave) => {
