@@ -1,51 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import axios from "axios";
+import { Redirect, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { isAuthenticated } from "../helpers/helpers";
+import { postToActivate } from "../helpers/services/auth_services";
 
-import { Redirect, useHistory } from "react-router-dom";
-
-import "react-toastify/dist/ReactToastify.css";
 import "../styles/activation.css";
 
 /*------------Font Awesome Icons --------------*/
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserPlus, faSignInAlt } from "@fortawesome/free-solid-svg-icons";
-import { isAuthenticated } from "../helpers/auth";
+import {
+  faUserPlus,
+  faSignInAlt,
+  faCalendar,
+} from "@fortawesome/free-solid-svg-icons";
 
 const iconUserPlus = <FontAwesomeIcon icon={faUserPlus} />;
 const iconSignIn = <FontAwesomeIcon icon={faSignInAlt} />;
+const iconCal = <FontAwesomeIcon icon={faCalendar} size="xs" />;
 
-const Activate = (match) => {
-  const history = useHistory();
-
-  const [formData, setFormData] = useState({
-    name: "",
-    token: "",
-    show: true,
-  });
-
-  const { name } = formData;
-
+const Activate = ({ match }) => {
   const handleOnSubmit = (e) => {
     e.preventDefault();
-
-    axios
-      .post(`${process.env.REACT_APP_API_URI}/auth/activate`, {
-        withCredentials: true,
-      })
+    postToActivate(match.params.token)
       .then((res) => {
-        setFormData({
-          ...formData,
-          show: false,
-        });
-        if (res.data.message === "Error! Please signup again!") {
-          toast.error(res.data.message);
-        } else {
-          toast.success(res.data.message);
-          history.push("/login");
-        }
+        toast.success(res.data.message);
       })
       .catch((err) => {
         toast.error(err.response.data.errors);
@@ -55,11 +35,10 @@ const Activate = (match) => {
   return (
     <div className="activate">
       <ToastContainer autoClose={2500} />
-      {isAuthenticated() ? <Redirect to="/" /> : null}
       <div className="activate-container">
+        <h3>{iconCal} Welcome to Bookme</h3>
         <div className="activatebox">
           <Form onSubmit={handleOnSubmit}>
-            <h1>Welcome {name}</h1>
             <Button variant="primary" type="submit">
               {iconUserPlus} Activate your Account
             </Button>

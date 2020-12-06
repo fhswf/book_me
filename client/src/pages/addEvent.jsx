@@ -1,7 +1,8 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
 import { useHistory } from "react-router";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { signout } from "../helpers/helpers";
 
 import {
   Form,
@@ -16,24 +17,19 @@ import {
 import "../styles/addevent.css";
 
 import AppNavbar from "../components/appNavbar";
-
-import Available from "../components/available";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
   faCalendarCheck,
 } from "@fortawesome/free-solid-svg-icons";
+import { saveUserEvent } from "../helpers/services/event_services";
 
 const iconArrowLeft = <FontAwesomeIcon icon={faArrowLeft} />;
-const calendarCheck = <FontAwesomeIcon icon={faCalendarCheck} />;
+const calendarCheck = <FontAwesomeIcon icon={faCalendarCheck} size="1x" />;
 
 const AddEvent = () => {
   const history = useHistory();
-
-  const test = localStorage.getItem("user");
-  var result = JSON.parse(test);
-  var user = result._id;
+  const token = JSON.parse(localStorage.getItem("access_token"));
 
   const [formData, setFormData] = useState({
     name: "",
@@ -47,7 +43,18 @@ const AddEvent = () => {
     bufferafter: 0,
     bufferbefore: 0,
     starttimemon: "",
+    starttimetue: "",
+    starttimewen: "",
+    starttimethu: "",
     starttimefri: "",
+    starttimesat: "",
+    starttimesun: "",
+    endtimemon: "",
+    endtimetue: "",
+    endtimewen: "",
+    endtimethu: "",
+    endtimefri: "",
+    endtimesat: "",
     endtimesun: "",
   });
   const {
@@ -79,43 +86,69 @@ const AddEvent = () => {
   const handleOnSubmit = (event) => {
     event.preventDefault();
     setFormData({ ...formData });
-    console.log({ ...formData });
+    if (name && eventurl) {
+      if (
+        compareTimes(starttimefri, endtimefri) &&
+        compareTimes(starttimesat, endtimesat) &&
+        compareTimes(starttimesun, endtimesun) &&
+        compareTimes(starttimemon, endtimemon) &&
+        compareTimes(starttimetue, endtimetue) &&
+        compareTimes(starttimewen, endtimewen) &&
+        compareTimes(starttimethu, endtimethu)
+      ) {
+        saveUserEvent(
+          token,
+          name,
+          location,
+          description,
+          true,
+          eventurl,
+          rangedays,
+          calendardays,
+          bufferbefore,
+          bufferafter,
+          duration,
+          starttimemon,
+          endtimemon,
+          starttimetue,
+          endtimetue,
+          starttimewen,
+          endtimewen,
+          starttimethu,
+          endtimethu,
+          starttimefri,
+          endtimefri,
+          starttimesat,
+          endtimesat,
+          starttimesun,
+          endtimesun
+        )
+          .then((res) => {
+            if (res.data.success === false) {
+              signout();
+              history.push("/landing");
+            } else {
+              toast.success(res.data.msg);
+              history.push("/app");
+            }
+          })
+          .catch((err) => {
+            toast.error(err.response.data.errors);
+          });
+      } else {
+        toast.error("Starttime cant be later than endtime");
+      }
+    } else {
+      toast.error("Please fill in all required fields!");
+    }
+  };
 
-    axios
-      .post(`${process.env.REACT_APP_API_URI}/events/addEvent`, {
-        user,
-        name,
-        location,
-        description,
-        isActive: true,
-        eventurl,
-        rangedays,
-        calendardays,
-        bufferbefore,
-        bufferafter,
-        duration,
-        starttimemon,
-        endtimemon,
-        starttimetue,
-        endtimetue,
-        starttimewen,
-        endtimewen,
-        starttimethu,
-        endtimethu,
-        starttimefri,
-        endtimefri,
-        starttimesat,
-        endtimesat,
-        starttimesun,
-        endtimesun,
-      })
-      .then((res) => {
-        toast.success(res.data.msg);
-        history.push("/app");
-      })
-      .catch((err) => {
-        toast.error(err.response.data.errors);
-      });
+  const compareTimes = (start, end) => {
+    if (Date.parse("01/01/2011 " + start) > Date.parse("01/01/2011 " + end)) {
+      return false;
+    } else {
+      return true;
+    }
   };
 
   const handleOnChange = (type) => (event) => {
@@ -127,9 +160,9 @@ const AddEvent = () => {
       });
     } else {
       setFormData({ ...formData, [type]: event.target.value });
-      console.log(starttimemon);
     }
   };
+
   const handleBackClick = (event) => {
     event.preventDefault();
     history.goBack();
@@ -155,7 +188,7 @@ const AddEvent = () => {
         <Accordion defaultActiveKey="0" className="addeventaccordion">
           <Card>
             <Accordion.Toggle as={Card.Header} variant="link" eventKey="0">
-              Add a new Event {calendarCheck}
+              Add a new event {calendarCheck}
             </Accordion.Toggle>
             <Accordion.Collapse eventKey="0">
               <Card.Body>
@@ -224,23 +257,27 @@ const AddEvent = () => {
                           value={rangedays}
                         />
                       </InputGroup>
-                      <InputGroup>
-                        <Form.Control
-                          as="select"
-                          type="calendardays"
-                          onChange={handleOnChange("calendardays")}
-                          value={calendardays}
-                        >
-                          <option value={true}>Calendar days</option>
-                          <option value={false}>Workingdays</option>
-                        </Form.Control>
-                      </InputGroup>
                     </div>
-
                     <Form.Text className="text-muted">
-                      Set a daterange for the event.
+                      How many days in the future is this event bookable
                     </Form.Text>
                   </FormGroup>
+                  <Form.Group controlId="daterange">
+                    <InputGroup>
+                      <Form.Control
+                        as="select"
+                        type="calendardays"
+                        onChange={handleOnChange("calendardays")}
+                        value={calendardays}
+                      >
+                        <option value={true}>Calendar days</option>
+                        <option value={false}>Workingdays</option>
+                      </Form.Control>
+                    </InputGroup>
+                    <Form.Text className="text-muted">
+                      Available on weekends?
+                    </Form.Text>
+                  </Form.Group>
                   <FormGroup controlId="duration">
                     <Form.Label>Duration</Form.Label>
                     <div className="displayrow">
@@ -264,7 +301,6 @@ const AddEvent = () => {
                     <Form.Label className="labelbuffer">
                       Buffer After
                     </Form.Label>
-
                     <div className="displayrow">
                       <InputGroup>
                         <FormControl
@@ -273,15 +309,15 @@ const AddEvent = () => {
                           onChange={handleOnChange("bufferbefore")}
                           value={bufferbefore}
                         >
-                          <option value="0">0 Min</option>
-                          <option value="5">5 Min</option>
-                          <option value="10">10 Min</option>
-                          <option value="15">15 Min</option>
-                          <option value="30">30 Min</option>
-                          <option value="45">45 Min</option>
-                          <option value="60">1 h</option>
-                          <option value="90">1h 30min</option>
-                          <option value="120">2h</option>
+                          <option value={0}>0m</option>
+                          <option value={5}>5m</option>
+                          <option value={10}>10m</option>
+                          <option value={15}>15m</option>
+                          <option value={30}>30m</option>
+                          <option value={45}>45m</option>
+                          <option value={60}>1H</option>
+                          <option value={90}>1H 30m</option>
+                          <option value={120}>2H</option>
                         </FormControl>
                       </InputGroup>
                       <InputGroup className="bufferafter">
@@ -291,23 +327,22 @@ const AddEvent = () => {
                           onChange={handleOnChange("bufferafter")}
                           value={bufferafter}
                         >
-                          <option value="0">0 Min</option>
-                          <option value="5">5 Min</option>
-                          <option value="10">10 Min</option>
-                          <option value="15">15 Min</option>
-                          <option value="30">30 Min</option>
-                          <option value="45">45 Min</option>
-                          <option value="60">1 h</option>
-                          <option value="90">1h 30min</option>
-                          <option value="120">2h</option>
+                          <option value={0}>0m</option>
+                          <option value={5}>5m</option>
+                          <option value={10}>10m</option>
+                          <option value={15}>15m</option>
+                          <option value={30}>30m</option>
+                          <option value={45}>45m</option>
+                          <option value={60}>1H</option>
+                          <option value={90}>1H 30m</option>
+                          <option value={120}>2H</option>
                         </FormControl>
                       </InputGroup>
                     </div>
                   </FormGroup>
                   <FormGroup>
-                    <Form.Label>available</Form.Label>
-
-                    <ul>
+                    <Form.Label>Available times</Form.Label>
+                    <ul className="availabletimes">
                       <li>
                         Set ur availabillty for this Event. In the Format: HH:mm
                         or H:mm
@@ -326,7 +361,7 @@ const AddEvent = () => {
                             value={starttimemon}
                           />
                         </InputGroup>
-                        <InputGroup>
+                        <InputGroup className="endinput">
                           <FormControl
                             type="endtimemon"
                             placeholder="Endtime"
@@ -349,7 +384,7 @@ const AddEvent = () => {
                             value={starttimetue}
                           />
                         </InputGroup>
-                        <InputGroup>
+                        <InputGroup className="endinput">
                           <FormControl
                             type="endtimetue"
                             placeholder="Endtime"
@@ -372,7 +407,7 @@ const AddEvent = () => {
                             value={starttimewen}
                           />
                         </InputGroup>
-                        <InputGroup>
+                        <InputGroup className="endinput">
                           <FormControl
                             type="endtimewen"
                             placeholder="Endtime"
@@ -396,7 +431,7 @@ const AddEvent = () => {
                             value={starttimethu}
                           />
                         </InputGroup>
-                        <InputGroup>
+                        <InputGroup className="endinput">
                           <FormControl
                             type="endtimethu"
                             placeholder="Endtime"
@@ -420,7 +455,7 @@ const AddEvent = () => {
                             value={starttimefri}
                           />
                         </InputGroup>
-                        <InputGroup>
+                        <InputGroup className="endinput">
                           <FormControl
                             type="endtimefri"
                             placeholder="Endtime"
@@ -444,7 +479,7 @@ const AddEvent = () => {
                             value={starttimesat}
                           />
                         </InputGroup>
-                        <InputGroup>
+                        <InputGroup className="endinput">
                           <FormControl
                             type="endtimesat"
                             placeholder="Endtime"
@@ -467,7 +502,7 @@ const AddEvent = () => {
                             value={starttimesun}
                           />
                         </InputGroup>
-                        <InputGroup>
+                        <InputGroup className="endinput">
                           <FormControl
                             type="endtimesun"
                             placeholder="Endtime"
@@ -478,10 +513,7 @@ const AddEvent = () => {
                       </li>
                     </ul>
                   </FormGroup>
-
-                  <Available />
-
-                  <Button variant="primary" type="submit">
+                  <Button variant="primary" type="submit" className="save">
                     Save
                   </Button>
                 </Form>

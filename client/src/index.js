@@ -18,7 +18,8 @@ import Booking from "./pages/booking";
 import EditEvent from "./pages/editevent";
 import PrivateRoute from "./routes/privateRoute";
 import Calendarintegration from "./pages/calendarint";
-
+import Bookdetails from "./pages/bookdetails";
+import Finished from "./pages/finished";
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
@@ -31,6 +32,16 @@ ReactDOM.render(
           path="/integration"
           exact
           component={Calendarintegration}
+        />
+        <Route
+          path="/users/:user_url/:url/:date"
+          exact
+          render={(props) => <Bookdetails {...props} />}
+        />
+        <Route
+          path="/booked"
+          exact
+          render={(props) => <Finished {...props} />}
         />
 
         <Route
@@ -45,7 +56,7 @@ ReactDOM.render(
           render={(props) => <Landing {...props} />}
         />
         <Route
-          path="/users/activate"
+          path="/activate/:token"
           exact
           render={(props) => <Activate {...props} />}
         />

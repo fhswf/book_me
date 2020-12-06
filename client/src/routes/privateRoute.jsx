@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
-import { isAuthenticated } from "../helpers/auth";
+import { isAuthenticated } from "../helpers/helpers";
 
 //If a user isnt authenticated the user gets Redirected to /landing
 

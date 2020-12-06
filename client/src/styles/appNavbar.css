@@ -30,6 +30,9 @@
 .top-navbar .navbar-nav .nav-link:hover {
   color: rgb(99, 236, 87);
 }
+.top-navbar .navbar-nav .nav-link::selection {
+  color: rgb(99, 236, 87);
+}
 .dropdown-item {
   color: rgb(63, 60, 60);
 }

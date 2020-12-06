@@ -3,7 +3,8 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { Redirect, Link } from "react-router-dom";
 
-import { isAuthenticated } from "../helpers/auth";
+import { isAuthenticated } from "../helpers/helpers";
+import { postToRegister } from "../helpers/services/auth_services";
 
 import "../styles/register.css";
 
@@ -50,17 +51,9 @@ const Register = ({ history }) => {
     if (name && email && password) {
       if (password === password2) {
         setFormData({ ...formData, changeBtnTxt: iconSpinner });
-        axios
-          .post(
-            `${process.env.REACT_APP_API_URI}/auth/register`,
-            {
-              name,
-              email,
-              password: password,
-            },
-            { withCredentials: true }
-          )
+        postToRegister(name, email, password)
           .then((res) => {
+            toast.success(res.data.message);
             setFormData({
               ...formData,
               name: "",
@@ -69,8 +62,6 @@ const Register = ({ history }) => {
               password2: "",
               changeBtnTxt: "Submitted",
             });
-
-            toast.success(res.data.message);
           })
           .catch((err) => {
             setFormData({
@@ -84,10 +75,10 @@ const Register = ({ history }) => {
             toast.error(err.response.data.errors);
           });
       } else {
-        toast.error("Passwords don't matches");
+        toast.error("Passwords don't match");
       }
     } else {
-      toast.error("Please fill all fields");
+      toast.error("Please fill in all fields");
     }
   };
 

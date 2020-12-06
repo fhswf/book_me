@@ -1,42 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
-
+import { Link, useHistory } from "react-router-dom";
+import { getUserById } from "./helpers/services/user_services";
 import EventList from "./components/eventlist";
 import AppNavbar from "./components/appNavbar";
+
+import { signout } from "./helpers/helpers";
 
 import "./styles/app.css";
 import { Navbar, Nav, Table, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 const iconPlus = <FontAwesomeIcon icon={faPlus} size="xs" />;
 
 const App = () => {
-  const test = localStorage.getItem("user");
-  var result = JSON.parse(test);
-  var userID = result._id;
-
+  const history = useHistory();
+  const token = JSON.parse(localStorage.getItem("access_token"));
   const [user, setUser] = useState("");
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URI}/users/getUser`, {
-        params: { user: userID },
-      })
+    getUserById(token)
       .then((res) => {
-        setUser(res.data);
-        if (!res.data.access_token) {
+        if (res.data.success === false) {
+          signout();
+          history.push("/landing");
+        } else {
+          setUser(res.data);
+        }
+        if (!res.data.google_tokens.access_token) {
           setConnected(false);
         } else {
           setConnected(true);
         }
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err);
       });
-  }, [userID]);
+  }, []);
 
   const renderConnectButton = () => {
     if (connected) {
@@ -46,7 +48,17 @@ const App = () => {
         </Button>
       );
     } else {
-      return <h4>Please connect your Calendar first!</h4>;
+      return (
+        <Link className="calcon" as={Link} to="/integration">
+          You need to connect your Calendar first, before you can add Events!
+        </Link>
+      );
+    }
+  };
+
+  const renderList = () => {
+    if (connected) {
+      return <EventList></EventList>;
     }
   };
 
@@ -78,14 +90,11 @@ const App = () => {
                     Your Link: {user.user_url}
                   </a>
                 </td>
-                <td className="addeventbtn">
-                  <div className="wrap-button"></div>
-                  {renderConnectButton()}
-                </td>
+                <td className="addeventbtn">{renderConnectButton()}</td>
               </tr>
             </tbody>
           </Table>
-          <EventList></EventList>
+          {renderList()}
         </div>
       </div>
     </div>

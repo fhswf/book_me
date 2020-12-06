@@ -17,6 +17,7 @@
 }
 .booking-header {
   text-align: center;
+  margin-right: 90px;
 }
 .booking-container {
   display: flex;
@@ -26,7 +27,7 @@
   transition: all 0.22s ease-out;
   border: 2px solid var(--text-color-level3, rgba(77, 80, 85, 0.1));
   border-radius: 8px;
-  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.08);
 }
 
 .leftpanel {
@@ -46,7 +47,7 @@
   padding-left: 10px;
   padding-right: 10px;
 }
-.btn-back {
+.booking.btn-back {
   display: flex;
   cursor: pointer;
   color: var(--primary-color, rgb(0, 162, 255));
@@ -104,4 +105,18 @@
   text-align: center;
   font-weight: bold;
   font-size: 25px;
+}
+.booksubmit {
+  display: flex;
+
+  margin-top: 40px;
+}
+
+.booking .btn-back {
+  display: flex;
+  cursor: pointer;
+  color: var(--primary-color, rgb(0, 162, 255));
+  font-size: 30px;
+  padding-left: 30px;
+  margin-bottom: 15px;
 }

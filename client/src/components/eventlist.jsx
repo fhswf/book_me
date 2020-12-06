@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useHistory } from "react-router-dom";
+import { signout } from "../helpers/helpers";
 import Dropdown from "./eventDropdownMenu";
 import "../styles/eventlist.css";
 import { Card } from "react-bootstrap";
+import { getUsersEvents } from "../helpers/services/event_services";
 
 function EventList() {
-  const localuser = localStorage.getItem("user");
-  var result = JSON.parse(localuser);
-  var userid = result._id;
+  const token = JSON.parse(localStorage.getItem("access_token"));
+  const history = useHistory();
+
   const [events, setEvents] = useState([]);
 
   function changeActive(active) {
@@ -17,19 +19,16 @@ function EventList() {
       return false;
     }
   }
-
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URI}/events/getEvents`, {
-        params: { user: userid },
-      })
-      .then((res) => {
+    getUsersEvents(token).then((res) => {
+      if (res.data.success === false) {
+        signout();
+        history.push("/landing");
+      } else {
         setEvents(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [userid]);
+      }
+    });
+  }, [token, history]);
 
   return (
     <div>

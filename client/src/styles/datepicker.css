@@ -80,3 +80,18 @@
 .react-datepicker__time-container {
   min-width: 25%;
 }
+
+.react-datepicker__time-list-item {
+  color: var(--primary-color, rgb(0, 162, 255));
+  font-weight: bold;
+}
+
+.booking .firstselect {
+  margin-top: 50px;
+  margin-left: 25%;
+}
+
+.booking .btn {
+  width: 25%;
+  margin-left: 25%;
+}

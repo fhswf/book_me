@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-// User schema for our Database
+// User schema for the Database
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -11,9 +11,23 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    access_token: {
-      type: Object,
-      default: null,
+    google_tokens: {
+      access_token: {
+        type: String,
+        default: null,
+      },
+      refresh_token: {
+        type: String,
+        default: null,
+      },
+      scope: {
+        type: String,
+        default: null,
+      },
+      expiry_date: {
+        type: Number,
+        default: null,
+      },
     },
     name: {
       type: String,
@@ -27,10 +41,11 @@ const userSchema = new mongoose.Schema(
     user_url: {
       type: String,
       default: "",
+      unique: true,
     },
     welcome: {
       type: String,
-      dafault: "Willkommen auf meiner Planungsseite",
+      default: "Willkommen auf meiner Planungsseite",
     },
   },
   {

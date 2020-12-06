@@ -16,6 +16,7 @@
     "bootstrap": "^4.5.3",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.1",
     "react": "^16.14.0",
     "react-available-times": "^1.4.0",
     "react-bootstrap": "^1.4.0",
@@ -24,6 +25,7 @@
     "react-google-login": "^5.1.22",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.0",
+    "react-time-picker": "^4.0.1",
     "react-toastify": "^6.0.9"
   },
   "scripts": {

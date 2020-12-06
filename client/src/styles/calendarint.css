@@ -1,0 +1,54 @@
+.integration {
+  word-break: break-word;
+}
+
+.integration .wrapcontent {
+  color: var(--text-color, #4d5055);
+  font-family: "Montserrat", sans-serif;
+  max-width: 1020px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 20px;
+  padding-left: 20px;
+  margin-top: 60px;
+}
+
+.integration .wrapcalendar {
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  min-height: 150px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #dadada;
+  border-radius: 6px;
+  box-shadow: 0 1px 5px rgba(0, 74, 116, 0.15);
+}
+.integration .left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 50%;
+}
+.integration .right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 50%;
+  justify-content: center;
+}
+.integration .left .calendarName {
+  font-size: 35px;
+  margin-left: 30px;
+  margin-top: 10px;
+}
+.integration .connectbtn {
+  color: var(--primary-color, rgb(0, 162, 255));
+  border-color: var(--primary-color, rgb(0, 162, 255));
+  min-height: 32px;
+  cursor: pointer;
+  font-size: 15px;
+  background-color: transparent;
+  width: 50%;
+  float: right;
+}

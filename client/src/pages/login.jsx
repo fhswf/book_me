@@ -1,20 +1,13 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { isAuthenticated, authenticate } from "../helpers/auth";
-import { Redirect, Link } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
+import { isAuthenticated, authenticate } from "../helpers/helpers";
+import { Redirect, Link, useHistory } from "react-router-dom";
 import { GoogleLogin } from "react-google-login";
-
-/*------------ Styling --------------*/
+import { postGoogleLogin, postLogin } from "../helpers/services/auth_services";
 import "../styles/login.css";
-
-/*------------ Bootstrap Stuff  --------------*/
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
-
-/*------------Font Awesome Icons --------------*/
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSignInAlt,
@@ -33,36 +26,30 @@ const iconSpinner = <FontAwesomeIcon icon={faSpinner} pulse />;
 const iconCal = <FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>;
 const iconGoogle = <FontAwesomeIcon icon={faGoogle}></FontAwesomeIcon>;
 
-const Login = ({ history }) => {
-  /*- Google Login -*/
-  const sendGoogleToken = (tokenId) => {
-    axios
-      .post(`${process.env.REACT_APP_API_URI}/auth/googlelogin`, {
-        idToken: tokenId,
-      })
+const Login = () => {
+  const history = useHistory();
+
+  const sendGoogleToken = (idToken) => {
+    postGoogleLogin(idToken)
       .then((res) => {
-        informParent(res);
+        authenticate(res, () => {
+          if (isAuthenticated()) {
+            history.push("/app");
+          }
+        });
       })
       .catch((error) => {
-        console.log(error);
         console.log("GOOGLE SIGNIN ERROR", error.response);
       });
   };
 
   const responseGoogle = (response) => {
-    console.log(response);
     sendGoogleToken(response.tokenId);
   };
 
-  const informParent = (response) => {
-    authenticate(response, () => {
-      if (isAuthenticated()) {
-        history.push("/app");
-      }
-    });
+  const errorResponseGoogle = () => {
+    toast.error("Google Login failed, please try again");
   };
-
-  /*- End of Google login -*/
 
   const [formData, setFormData] = useState({
     email: "",
@@ -80,13 +67,8 @@ const Login = ({ history }) => {
     event.preventDefault();
     if (email && password) {
       setFormData({ ...formData, changeBtnTxt: iconSpinner });
-      axios
-        .post(`${process.env.REACT_APP_API_URI}/auth/login`, {
-          email,
-          password: password,
-        })
+      postLogin(email, password)
         .then((res) => {
-          console.log(res.data);
           authenticate(res, () => {
             setFormData({
               ...formData,
@@ -162,10 +144,8 @@ const Login = ({ history }) => {
 
             <GoogleLogin
               clientId={process.env.REACT_APP_GOOGLE_ID}
-              buttonText="Login"
-              accessType="offline"
               onSuccess={responseGoogle}
-              onFailure={responseGoogle}
+              onFailure={errorResponseGoogle}
               cookiePolicy={"single_host_origin"}
               render={(renderProps) => (
                 <Button

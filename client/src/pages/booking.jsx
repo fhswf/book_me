@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Datepicker from "../components/datepicker";
-import axios from "axios";
+
 import "../styles/booking.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,7 +11,9 @@ import {
   faHourglass,
   faCalendar,
 } from "@fortawesome/free-solid-svg-icons";
-import { Button } from "react-bootstrap";
+
+import { getUserByUrl } from "../helpers/services/user_services";
+import { getEventByUrlAndUser } from "../helpers/services/event_services";
 const iconArrowLeft = <FontAwesomeIcon icon={faArrowLeft} />;
 const iconLocation = <FontAwesomeIcon icon={faMapMarkerAlt} />;
 const iconTime = <FontAwesomeIcon icon={faHourglass} />;
@@ -31,19 +33,13 @@ const Booking = () => {
   });
 
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URI}/users/findUserByUrl`, {
-        params: { user: data.user_url },
-      })
+    getUserByUrl(data.user_url)
       .then((res) => {
         if (res.data.length === 0) {
           history.push("/notfound");
         } else {
           setUser(res.data);
-          axios
-            .get(`${process.env.REACT_APP_API_URI}/events/getEventByUrl`, {
-              params: { user: res.data._id, url: data.url },
-            })
+          getEventByUrlAndUser(res.data._id, data.url)
             .then((res) => {
               if (res.data == null) {
                 history.push("/notfound");
@@ -51,7 +47,6 @@ const Booking = () => {
               if (res.data.isActive === false) {
                 history.push("/notfound");
               } else {
-                console.log(res.data);
                 setEvent(res.data);
               }
             })
@@ -89,7 +84,7 @@ const Booking = () => {
                 </div>
                 <div className="eventinfo">
                   <p className="eventdata">
-                    {iconTime} {event.duration}
+                    {iconTime} {event.duration} Minutes
                   </p>
                   <p className="eventdata">
                     {iconLocation} {event.location}
@@ -99,8 +94,8 @@ const Booking = () => {
             </div>
             <div className="panel">
               <div className="wrappanel">
-                <h2 className="pickertitel">Datum wählen</h2>
-                <Datepicker options={data.url}></Datepicker>
+                <h2 className="pickertitel">Choose a date</h2>
+                <Datepicker options={(data.url, event, user)}></Datepicker>
               </div>
             </div>
           </div>

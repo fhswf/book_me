@@ -33,7 +33,6 @@
   font-family: "Montserrat", sans-serif;
   color: var(--text-color, #4d5055);
 }
-
 .row {
   display: flex;
 }
@@ -65,4 +64,8 @@
   box-sizing: border-box;
   float: left;
   width: 50%;
+}
+
+.landing .nav-link {
+  font-size: large;
 }

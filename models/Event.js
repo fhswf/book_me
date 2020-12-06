@@ -59,35 +59,35 @@ const eventSchema = new mongoose.Schema({
   available: {
     mon: {
       type: Array,
-      default: [{ starttime: "08:00", endtime: "17:00" }],
+      default: [{ starttime: "8:00", endtime: "17:00" }],
     },
     tue: {
       type: Array,
-      default: [{ starttime: "08:00", endtime: "17:00" }],
+      default: [{ starttime: "8:00", endtime: "17:00" }],
     },
     wen: {
       type: Array,
-      default: [{ starttime: "08:00", endtime: "17:00" }],
+      default: [{ starttime: "8:00", endtime: "17:00" }],
     },
     thu: {
       type: Array,
-      default: [{ starttime: "08:00", endtime: "17:00" }],
+      default: [{ starttime: "8:00", endtime: "17:00" }],
     },
     fri: {
       type: Array,
-      default: [{ starttime: "08:00", endtime: "17:00" }],
+      default: [{ starttime: "8:00", endtime: "17:00" }],
     },
     sat: {
       type: Array,
-      default: [{ starttime: "08:00", endtime: "17:00" }],
+      default: [{ starttime: "8:00", endtime: "17:00" }],
     },
     sun: {
       type: Array,
-      default: [{ starttime: "08:00", endtime: "17:00" }],
+      default: [{ starttime: "8:00", endtime: "17:00" }],
     },
   },
 });
 
-eventSchema.index({ name: 1, url: 1 }, { unique: true });
+eventSchema.index({ user: 1, url: 1 }, { unique: true });
 
 module.exports = mongoose.model("Event", eventSchema);

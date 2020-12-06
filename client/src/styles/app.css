@@ -7,40 +7,38 @@ ul {
   font-family: sans-serif;
 }
 
-.wrap-homebar {
+.app .wrap-homebar {
   padding-top: 30px;
   background-color: white;
   box-shadow: 0 15px 15px -15px rgba(0, 0, 0, 0.15);
 }
 
-.wrap-homebar .menu-wrapper {
+.app .wrap-homebar .menu-wrapper {
   display: flex;
   flex-wrap: wrap;
-
   min-height: 50px;
 }
-.menu-wrapper {
+.app .menu-wrapper {
   margin-right: auto;
   margin-left: auto;
   max-width: 1200px;
   font-size: larger;
 }
 
-.homebar {
+.app .homebar {
   max-width: 1200px;
   margin-right: auto;
   margin-left: auto;
   flex-direction: column;
   padding: 0;
 }
-
-.homebar .navbar-nav {
+.app .homebar .navbar-nav {
   margin-right: auto;
   margin-left: 0;
   padding: 0;
 }
 
-.wrap-event-list {
+.app .wrap-event-list {
   margin-right: auto;
   margin-left: auto;
   padding-right: 20px;
@@ -50,7 +48,7 @@ ul {
   margin-bottom: 100px;
 }
 
-.table-list {
+.app .table-list {
   width: 100%;
   font-size: 20px;
   border-color: grey;
@@ -59,37 +57,46 @@ ul {
   margin-top: 25px;
 }
 
-.table-list tbody {
+.app .table-list tbody {
   display: table-row-group;
   vertical-align: middle;
   border-color: inherit;
 }
 
-.table-list .mybtn {
+.app .table-list .mybtn {
   color: var(--primary-color, rgb(0, 162, 255));
   border-color: var(--primary-color, rgb(0, 162, 255));
   min-height: 32px;
   cursor: pointer;
   font-size: 15px;
   background-color: transparent;
+  width: 50%;
+  float: right;
 }
-.wrap-button {
+.app .wrap-button {
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
 }
 
-.profileinfo {
+.app .profileinfo {
   font-family: "Montserrat", sans-serif;
   font-size: 13px;
 }
 
-.userurl {
+.app .userurl {
+  cursor: pointer;
+}
+.app .calcon {
+  font-family: "Montserrat", sans-serif;
+  font-size: 20px;
+  max-width: 300px;
+  float: right;
   cursor: pointer;
 }
 
 @media screen and (max-width: 600px) {
-  .spalte {
+  .app .spalte {
     width: 100%;
     display: block;
     margin-bottom: 20px;
@@ -102,7 +109,7 @@ ul {
   .app td:nth-child(2) {
     clear: both;
   }
-  .mybtn {
+  .app .mybtn {
     width: 100%;
   }
 }

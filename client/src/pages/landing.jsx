@@ -5,7 +5,7 @@ import Nav from "react-bootstrap/Nav";
 
 import "../styles/landing.css";
 
-import { isAuthenticated } from "../helpers/auth";
+import { isAuthenticated } from "../helpers/helpers";
 import { Link, Redirect } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,12 +14,16 @@ import {
   faCalendarCheck,
   faShare,
   faCheck,
+  faSignInAlt,
+  faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { Jumbotron } from "react-bootstrap";
 const iconCal = <FontAwesomeIcon icon={faCalendar} />;
 const iconAddCal = <FontAwesomeIcon icon={faCalendarCheck} size="10x" />;
 const iconShare = <FontAwesomeIcon icon={faShare} size="10x" />;
 const iconCheck = <FontAwesomeIcon icon={faCheck} size="10x" />;
+const signIn = <FontAwesomeIcon icon={faSignInAlt} />;
+const signUp = <FontAwesomeIcon icon={faUserPlus} />;
 
 const Landing = () => {
   return (
@@ -32,13 +36,10 @@ const Landing = () => {
           </Navbar.Brand>
           <Nav className="content-end">
             <Nav.Link as={Link} to="/register">
-              Sign Up
+              {signUp} Sign Up
             </Nav.Link>
             <Nav.Link as={Link} to="/login">
-              Sing In
-            </Nav.Link>
-            <Nav.Link as={Link} to="/landing">
-              First Steps Guide(coming soon)
+              {signIn} Sing In
             </Nav.Link>
           </Nav>
         </Navbar>
