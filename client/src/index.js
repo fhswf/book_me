@@ -22,7 +22,7 @@ import Bookdetails from "./pages/bookdetails";
 import Finished from "./pages/finished";
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/bookme">
       <Switch>
         <PrivateRoute path="/app" exact component={App} />
         <PrivateRoute path="/addevent" exact component={AddEvent} />

@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/bookme/static/css/main.b3882cba.chunk.css",
+    "main.js": "/bookme/static/js/main.af752487.chunk.js",
+    "main.js.map": "/bookme/static/js/main.af752487.chunk.js.map",
+    "runtime-main.js": "/bookme/static/js/runtime-main.78ee3565.js",
+    "runtime-main.js.map": "/bookme/static/js/runtime-main.78ee3565.js.map",
+    "static/css/2.56f64373.chunk.css": "/bookme/static/css/2.56f64373.chunk.css",
+    "static/js/2.ae5aef10.chunk.js": "/bookme/static/js/2.ae5aef10.chunk.js",
+    "static/js/2.ae5aef10.chunk.js.map": "/bookme/static/js/2.ae5aef10.chunk.js.map",
+    "index.html": "/bookme/index.html",
+    "static/css/2.56f64373.chunk.css.map": "/bookme/static/css/2.56f64373.chunk.css.map",
+    "static/css/main.b3882cba.chunk.css.map": "/bookme/static/css/main.b3882cba.chunk.css.map",
+    "static/js/2.ae5aef10.chunk.js.LICENSE.txt": "/bookme/static/js/2.ae5aef10.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.78ee3565.js",
+    "static/css/2.56f64373.chunk.css",
+    "static/js/2.ae5aef10.chunk.js",
+    "static/css/main.b3882cba.chunk.css",
+    "static/js/main.af752487.chunk.js"
+  ]
+}
