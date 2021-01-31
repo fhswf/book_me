@@ -36,10 +36,12 @@ const googleRouter = require("./routes/google_routes");
 const userRouter = require("./routes/user_routes");
 
 //Use routes
-app.use("/auth/", authenticationRouter);
-app.use("/events/", eventRouter);
-app.use("/google/", googleRouter);
-app.use("/users/", userRouter);
+const router = express.Router();
+router.use("/auth/", authenticationRouter);
+router.use("/events/", eventRouter);
+router.use("/google/", googleRouter);
+router.use("/users/", userRouter);
+app.use("/bookme/api/v1", router);
 
 const PORT = process.env.PORT || 5000;
 
