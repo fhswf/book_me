@@ -47,7 +47,8 @@ const Login = () => {
     sendGoogleToken(response.tokenId);
   };
 
-  const errorResponseGoogle = () => {
+  const errorResponseGoogle = (err) => {
+    console.error('google login error: %o', err);
     toast.error("Google Login failed, please try again");
   };
 
