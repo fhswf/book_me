@@ -5,6 +5,7 @@ const Event = require("../models/Event");
 const Google = require("./google_controller");
 const { validationResult } = require("express-validator");
 const { errorHandler } = require("../handlers/errorhandler");
+const { zonedTimeToUtc } = require('date-fns-tz');
 
 const DAYS = ["sun", "mon", "tue", "wen", "thu", "fri", "sat"]
 
@@ -24,17 +25,25 @@ exports.getAvailableTimesForDay = (req, res) => {
   );
   query.exec((err, event) => {
     if (err) {
-      return res.status(400).json({ erorr: err });
+      res.status(400).json({ erorr: err });
     } else {
       let slot = event.available[day];
       let start = new Date(date);
       start.setHours(Number.parseInt(slot[0].substring(0, 2)), Number.parseInt(slot[0].substring(3, 5)), 0);
+      start = zonedTimeToUtc(start, 'Europe/Berlin');
       let end = new Date(date);
       end.setHours(Number.parseInt(slot[1].substring(0, 2)), Number.parseInt(slot[1].substring(3, 5)), 0);
+      end = zonedTimeToUtc(end, 'Europe/Berlin');
+      console.log('TZ: %s', process.env.TZ);
       console.log("event: %j %o %s %s", event, slot, start, end);
-      Google.freeBusy(userid, start, end).then((slots) => {
-        res.status(200).json(slots);
-      });
+      Google.freeBusy(userid, start, end)
+        .then(slots => {
+          res.status(200).json(slots);
+        })
+        .catch(err => {
+          console.log('freeBusy failed: %o', err);
+          res.status(400).json({ erorr: err });
+        });
     }
   });
 };

@@ -137,31 +137,36 @@ exports.freeBusy = async (user_id, start, end) => {
   let google_tokens = user.google_tokens;
   oAuth2Client.setCredentials(google_tokens);
   const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
-  const res = await calendar.freebusy.query({
+  return calendar.freebusy.query({
     requestBody: {
       timeMin: start,
       timeMax: end,
+      timeZone: "Europe/Berlin",
       items: [
         { id: "primary" }
       ]
     }
-  });
-
-  let slots = [];
-  for (key in res.data.calendars) {  
-    for (busy of res.data.calendars[key].busy) {
-      console.log('freeBusy: %o %o', busy.start, busy.end);
-      let _start = new Date(busy.start);
-      let _end =  new Date(busy.end);
-      slots.push({start: start, end: _start});
-      start = _end;
-    }
-    if (start < end) {
-      slots.push({start: start, end: end});
-    }
-    console.log('freeBusy: %s %j', key, slots);
-  }
-  return slots;
+  })
+    .catch(err => {
+      console.log('freebusy failed: %o', err);
+    })
+    .then(res => {
+      let slots = [];
+      for (let key in res.data.calendars) {
+        for (let busy of res.data.calendars[key].busy) {
+          console.log('freeBusy: %o %o', busy.start, busy.end);
+          let _start = new Date(busy.start);
+          let _end = new Date(busy.end);
+          slots.push({ start: start, end: _start });
+          start = _end;
+        }
+        if (start < end) {
+          slots.push({ start: start, end: end });
+        }
+        console.log('freeBusy: %s %j', key, slots);
+      }
+      return slots;
+    });
 }
 
 function deleteTokens(userid) {
