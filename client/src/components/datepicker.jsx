@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
-import setMinutes from "date-fns/setMinutes";
-import setHours from "date-fns/setHours";
 
 import { useHistory, useLocation } from "react-router-dom";
 import { Button } from "react-bootstrap";
@@ -24,10 +22,7 @@ const Datepicker = () => {
 
   const [selected, setSelected] = useState(new Date().addDays(2));
   const [timeSelected, setTimeSelected] = useState(false);
-  const [startHour, setStartHour] = useState();
-  const [startMin, setStartMin] = useState();
-  const [endHour, setEndHour] = useState();
-  const [endMin, setEndMin] = useState();
+  const [slots, setSlots] = useState();
   const [timeselect, settimeselect] = useState(false);
 
   const history = useHistory();
@@ -98,25 +93,49 @@ const Datepicker = () => {
   };
 
   function setAvailableTimes(selectedDay) {
-    let weekday = getDayofWeek(selectedDay.getDay());
-    getAvailableTimes(weekday, event.url, user._id).then((res) => {
-      if (isToday(selectedDay)) {
-        let hoursToday = new Date().getHours();
-        let minsToday = new Date().getMinutes();
-        setStartHour(hoursToday);
-        setStartMin(minsToday);
-      } else {
-        setStartHour(res.data[0].split(":")[0]);
-        setStartMin(res.data[0].split(":")[1]);
-      }
-      setEndHour(res.data[1].split(":")[0]);
-      setEndMin(res.data[1].split(":")[1]);
+    selectedDay.setHours(6);
+    getAvailableTimes(selectedDay, event.url, user._id).then((res) => {
+      console.log('slots: %j', res.data);
+      setSlots(res.data);
     });
   }
 
+  const getTimes = () => {
+    if (slots) {
+      let times = []
+      for (let slot of slots) {
+        const start = new Date(slot.start);
+        const end = new Date(slot.end);
+        times.push(start);
+        times.push(end);
+      }
+      return times;
+    }
+    else {
+      return []
+    }
+  }
+
+  const filterPassedTime = (time) => {
+    const _time = new Date(time);
+    console.log('filterPassedTime: slots=%o %s', slots, time);
+    if (!slots) {
+      return false;
+    }
+    for (let slot of slots) {
+      const start = new Date(slot.start);
+      const end = new Date(slot.end);
+      console.log('filterPassedTime: %s %s %s', start.toTimeString(), _time.toTimeString(), end.toTimeString());
+      if (start.toTimeString() <= selected.toTimeString() && _time.toTimeString() <= end.toTimeString()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   const handleDateChange = (date) => {
-    setAvailableTimes(date);
     setSelected(date);
+    setAvailableTimes(date);
   };
 
   const renderBookingButton = () => {
@@ -173,17 +192,12 @@ const Datepicker = () => {
         locale="de"
         inline
         timeFormat="HH:mm"
-        timeIntervals={parseInt(event.duration)}
+        timeIntervals={60}
         minDate={new Date()}
         maxDate={new Date().addDays(event.rangedays)}
-        minTime={setHours(
-          setMinutes(new Date(), parseInt(startMin)),
-          parseInt(startHour)
-        )}
-        maxTime={setHours(
-          setMinutes(new Date(), parseInt(endMin)),
-          parseInt(endHour)
-        )}
+        minTime={Math.min.apply(null, getTimes())}
+        maxTime={Math.max.apply(null, getTimes())}
+        includeTimes={getTimes()}
         onChange={handleDateChange}
         filterDate={filterDates}
       />

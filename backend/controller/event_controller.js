@@ -2,8 +2,11 @@
  * @module event_controller
  */
 const Event = require("../models/Event");
+const Google = require("./google_controller");
 const { validationResult } = require("express-validator");
 const { errorHandler } = require("../handlers/errorhandler");
+
+const DAYS = ["sun", "mon", "tue", "wen", "thu", "fri", "sat"]
 
 /**
  * Middleware to get available times for one weekday of a given user
@@ -12,17 +15,26 @@ const { errorHandler } = require("../handlers/errorhandler");
  * @param {response} res
  */
 exports.getAvailableTimesForDay = (req, res) => {
-  const day = req.query.day;
+  const date = new Date(req.query.day);
+  const day = DAYS[date.getDay()];
   const eventurl = req.query.eventurl;
   const userid = req.query.user;
   const query = Event.findOne({ url: eventurl, user: userid }).select(
     `available -_id`
   );
-  query.exec(function (err, event) {
+  query.exec((err, event) => {
     if (err) {
       return res.status(400).json({ erorr: err });
     } else {
-      return res.status(200).json(event.available[day]);
+      let slot = event.available[day];
+      let start = new Date(date);
+      start.setHours(Number.parseInt(slot[0].substring(0, 2)), Number.parseInt(slot[0].substring(3, 5)), 0);
+      let end = new Date(date);
+      end.setHours(Number.parseInt(slot[1].substring(0, 2)), Number.parseInt(slot[1].substring(3, 5)), 0);
+      console.log("event: %j %o %s %s", event, slot, start, end);
+      Google.freeBusy(userid, start, end).then((slots) => {
+        res.status(200).json(slots);
+      });
     }
   });
 };
