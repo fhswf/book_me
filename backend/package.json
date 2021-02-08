@@ -24,7 +24,7 @@
     "express": "^4.17.1",
     "express-jwt": "^6.0.0",
     "express-validator": "^6.6.1",
-    "googleapis": "^39.2.0",
+    "googleapis": "^67.0.0",
     "ical-generator": "^1.15.2",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
