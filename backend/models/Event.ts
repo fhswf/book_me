@@ -1,6 +1,45 @@
-const mongoose = require("mongoose");
+import * as mongoose from 'mongoose';
 
-const eventSchema = new mongoose.Schema({
+
+//export interface Available {
+//  mon: []
+//}
+
+export enum Day {
+  SUN = "sun", 
+  MON = "mon", 
+  TUE = "tue", 
+  WED = "wed", 
+  THU = "thu", 
+  FRI = "fri", 
+  SAT = "sat"
+}
+
+export type EventSlot = Array<string>;
+
+export interface Event extends mongoose.Document {
+  user: string;
+  name: string;
+  location: string;
+  description: string;
+  duration: number;
+  url: string;
+  isActive: boolean;
+  
+  rangedays: number;
+
+  calendardays: boolean;
+
+  /** reserved buffer before an event (in minutes) */
+  bufferbefore: number;
+
+  /** reserved buffer after an event (in minutes) */
+  bufferafter: number;
+
+  available: Record<Day, EventSlot>;
+};
+
+const eventSchema = new mongoose.Schema<Event>({
   user: {
     type: String,
     required: true,
@@ -22,6 +61,7 @@ const eventSchema = new mongoose.Schema({
     trim: true,
   },
 
+  /** duration of the event (in minutes) */
   duration: {
     type: Number,
     required: true,
@@ -47,10 +87,14 @@ const eventSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+
+  /** reserved buffer before an event (in minutes) */
   bufferbefore: {
     type: Number,
     default: 0,
   },
+
+  /** reserved buffer after an event (in minutes) */
   bufferafter: {
     type: Number,
     default: 0,
@@ -90,4 +134,4 @@ const eventSchema = new mongoose.Schema({
 
 eventSchema.index({ user: 1, url: 1 }, { unique: true });
 
-module.exports = mongoose.model("Event", eventSchema);
+export const EventModel = mongoose.model<Event>("Event", eventSchema);

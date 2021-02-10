@@ -1,13 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /**
  * @module event_controller
  */
-const Event = require("../models/Event");
-const Google = require("./google_controller");
-const { validationResult } = require("express-validator");
-const { errorHandler } = require("../handlers/errorhandler");
-const { zonedTimeToUtc } = require('date-fns-tz');
+import { Day, Event, EventModel } from "../models/Event";
+import { freeBusy } from "./google_controller";
+import  { validationResult } from "express-validator";
+import { errorHandler } from "../handlers/errorhandler";
+import { zonedTimeToUtc } from 'date-fns-tz';
+import { Request, Response } from "express";
 
-const DAYS = ["sun", "mon", "tue", "wen", "thu", "fri", "sat"]
+const DAYS = [ Day.SUN, Day.MON, Day.TUE, Day.WED, Day.THU, Day.FRI, Day.SAT,  ]
 
 /**
  * Middleware to get available times for one weekday of a given user
@@ -15,34 +18,40 @@ const DAYS = ["sun", "mon", "tue", "wen", "thu", "fri", "sat"]
  * @param {request} req
  * @param {response} res
  */
-exports.getAvailableTimesForDay = (req, res) => {
-  const date = new Date(req.query.day);
+export const getAvailableTimesForDay = (req: Request, res: Response): void => {
+  console.log('getAvailableTimesForDay: %s', req.query.day);
+  const date = new Date(<string>req.query.day);
   const day = DAYS[date.getDay()];
-  const eventurl = req.query.eventurl;
-  const userid = req.query.user;
-  const query = Event.findOne({ url: eventurl, user: userid }).select(
+  const eventurl = <string>req.query.eventurl;
+  const userid = <string>req.query.user;
+  const query = EventModel.findOne({ url: eventurl, user: userid }).select(
     `available -_id`
   );
-  query.exec((err, event) => {
+  void query.exec((err, event) => {
     if (err) {
       res.status(400).json({ erorr: err });
     } else {
-      let slot = event.available[day];
+      console.log("Event: %o; day: %o, %o", event, day, event.available[day]);
+      const slot = event.available[day];
       let start = new Date(date);
-      start.setHours(Number.parseInt(slot[0].substring(0, 2)), Number.parseInt(slot[0].substring(3, 5)), 0);
+      console.log("start: %o, %j", start, slot)
+      start.setHours(Number.parseInt(slot[0].substring(0, 2)), 
+                     Number.parseInt(slot[0].substring(3, 5)), 0);
+      console.log("start: %o", start);
       start = zonedTimeToUtc(start, 'Europe/Berlin');
       let end = new Date(date);
-      end.setHours(Number.parseInt(slot[1].substring(0, 2)), Number.parseInt(slot[1].substring(3, 5)), 0);
+      end.setHours(Number.parseInt(slot[1].substring(0, 2)), 
+                   Number.parseInt(slot[1].substring(3, 5)), 0);
       end = zonedTimeToUtc(end, 'Europe/Berlin');
       console.log('TZ: %s', process.env.TZ);
       console.log("event: %j %o %s %s", event, slot, start, end);
-      Google.freeBusy(userid, start, end)
+      freeBusy(userid, start, end, event)
         .then(slots => {
           res.status(200).json(slots);
         })
         .catch(err => {
           console.log('freeBusy failed: %o', err);
-          res.status(400).json({ erorr: err });
+          res.status(400).json({ error: <unknown>err });
         });
     }
   });
@@ -54,11 +63,11 @@ exports.getAvailableTimesForDay = (req, res) => {
  * @param {request} req
  * @param {response} res
  */
-exports.addEventController = (req, res) => {
-  const userid = req.user_id;
+export const addEventController = (req: Request, res: Response): void => {
+  const userid = req.params.user_id;
   const errors = validationResult(req);
 
-  let available = {
+  const available = {
     mon: [req.body.starttimemon, req.body.endtimemon],
     tue: [req.body.starttimetue, req.body.endtimetue],
     wen: [req.body.starttimewen, req.body.endtimewen],
@@ -69,10 +78,10 @@ exports.addEventController = (req, res) => {
   };
 
   if (!errors.isEmpty()) {
-    const newError = errors.array().map((error) => error.msg)[0];
-    return res.status(422).json({ error: newError });
+    const newError = errors.array().map(error => error.msg)[0];
+    res.status(422).json({ error: newError });
   } else {
-    const eventToSave = new Event({
+    const eventToSave = new EventModel({
       user: userid,
       name: req.body.name,
       location: req.body.location,
@@ -83,11 +92,11 @@ exports.addEventController = (req, res) => {
       rangedays: parseInt(req.body.rangedays),
       bufferbefore: parseInt(req.body.bufferbefore),
       bufferafter: parseInt(req.body.bufferafter),
-      calendarday: req.body.calendarday,
+      calendardays: req.body.calendardays,
       available: available,
     });
 
-    eventToSave.save((err, eventToSave) => {
+    void eventToSave.save((err, eventToSave) => {
       if (err) {
         return res.status(400).json({ error: errorHandler(err) });
       } else {
@@ -107,9 +116,9 @@ exports.addEventController = (req, res) => {
  * @param {request} req
  * @param {response} res
  */
-exports.deleteEventController = (req, res) => {
+export const deleteEventController = (req: Request, res: Response): void => {
   const eventid = req.params.id;
-  Event.findByIdAndDelete(eventid, function (err) {
+  void EventModel.findByIdAndDelete(eventid, function (err) {
     if (err) {
       return res.status(400).json({ error: err });
     } else {
@@ -124,10 +133,10 @@ exports.deleteEventController = (req, res) => {
  * @param {request} req
  * @param {response} res
  */
-exports.getEventListController = (req, res) => {
-  const userid = req.user_id;
-  const query = Event.find({ user: userid });
-  query.exec(function (err, event) {
+export const getEventListController = (req: Request, res: Response): void => {
+  const userid = <string>req.query.user_id;
+  const query = EventModel.find({ user: userid });
+  void query.exec(function (err, event) {
     if (err) {
       return res.status(400).json({ error: err });
     } else {
@@ -142,15 +151,15 @@ exports.getEventListController = (req, res) => {
  * @param {request} req
  * @param {response} res
  */
-exports.getActiveEventsController = (req, res) => {
-  const userid = req.query.user;
-  const query = Event.find({ user: userid, isActive: true });
+export const getActiveEventsController = (req: Request, res: Response): void => {
+  const userid = <string>req.query.user;
+  const query = EventModel.find({ user: userid, isActive: true });
 
-  query.exec(function (err, event) {
+  void query.exec(function (err, event) {
     if (err) {
-      return res.status(400).json({ error: err });
+      res.status(400).json({ error: err });
     } else {
-      return res.status(200).json(event);
+      res.status(200).json(event);
     }
   });
 };
@@ -161,14 +170,14 @@ exports.getActiveEventsController = (req, res) => {
  * @param {request} req
  * @param {response} res
  */
-exports.getEventByIdController = (req, res) => {
+export const getEventByIdController = (req: Request, res: Response): void => {
   const event_id = req.params.id;
-  const query = Event.findById({ _id: event_id });
-  query.exec(function (err, event) {
+  const query = EventModel.findById({ _id: event_id });
+  void query.exec(function (err, event) {
     if (err) {
-      return res.status(400).json({ error: err });
+      res.status(400).json({ error: err });
     } else {
-      return res.status(200).json(event);
+      res.status(200).json(event);
     }
   });
 };
@@ -179,12 +188,12 @@ exports.getEventByIdController = (req, res) => {
  * @param {request} req
  * @param {response} res
  */
-exports.getEventByUrl = (req, res) => {
-  const userid = req.query.user;
-  const url = req.query.url;
+export const getEventByUrl = (req: Request, res: Response): void => {
+  const userid = <string>req.query.user;
+  const url = <string>req.query.url;
 
-  const query = Event.findOne({ url: url, user: userid });
-  query.exec(function (err, event) {
+  const query = EventModel.findOne({ url: url, user: userid });
+  void query.exec(function (err, event) {
     if (err) {
       return res.status(400).json({ error: err });
     } else {
@@ -199,10 +208,10 @@ exports.getEventByUrl = (req, res) => {
  * @param {request} req
  * @param {response} res
  */
-exports.updateEventController = (req, res) => {
+export const updateEventController = (req: Request, res: Response): void => {
   const event = req.body.data;
   const event_id = req.params.id;
-  Event.findByIdAndUpdate(event_id, event, function (err, event) {
+  void EventModel.findByIdAndUpdate(event_id, event, function (err, event) {
     if (err) {
       return res.status(400).json({ error: err });
     } else {

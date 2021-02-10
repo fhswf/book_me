@@ -1,12 +1,20 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /**
  * @module google_controller
  */
-const { body } = require("express-validator");
-const { google } = require("googleapis");
-const User = require("../models/User");
-const { OAuth2 } = google.auth;
 
-const oAuth2Client = new OAuth2({
+
+import { addMinutes, parseISO, parse } from 'date-fns';
+const { body } = require("express-validator");
+import { calendar_v3, google } from 'googleapis';
+import { GaxiosPromise } from "gaxios";
+import { OAuth2Client, Credentials } from 'google-auth-library';
+import Schema$Event = calendar_v3.Schema$Event;
+import { UserModel, User } from "../models/User";
+import { Request, Response } from 'express';
+
+
+const oAuth2Client = new OAuth2Client({
   clientId: process.env.GOOGLE_ID,
   clientSecret: process.env.GOOGLE_SECRET,
   redirectUri: `${process.env.API_URL}/google/oauthcallback`,
@@ -21,8 +29,8 @@ const SCOPES = [
  * @param {request} req
  * @param {response} res
  */
-exports.generateAuthUrl = (req, res) => {
-  const userid = req.user_id;
+export const generateAuthUrl = (req: Request, res: Response) => {
+  const userid = <string>req["user_id"];
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES,
@@ -38,7 +46,7 @@ exports.generateAuthUrl = (req, res) => {
  * @param {request} req
  * @param {response} res
  */
-exports.googleCallback = (req, res) => {
+export const googleCallback = (req, res) => {
   const code = req.query.code;
   const user = req.query.state;
   if (code) {
@@ -61,45 +69,46 @@ exports.googleCallback = (req, res) => {
  * @param {request} req
  * @param {response} res
  */
-exports.insertEventToGoogleCal = (req, res) => {
-  let datum = req.body.starttime.split(" ")[0];
+export const insertEventToGoogleCal = (req: Request, res: Response): void => {
+  const starttime = parse(<string>req.body.starttime, "yyyy-MM-dd HH:mm:ss", new Date());
+  const endtime = addMinutes(starttime, req.body.event.duration);
 
-  let startzeit = req.body.starttime.split(" ")[1];
-  const starttime = datum.concat("T", startzeit);
 
-  let endzeit = addMinutes(startzeit, req.body.event.duration.toString());
-  const endtime = datum.concat("T", endzeit, ":00");
-
-  let event = {
-    summary: req.body.event.name + " with " + req.body.name,
-    location: req.body.event.location,
+  const event: Schema$Event = {
+    summary: <string>req.body.event.name + " with " + <string>req.body.name,
+    location: <string>req.body.event.location,
     description: req.body.event.description,
     start: {
-      dateTime: starttime,
+      dateTime: starttime.toISOString(),
       timeZone: "Europe/Berlin",
     },
     end: {
-      dateTime: endtime,
+      dateTime: endtime.toISOString(),
       timeZone: "Europe/Berlin",
     },
-    attendes: [
+    attendees: [
       {
         email: req.body.email,
       },
     ],
   };
 
-  const query = User.findOne({ _id: req.params.user_id });
-  query.exec(function (err, user) {
-    if (err) {
-      return err;
-    } else {
-      let google_tokens = user.google_tokens;
+  const query = UserModel.findOne({ _id: req.params.user_id });
+  query.exec()
+  .then((user: User) => {
+      const google_tokens = user.google_tokens;
       oAuth2Client.setCredentials(google_tokens);
-      insertEvent(oAuth2Client, event);
-      return res.json({ success: true, message: "Event wurde gebucht" });
-    }
-  });
+      void insertEvent(oAuth2Client, event)
+      .then(event => {
+        res.json({ success: true, message: "Event wurde gebucht", event: event });
+      })
+      .catch(err => {
+        res.status(400).json({ error: err});
+      })
+    })
+    .catch(err => {
+      res.status(400).json({ error: err});
+    });
 };
 
 /**
@@ -108,11 +117,11 @@ exports.insertEventToGoogleCal = (req, res) => {
  * @param {request} req
  * @param {response} res
  */
-exports.revokeScopes = (req, res) => {
+export const revokeScopes = (req, res) => {
   const userid = req.user_id;
   let tokens = null;
-  const query = User.findOne({ _id: userid });
-  query.exec(function (err, user) {
+  const query = UserModel.findOne({ _id: userid });
+  query.exec((err, user: User) => {
     if (err) {
     } else {
       tokens = user.google_tokens;
@@ -132,9 +141,9 @@ exports.revokeScopes = (req, res) => {
   });
 };
 
-exports.freeBusy = async (user_id, start, end) => {
-  let user = await User.findOne({ _id: user_id });
-  let google_tokens = user.google_tokens;
+export const freeBusy = async (user_id, start, end, event) => {
+  const user: User = await UserModel.findOne({ _id: user_id });
+  const google_tokens = user.google_tokens;
   oAuth2Client.setCredentials(google_tokens);
   const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
   return calendar.freebusy.query({
@@ -147,16 +156,15 @@ exports.freeBusy = async (user_id, start, end) => {
       ]
     }
   })
-    .catch(err => {
-      console.log('freebusy failed: %o', err);
-    })
     .then(res => {
-      let slots = [];
-      for (let key in res.data.calendars) {
-        for (let busy of res.data.calendars[key].busy) {
+      const slots = [];
+      for (const key in res.data.calendars) {
+        for (const busy of res.data.calendars[key].busy) {
           console.log('freeBusy: %o %o', busy.start, busy.end);
-          let _start = new Date(busy.start);
-          let _end = new Date(busy.end);
+          // let _start = addMinutes(new Date(busy.start), -event.bufferbefore);
+          // let _end = addMinutes(new Date(busy.end), event.bufferafter);
+          const _start = new Date(busy.start);
+          const _end = new Date(busy.end);
           slots.push({ start: start, end: _start });
           start = _end;
         }
@@ -166,14 +174,17 @@ exports.freeBusy = async (user_id, start, end) => {
         console.log('freeBusy: %s %j', key, slots);
       }
       return slots;
+    })
+    .catch(err => {
+      console.log('freebusy failed: %o', err);
     });
 }
 
 function deleteTokens(userid) {
-  User.findOneAndUpdate(
+  UserModel.findOneAndUpdate(
     { _id: userid },
     { $unset: { google_tokens: "" } }
-  ).then((res) => {
+  ).then(res => {
     console.log(res);
   });
 }
@@ -184,14 +195,9 @@ function deleteTokens(userid) {
  * @param {string} userid - User who gave consent to connect Calendar API
  * @param {object} token  - The Token Object retrieved from Google
  */
-function saveTokens(user, token) {
-  User.findOneAndUpdate({ _id: user }, { google_tokens: token })
-    .then((res) => {
-      return res.status(200).json({ msg: "Succesfully saved Tokens" });
-    })
-    .catch((err) => {
-      return err;
-    });
+function saveTokens(user: User, token) {
+  UserModel.findOneAndUpdate({ _id: user }, { google_tokens: token });
+ 
   /*
   if (token.refresh_token) {
     User.findOneAndUpdate(
@@ -235,37 +241,13 @@ function saveTokens(user, token) {
  * @param {object} auth - The OAuth Client Object, which stores Tokens.
  * @param {object} event - The event to insert into the calendar.
  */
-function insertEvent(auth, event) {
+export function insertEvent(auth: OAuth2Client, event: Schema$Event) : GaxiosPromise<Schema$Event> {
   const calendar = google.calendar({ version: "v3", auth });
-  calendar.events.insert(
+  return calendar.events.insert(
     {
       auth: auth,
       calendarId: "primary",
-      resource: event,
-    },
-    function (err, event) {
-      if (err) {
-        console.log(err.response);
-      } else {
-        return res
-          .status(200)
-          .json({ msg: "Event successfully inserted.", event: event });
-      }
-    }
-  );
-}
-
-/**
- *
- * @param {string} time - time to add minutes to
- * @param {number} minsToAdd  Amount of Minutes to add.
- */
-function addMinutes(time, minsToAdd) {
-  function D(J) {
-    return (J < 10 ? "0" : "") + J;
-  }
-  var piece = time.split(":");
-  var mins = piece[0] * 60 + +piece[1] + +minsToAdd;
-
-  return D(((mins % (24 * 60)) / 60) | 0) + ":" + D(mins % 60);
+      sendUpdates: "all",
+      requestBody: event,
+    });
 }
