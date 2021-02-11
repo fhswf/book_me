@@ -66,6 +66,7 @@ export const getAvailableTimesForDay = (req: Request, res: Response): void => {
 export const addEventController = (req: Request, res: Response): void => {
   const userid = req.user_id;
   const errors = validationResult(req);
+  console.log('errors: %j', errors);
 
   const available = {
     mon: [req.body.starttimemon, req.body.endtimemon],
@@ -76,6 +77,7 @@ export const addEventController = (req: Request, res: Response): void => {
     sat: [req.body.starttimesat, req.body.endtimesat],
     sun: [req.body.starttimesun, req.body.endtimesun],
   };
+  console.log('available: %j', available)
 
   if (!errors.isEmpty()) {
     const newError = errors.array().map(error => error.msg)[0];
