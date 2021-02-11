@@ -77,6 +77,10 @@
   border-radius: 50%;
 }
 
+li.react-datepicker__time-list-item--disabled {
+  display: none;
+}
+
 .react-datepicker__time-container {
   min-width: 25%;
 }

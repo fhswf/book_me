@@ -1,22 +1,22 @@
 /**
  * @module authentication_controller
  */
-const User = require("../models/User");
-const jwt = require("jsonwebtoken");
-const _ = require("lodash");
-const { validationResult } = require("express-validator");
-const mailer = require("nodemailer");
-const bcrypt = require("bcryptjs");
-const { google } = require("googleapis");
-const { OAuth2 } = google.auth;
+import { UserModel } from "../models/User";
+import { decode, sign, verify }  from "jsonwebtoken";
+// const _ = require("lodash");
+import { validationResult } from "express-validator";
+import { createTransport } from "nodemailer";
+import { compare } from "bcryptjs";
+import { google } from "googleapis";
+import { OAuth2Client, Credentials } from 'google-auth-library';
 
-const oAuth2Client = new OAuth2({
+const oAuth2Client = new OAuth2Client({
   clientId: process.env.GOOGLE_ID,
   clientSecret: process.env.GOOGLE_SECRET,
   redirectUri: `${process.env.API_URL}/oauthcallback`,
 });
 
-const transporter = mailer.createTransport({
+const transporter = createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL_FROM,
@@ -38,7 +38,7 @@ exports.registerController = (req, res) => {
     const newError = errors.array().map((error) => error.msg)[0];
     return res.status(422).json({ errors: newError });
   } else {
-    User.findOne({
+    UserModel.findOne({
       email,
     }).exec((err, user) => {
       if (user) {
@@ -48,7 +48,7 @@ exports.registerController = (req, res) => {
           .status(400)
           .json({ errors: "Something went wrong, please try again." });
       } else {
-        const token = jwt.sign(
+        const token = sign(
           { name, email, password },
           process.env.ACCOUNT_ACTIVATION,
           { expiresIn: "10m" }
@@ -90,15 +90,27 @@ exports.activationController = (req, res) => {
   const token = header.split(" ")[1];
 
   if (token) {
-    jwt.verify(token, process.env.ACCOUNT_ACTIVATION, (err) => {
+    verify(token, process.env.ACCOUNT_ACTIVATION, (err) => {
       if (err) {
         return res.status(400).json({ errors: "Error! Please signup again!" }); //Verify failed
       } else {
         //Decode the jwt for User information
-        const { name, email, password } = jwt.decode(token);
+        let name = "";
+        let email = "";
+        let password = ""; 
+        let _t = <Record<string, string>>decode(token);
+        if ('name' in _t) {
+          name = _t['name']
+        }
+        if ('email' in _t) {
+          email = _t['email']
+        }
+        if ('password' in _t) {
+          password = _t['password']
+        }
         const user_url = validateUrl(email);
         //Create a new User
-        const userToSave = new User({ name, email, password, user_url });
+        const userToSave = new UserModel({ name, email, password, user_url });
         //Save the new created User to the DB
         userToSave.save((err) => {
           if (err) {
@@ -133,16 +145,15 @@ exports.loginController = (req, res) => {
     const newError = errors.array().map((error) => error.msg)[0];
     return res.status(422).json({ errors: newError });
   } else {
-    User.findOne({ email }).exec((err, user) => {
+    UserModel.findOne({ email }).exec((err, user) => {
       if (!user || err) {
         return res.status(400).json({ errors: "User does not exist!" });
       }
-      bcrypt
-        .compare(password, user.password)
+      compare(password, user.password)
         .then((result) => {
           if (result) {
             const { _id, name, email } = user;
-            const access_token = jwt.sign(
+            const access_token = sign(
               { _id, name, email },
               process.env.JWT_SECRET_TOKEN,
               {
@@ -173,12 +184,12 @@ exports.googleLoginController = (req, res) => {
   oAuth2Client
     .verifyIdToken({ idToken, audience: process.env.GOOGLE_ID })
     .then((response) => {
-      const { email_verified, name, email } = response.payload;
+      const { email_verified, name, email } = response.getAttributes().payload;
       if (email_verified) {
-        User.findOne({ email }).exec((err, user) => {
+        UserModel.findOne({ email }).exec((err, user) => {
           if (user) {
             const { _id, name, email } = user;
-            const access_token = jwt.sign(
+            const access_token = sign(
               { _id, name, email },
               process.env.JWT_SECRET_TOKEN,
               {
@@ -195,7 +206,7 @@ exports.googleLoginController = (req, res) => {
             let password = randompw + process.env.JWT_SECRET_TOKEN;
             const user_url = validateUrl(email);
 
-            user = new User({ name, email, password, user_url });
+            user = new UserModel({ name, email, password, user_url });
             user.save((err, user) => {
               if (err) {
                 return res.status(400).json({
@@ -203,7 +214,7 @@ exports.googleLoginController = (req, res) => {
                 });
               }
               const { _id, name, email } = user;
-              const access_token = jwt.sign(
+              const access_token = sign(
                 { _id, name, email },
                 process.env.JWT_SECRET_TOKEN,
                 {
