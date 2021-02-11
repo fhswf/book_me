@@ -118,6 +118,16 @@ export async function updateEvent(
   endtimesun,
   isActive
 ) {
+  const available = {
+    mon: [starttimemon, endtimemon],
+    tue: [starttimetue, endtimetue],
+    wen: [starttimewen, endtimewen],
+    thu: [starttimethu, endtimethu],
+    fri: [starttimefri, endtimefri],
+    sat: [starttimesat, endtimesat],
+    sun: [starttimesun, endtimesun],
+  };
+  console.log('available: %o', available);
   const response = await axios.put(
     `${process.env.REACT_APP_API_URI}/events/updateEvent/${id}`,
     {
@@ -131,20 +141,7 @@ export async function updateEvent(
         calendardays,
         bufferafter,
         bufferbefore,
-        starttimemon,
-        endtimemon,
-        starttimetue,
-        endtimetue,
-        starttimewen,
-        endtimewen,
-        starttimethu,
-        endtimethu,
-        starttimefri,
-        endtimefri,
-        starttimesat,
-        endtimesat,
-        starttimesun,
-        endtimesun,
+        available,
         isActive,
       },
     },

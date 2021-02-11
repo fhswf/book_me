@@ -39,7 +39,7 @@ const Landing = () => {
               {signUp} Sign Up
             </Nav.Link>
             <Nav.Link as={Link} to="/login">
-              {signIn} Sing In
+              {signIn} Sign In
             </Nav.Link>
           </Nav>
         </Navbar>
