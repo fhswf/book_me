@@ -166,6 +166,7 @@ export async function getActiveEvents(user_id) {
   );
   return response;
 }
+
 export async function getAvailableTimes(day, url, userid) {
   const response = await axios.get(
     `${process.env.REACT_APP_API_URI}/events/getAvailable`,

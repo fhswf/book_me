@@ -1,7 +1,7 @@
 /**
  * @module user_controller
  */
-const User = require("../models/User");
+import {User, UserModel} from "../models/User";
 
 /**
  * Middleware to get the logged in user
@@ -11,7 +11,7 @@ const User = require("../models/User");
  */
 exports.getUserController = (req, res) => {
   const userid = req.user_id;
-  const query = User.findOne({ _id: userid });
+  const query = UserModel.findOne({ _id: userid });
   query.exec(function (err, user) {
     if (err) {
       return res.status(400).json({ error: err });
@@ -29,7 +29,7 @@ exports.getUserController = (req, res) => {
  */
 exports.getUserByUrl = (req, res) => {
   const userurl = req.query.url;
-  const query = User.findOne({ user_url: userurl }, "-password");
+  const query = UserModel.findOne({ user_url: userurl }, "-password");
   query.exec(function (err, user) {
     if (err) {
       return res.status(400).json({ error: err });

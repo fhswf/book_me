@@ -85,7 +85,7 @@ const App = () => {
                   <br></br>
 
                   <a
-                    href={process.env.REACT_APP_URL + "users/" + user.user_url}
+                    href={process.env.REACT_APP_URL + "/users/" + user.user_url}
                   >
                     Your Link: {user.user_url}
                   </a>

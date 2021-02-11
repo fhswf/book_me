@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
-import setMinutes from "date-fns/setMinutes";
-import setHours from "date-fns/setHours";
-
 import { useHistory, useLocation } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
@@ -12,26 +9,23 @@ import { getAvailableTimes } from "../helpers/services/event_services";
 
 import { registerLocale } from "react-datepicker";
 import de from "date-fns/locale/de";
+import addMinutes from 'date-fns/addMinutes';
 
 const Datepicker = () => {
   registerLocale("de", de);
   // eslint-disable-next-line no-extend-native
   Date.prototype.addDays = function (days) {
-    var date = new Date(this.valueOf());
+    let date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
     return date;
   };
 
-  const [selected, setSelected] = useState(new Date().addDays(2));
+  const [selected, setSelected] = useState(new Date());
   const [timeSelected, setTimeSelected] = useState(false);
-  const [startHour, setStartHour] = useState();
-  const [startMin, setStartMin] = useState();
-  const [endHour, setEndHour] = useState();
-  const [endMin, setEndMin] = useState();
-  const [timeselect, settimeselect] = useState(false);
+  const [slots, setSlots] = useState();
 
   const history = useHistory();
-  let location = useLocation();
+  const location = useLocation();
   const event = location.state.bookingEvent;
   const user = location.state.user;
 
@@ -98,26 +92,60 @@ const Datepicker = () => {
   };
 
   function setAvailableTimes(selectedDay) {
-    let weekday = getDayofWeek(selectedDay.getDay());
-    getAvailableTimes(weekday, event.url, user._id).then((res) => {
-      if (isToday(selectedDay)) {
-        let hoursToday = new Date().getHours();
-        let minsToday = new Date().getMinutes();
-        setStartHour(hoursToday);
-        setStartMin(minsToday);
-      } else {
-        setStartHour(res.data[0].split(":")[0]);
-        setStartMin(res.data[0].split(":")[1]);
-      }
-      setEndHour(res.data[1].split(":")[0]);
-      setEndMin(res.data[1].split(":")[1]);
+    getAvailableTimes(selectedDay, event.url, user._id).then((res) => {
+      console.log('slots: %j', res.data);
+      setSlots(res.data);
     });
   }
 
+  const getTimes = () => {
+    if (slots) {
+      let times = []
+      for (let slot of slots) {
+        let start = new Date(slot.start);
+        let end = new Date(slot.end);
+        console.log("start: %s, end: %s", start, end);
+        let s = start;
+        while (s < end) {
+          times.push(s);
+          s = addMinutes(s, 15);
+        }
+      }
+      return times;
+    }
+    else {
+      return []
+    }
+  }
+
+  const filterPassedTime = (time) => {
+    const _time = new Date(time);
+    console.log('filterPassedTime: slots=%o %s', slots, time);
+    if (!slots) {
+      return false;
+    }
+    for (let slot of slots) {
+      const start = new Date(slot.start);
+      const end = new Date(slot.end);
+      console.log('filterPassedTime: %s %s %s', start.toTimeString(), _time.toTimeString(), end.toTimeString());
+      if (start.toTimeString() <= selected.toTimeString() && _time.toTimeString() <= end.toTimeString()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   const handleDateChange = (date) => {
-    setAvailableTimes(date);
+    console.log('dateChange: %o', date);
     setSelected(date);
+    setTimeSelected(true);
+    setAvailableTimes(date);
+    console.log('dateChange: %o', date);
   };
+
+  const handleSelect = (date, event) => {
+    console.log('handleSelect: %o %o', date, event)
+  }
 
   const renderBookingButton = () => {
     if (timeSelected === true) {
@@ -135,56 +163,22 @@ const Datepicker = () => {
     }
   };
 
-  function getDayofWeek(day) {
-    let weekday = "";
-    switch (day) {
-      case 0:
-        weekday = "sun";
-        break;
-      case 1:
-        weekday = "mon";
-        break;
-      case 2:
-        weekday = "tue";
-        break;
-      case 3:
-        weekday = "wen";
-        break;
-      case 4:
-        weekday = "thu";
-        break;
-      case 5:
-        weekday = "fri";
-        break;
-      case 6:
-        weekday = "sat";
-        break;
-      default:
-        weekday = "";
-    }
-    return weekday;
-  }
-
   return (
     <div>
       <DatePicker
         selected={selected}
-        showTimeSelect
         locale="de"
         inline
+        showTimeSelect
         timeFormat="HH:mm"
-        timeIntervals={parseInt(event.duration)}
+        timeIntervals={15}
         minDate={new Date()}
         maxDate={new Date().addDays(event.rangedays)}
-        minTime={setHours(
-          setMinutes(new Date(), parseInt(startMin)),
-          parseInt(startHour)
-        )}
-        maxTime={setHours(
-          setMinutes(new Date(), parseInt(endMin)),
-          parseInt(endHour)
-        )}
+        minTime={Math.min.apply(null, getTimes())}
+        maxTime={Math.max.apply(null, getTimes())}
+        includeTimes={getTimes()}
         onChange={handleDateChange}
+        onSelect={handleSelect}
         filterDate={filterDates}
       />
       {renderBookingButton()}
