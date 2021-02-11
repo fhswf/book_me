@@ -30,7 +30,7 @@ const SCOPES = [
  * @param {response} res
  */
 export const generateAuthUrl = (req: Request, res: Response) => {
-  const userid = <string>req["user_id"];
+  const userid = req.user_id;
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES,
@@ -93,7 +93,7 @@ export const insertEventToGoogleCal = (req: Request, res: Response): void => {
     ],
   };
 
-  const query = UserModel.findOne({ _id: req.params.user_id });
+  const query = UserModel.findOne({ _id: req.user_id });
   query.exec()
   .then((user: User) => {
       const google_tokens = user.google_tokens;
@@ -117,13 +117,12 @@ export const insertEventToGoogleCal = (req: Request, res: Response): void => {
  * @param {request} req
  * @param {response} res
  */
-export const revokeScopes = (req, res) => {
+export const revokeScopes = (req: Request, res: Response): void => {
   const userid = req.user_id;
   let tokens = null;
   const query = UserModel.findOne({ _id: userid });
-  query.exec((err, user: User) => {
-    if (err) {
-    } else {
+  void query.exec()
+  .then ((user: User) => {
       tokens = user.google_tokens;
       if (tokens.expiry_date <= Date.now()) {
         deleteTokens(userid);
@@ -136,9 +135,11 @@ export const revokeScopes = (req, res) => {
           }
         });
       }
-      return res.json({ msg: "ok" });
-    }
-  });
+      res.json({ msg: "ok" });
+    })
+    .catch(err => {
+      res.status(400).json({ error: <unknown>err});
+    });
 };
 
 export const freeBusy = async (user_id, start, end, event) => {
@@ -160,11 +161,9 @@ export const freeBusy = async (user_id, start, end, event) => {
       const slots = [];
       for (const key in res.data.calendars) {
         for (const busy of res.data.calendars[key].busy) {
-          console.log('freeBusy: %o %o', busy.start, busy.end);
-          // let _start = addMinutes(new Date(busy.start), -event.bufferbefore);
-          // let _end = addMinutes(new Date(busy.end), event.bufferafter);
-          const _start = new Date(busy.start);
-          const _end = new Date(busy.end);
+          console.log('freeBusy: %o %o %d %d', busy.start, busy.end, event.bufferbefore, event.bufferafter);
+          let _start = addMinutes(new Date(busy.start), -event.bufferbefore);
+          let _end = addMinutes(new Date(busy.end), event.bufferafter);
           slots.push({ start: start, end: _start });
           start = _end;
         }

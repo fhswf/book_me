@@ -25,7 +25,7 @@ export const getAvailableTimesForDay = (req: Request, res: Response): void => {
   const eventurl = <string>req.query.eventurl;
   const userid = <string>req.query.user;
   const query = EventModel.findOne({ url: eventurl, user: userid }).select(
-    `available -_id`
+    `available bufferbefore bufferafter -_id`
   );
   void query.exec((err, event) => {
     if (err) {
@@ -64,7 +64,7 @@ export const getAvailableTimesForDay = (req: Request, res: Response): void => {
  * @param {response} res
  */
 export const addEventController = (req: Request, res: Response): void => {
-  const userid = req.params.user_id;
+  const userid = req.user_id;
   const errors = validationResult(req);
 
   const available = {
@@ -134,14 +134,14 @@ export const deleteEventController = (req: Request, res: Response): void => {
  * @param {response} res
  */
 export const getEventListController = (req: Request, res: Response): void => {
-  const userid = <string>req.query.user_id;
+  const userid = req.user_id;
   const query = EventModel.find({ user: userid });
-  void query.exec(function (err, event) {
-    if (err) {
-      return res.status(400).json({ error: err });
-    } else {
-      return res.status(200).json(event);
-    }
+  void query.exec()
+  .then((event) => {
+      res.status(200).json(event);
+  })
+  .catch((err) => {
+      res.status(400).json({ error: err });
   });
 };
 
