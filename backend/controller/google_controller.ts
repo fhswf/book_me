@@ -198,7 +198,6 @@ function deleteTokens(userid: string) {
  * @param {object} token  - The Token Object retrieved from Google
  */
 function saveTokens(user: string, token) {
-  console.log("saving token %o for user %s", token, user);
   const _KEYS = ["access_token", "refresh_token", "scope", "expiry_date"];
   const google_tokens: GoogleTokens = {};
   _KEYS.forEach(key => {
@@ -206,50 +205,14 @@ function saveTokens(user: string, token) {
       google_tokens[key] = <string>token.tokens[key];
     }
   });
-  console.log('saveTokens: %s, %o', user, google_tokens)
   void UserModel.findOneAndUpdate({ _id: user }, { google_tokens }, { new: true })
     .then(user => {
       console.log('saveTokens: %o', user)
     })
     .catch(err => {
-      console.error('saveTokens: %o', err)
+      console.error('saveTokens: %o', err);
+      throw err;
     });
-
-  /*
-  if (token.refresh_token) {
-    User.findOneAndUpdate(
-      { _id: user },
-      {
-        google_tokens: {
-          access_token: token.access_token,
-          refresh_token: token.refresh_token,
-          scope: token.scope,
-          token_type: token.token_type,
-          expiry_date: token.expiry_date,
-        },
-      }
-    )
-      .then((res) => {
-        return res.status(200).json({ msg: "Succesfully saved Tokens" });
-      })
-      .catch((err) => {
-        return err;
-      });
-  } else {
-    User.findOneAndUpdate(
-      { _id: user },
-      {
-        $set: { "google_tokens.access_token": token.access_token },
-      }
-    )
-      .then((res) => {
-        return res.status(200).json({ msg: "succesfully created Tokens" });
-      })
-      .catch((err) => {
-        return err;
-      });
-  }
-  */
 }
 
 /**
@@ -260,11 +223,10 @@ function saveTokens(user: string, token) {
  */
 export function insertEvent(auth: OAuth2Client, event: Schema$Event): GaxiosPromise<Schema$Event> {
   const calendar = google.calendar({ version: "v3", auth });
-  return calendar.events.insert(
-    {
-      auth: auth,
-      calendarId: "primary",
-      sendUpdates: "all",
-      requestBody: event,
-    });
+  return calendar.events.insert({
+    auth: auth,
+    calendarId: "primary",
+    sendUpdates: "all",
+    requestBody: event,
+  });
 }
