@@ -1,0 +1,40 @@
+{
+  "name": "book_me",
+  "version": "1.0.0",
+  "description": "This web application helps you planning your appointments.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fhswf/book_me.git"
+  },
+  "contributors": [
+    {
+      "name": "Felix Hinnemann"
+    },
+    {
+      "name": "Christian Gawron",
+      "email": "gawron.christian@fh-swf.de"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fhswf/book_me/issues"
+  },
+  "homepage": "https://github.com/fhswf/book_me#readme",
+  "devDependencies": {
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/git": "^9.0.0",
+    "@semantic-release/github": "^7.2.0",
+    "@semantic-release/npm": "^7.0.10",
+    "@semantic-release/release-notes-generator": "^9.0.1",
+    "semantic-release": "^17.3.9",
+    "semantic-release-monorepo": "^7.0.4"
+  }
+}
