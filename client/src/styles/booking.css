@@ -1,8 +1,9 @@
 .booking {
   color: var(--text-color, #4d5055);
-  font-family: "Montserrat", sans-serif;
+  font-family: "Rubik", sans-serif;
   word-break: break-word;
 }
+
 .bookingwrapper {
   display: flex;
   justify-content: center;
@@ -60,6 +61,11 @@
   margin-bottom: 15px;
 }
 
+.profileinfo img {
+  margin-left: 30px;
+  border-radius: 50%;
+}
+
 .eventinfo {
   display: flex;
   flex-direction: column;
@@ -68,7 +74,7 @@
 }
 
 .username {
-  font-size: 20px;
+  font-size: 15px;
   padding-right: 10px;
   padding-left: 30px;
   font-weight: lighter;
