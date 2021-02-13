@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "This web application helps you planning your appointments.",
   "main": "index.js",
+  "private": "true",
   "directories": {
     "doc": "docs"
   },
