@@ -79,6 +79,7 @@ const Booking = () => {
                   {iconArrowLeft}
                 </a>
                 <div className="profileinfo">
+                  <img alt="profile" src={user.picture_url}/>
                   <h4 className="username">{user.name}</h4>
                   <h1 className="eventname">{event.name}</h1>
                 </div>
