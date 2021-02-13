@@ -10,7 +10,7 @@ import { calendar_v3, google } from 'googleapis';
 import { GaxiosPromise } from "gaxios";
 import { OAuth2Client, Credentials } from 'google-auth-library';
 import Schema$Event = calendar_v3.Schema$Event;
-import { UserModel, User } from "../models/User";
+import { UserModel, User, GoogleTokens } from "../models/User";
 import { Request, Response } from 'express';
 
 
@@ -33,6 +33,7 @@ export const generateAuthUrl = (req: Request, res: Response) => {
   const userid = req.user_id;
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
+    prompt: "consent",
     scope: SCOPES,
     state: userid,
   });
@@ -145,6 +146,7 @@ export const revokeScopes = (req: Request, res: Response): void => {
 export const freeBusy = async (user_id, start, end, event) => {
   const user: User = await UserModel.findOne({ _id: user_id });
   const google_tokens = user.google_tokens;
+  console.log('freeBusy: tokens: %o', google_tokens);
   oAuth2Client.setCredentials(google_tokens);
   const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
   return calendar.freebusy.query({
@@ -176,11 +178,12 @@ export const freeBusy = async (user_id, start, end, event) => {
     })
     .catch(err => {
       console.log('freebusy failed: %o', err);
+      throw err;
     });
 }
 
-function deleteTokens(userid) {
-  UserModel.findOneAndUpdate(
+function deleteTokens(userid: string) {
+  void UserModel.findOneAndUpdate(
     { _id: userid },
     { $unset: { google_tokens: "" } }
   ).then(res => {
@@ -196,7 +199,15 @@ function deleteTokens(userid) {
  */
 function saveTokens(user: string, token) {
   console.log("saving token %o for user %s", token, user);
-  void UserModel.findOneAndUpdate({ _id: user }, { google_tokens: token.tokens }, { new: true })
+  const _KEYS = ["access_token", "refresh_token", "scope", "expiry_date"];
+  const google_tokens: GoogleTokens = {};
+  _KEYS.forEach(key => {
+    if (key in token.tokens && token.tokens[key]) {
+      google_tokens[key] = <string>token.tokens[key];
+    }
+  });
+  console.log('saveTokens: %s, %o', user, google_tokens)
+  void UserModel.findOneAndUpdate({ _id: user }, { google_tokens }, { new: true })
     .then(user => {
       console.log('saveTokens: %o', user)
     })
