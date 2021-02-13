@@ -1,7 +1,8 @@
 /**
  * @module user_controller
  */
-import {User, UserModel} from "../models/User";
+import { User, UserModel } from "../models/User";
+import { Request, Response } from 'express';
 
 /**
  * Middleware to get the logged in user
@@ -9,16 +10,16 @@ import {User, UserModel} from "../models/User";
  * @param {request} req
  * @param {response} res
  */
-exports.getUserController = (req, res) => {
+export const getUserController = (req: Request, res: Response): void => {
   const userid = req.user_id;
   const query = UserModel.findOne({ _id: userid });
-  query.exec(function (err, user) {
-    if (err) {
-      return res.status(400).json({ error: err });
-    } else {
-      return res.status(200).json(user);
-    }
-  });
+  query.exec()
+    .then(user => {
+      res.status(200).json(user);
+    })
+    .catch(err => {
+      res.status(400).json({ error: err });
+    });
 };
 
 /**
@@ -27,14 +28,14 @@ exports.getUserController = (req, res) => {
  * @param {request} req
  * @param {response} res
  */
-exports.getUserByUrl = (req, res) => {
+export const getUserByUrl = (req: Request, res: Response): void => {
   const userurl = req.query.url;
-  const query = UserModel.findOne({ user_url: userurl }, "-password");
-  query.exec(function (err, user) {
-    if (err) {
-      return res.status(400).json({ error: err });
-    } else {
-      return res.status(200).json(user);
-    }
-  });
+  const query = UserModel.findOne({ user_url: <string>userurl }, "-password");
+  query.exec()
+    .then(user => {
+      res.status(200).json(user);
+    })
+    .catch(err => {
+      res.status(400).json({ error: err });
+    })
 };
