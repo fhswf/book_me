@@ -14,6 +14,10 @@
     "type": "git",
     "url": "git+https://github.com/fhswf/book_me.git"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "tag": "latest"
+  },
   "contributors": [
     {
       "name": "Felix Hinnemann"
