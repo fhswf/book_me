@@ -46,20 +46,20 @@ export const generateAuthUrl = (req: Request, res: Response) => {
  * @param {request} req
  * @param {response} res
  */
-export const googleCallback = (req, res) => {
-  const code = req.query.code;
-  const user = req.query.state;
+export const googleCallback = (req: Request, res: Response): void => {
+  const code = <string>req.query.code;
+  const user = <string>req.query.state;
   if (code) {
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) {
-        return res.status(400).json({ err: "Error retrieving access token" });
-      } else {
+    void oAuth2Client.getToken(code)
+      .then(token => {
         saveTokens(user, token);
         res.redirect(`${process.env.CLIENT_URL}/app`);
-      }
-    });
+      })
+      .catch(error => {
+        res.status(400).json({ message: "Error retrieving access token", error });
+      });
   } else {
-    return res.status(400).json({ err: "No authorization code was provided." });
+    res.status(400).json({ err: "No authorization code was provided." });
   }
 };
 
@@ -95,19 +95,19 @@ export const insertEventToGoogleCal = (req: Request, res: Response): void => {
 
   const query = UserModel.findOne({ _id: req.user_id });
   query.exec()
-  .then((user: User) => {
+    .then((user: User) => {
       const google_tokens = user.google_tokens;
       oAuth2Client.setCredentials(google_tokens);
       void insertEvent(oAuth2Client, event)
-      .then(event => {
-        res.json({ success: true, message: "Event wurde gebucht", event: event });
-      })
-      .catch(err => {
-        res.status(400).json({ error: err});
-      })
+        .then(event => {
+          res.json({ success: true, message: "Event wurde gebucht", event: event });
+        })
+        .catch(err => {
+          res.status(400).json({ error: err });
+        })
     })
     .catch(err => {
-      res.status(400).json({ error: err});
+      res.status(400).json({ error: err });
     });
 };
 
@@ -122,7 +122,7 @@ export const revokeScopes = (req: Request, res: Response): void => {
   let tokens = null;
   const query = UserModel.findOne({ _id: userid });
   void query.exec()
-  .then ((user: User) => {
+    .then((user: User) => {
       tokens = user.google_tokens;
       if (tokens.expiry_date <= Date.now()) {
         deleteTokens(userid);
@@ -138,7 +138,7 @@ export const revokeScopes = (req: Request, res: Response): void => {
       res.json({ msg: "ok" });
     })
     .catch(err => {
-      res.status(400).json({ error: <unknown>err});
+      res.status(400).json({ error: <unknown>err });
     });
 };
 
@@ -194,9 +194,16 @@ function deleteTokens(userid) {
  * @param {string} userid - User who gave consent to connect Calendar API
  * @param {object} token  - The Token Object retrieved from Google
  */
-function saveTokens(user: User, token) {
-  UserModel.findOneAndUpdate({ _id: user }, { google_tokens: token });
- 
+function saveTokens(user: string, token) {
+  console.log("saving token %o for user %s", token, user);
+  void UserModel.findOneAndUpdate({ _id: user }, { google_tokens: token.tokens }, { new: true })
+    .then(user => {
+      console.log('saveTokens: %o', user)
+    })
+    .catch(err => {
+      console.error('saveTokens: %o', err)
+    });
+
   /*
   if (token.refresh_token) {
     User.findOneAndUpdate(
@@ -240,7 +247,7 @@ function saveTokens(user: User, token) {
  * @param {object} auth - The OAuth Client Object, which stores Tokens.
  * @param {object} event - The event to insert into the calendar.
  */
-export function insertEvent(auth: OAuth2Client, event: Schema$Event) : GaxiosPromise<Schema$Event> {
+export function insertEvent(auth: OAuth2Client, event: Schema$Event): GaxiosPromise<Schema$Event> {
   const calendar = google.calendar({ version: "v3", auth });
   return calendar.events.insert(
     {
