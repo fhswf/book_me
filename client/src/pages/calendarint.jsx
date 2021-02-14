@@ -6,11 +6,11 @@ import AppNavbar from "../components/appNavbar";
 import "../styles/calendarint.css";
 import { Button } from "react-bootstrap";
 import { getUserById } from "../helpers/services/user_services";
-import { deleteAccess, getAuthUrl } from "../helpers/services/google_services";
+import { deleteAccess, getAuthUrl, getCalendarList } from "../helpers/services/google_services";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 const iconGoogle = (
   <FontAwesomeIcon icon={faGoogle} size="3x"></FontAwesomeIcon>
 );
@@ -20,6 +20,8 @@ const Calendarintegration = () => {
   const token = JSON.parse(localStorage.getItem("access_token"));
   const [connected, setConnected] = useState(false);
   const [url, setUrl] = useState("");
+  const [calendarList, setCalendarList] = useState(null);
+
 
   const revokeScopes = (event) => {
     event.preventDefault();
@@ -51,6 +53,14 @@ const Calendarintegration = () => {
           setUrl(res.data);
         }
       });
+      console.log('connected: %s', connected);
+      
+        getCalendarList(token)
+        .then(res => {
+          setCalendarList(res.data.data)
+          console.log('calendarList: %o', res.data.data)
+        })
+      
     });
   }, [history, token]);
 
@@ -70,6 +80,29 @@ const Calendarintegration = () => {
     }
   };
 
+  const renderCalendarList = () => {
+    if (connected) {
+      console.log("calendarList: %o", calendarList);
+      let items = "Liste";
+      if (calendarList) {
+        console.log("???");
+        items = calendarList.items.map(item => {
+          return (
+            <div>
+            <label>
+              <input name={item.id} type="checkbox" checked={item.primary}></input>
+              {item.summaryOverride ? item.summaryOverride : item.summary}
+            </label>
+            </div> 
+          )
+        })
+      }
+      return (
+        <div>{items}</div>
+      );
+    }
+  }
+
   return (
     <div className="integration">
       <AppNavbar />
@@ -80,6 +113,9 @@ const Calendarintegration = () => {
           </div>
           <div className="right">{renderConnectButton()}</div>
         </div>
+      </div>
+      <div className="wrapcontent">
+      {renderCalendarList()}
       </div>
     </div>
   );

@@ -26,6 +26,18 @@ export async function getAuthUrl(token) {
   return response;
 }
 
+export async function getCalendarList(token) {
+  const response = await axios.get(
+    `${process.env.REACT_APP_API_URI}/google/calendarList`,
+    {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  );
+  return response;
+}
+
 export async function insertIntoGoogle(
   user_id,
   event,

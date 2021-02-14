@@ -71,6 +71,12 @@ const userSchema = new mongoose.Schema<User>(
       type: String,
       default: "Willkommen auf meiner Planungsseite",
     },
+    pull_calendars: {
+      type: Array,
+    },
+    push_calendar: {
+      type: String
+    }
   },
   {
     timestamps: true,
