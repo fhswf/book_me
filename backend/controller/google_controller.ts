@@ -94,16 +94,22 @@ export async function insertEventToGoogleCal(req: Request, res: Response): Promi
     ],
   };
 
-  const auth = await getAuth(req.user_id);
-  return google.calendar({ version: "v3", auth }).events
-    .insert({
-      auth,
-      calendarId: "primary",
-      sendUpdates: "all",
-      requestBody: event,
-    })
-    .then((event: any) => {
-      res.json({ success: true, message: "Event wurde gebucht", event: event });
+  void UserModel.findOne({ _id: req.params.user_id })
+    .then(user => {
+      oAuth2Client.setCredentials(user.google_tokens);
+      void google.calendar({ version: "v3" }).events
+        .insert({
+          auth: oAuth2Client,
+          calendarId: user.push_calendar,
+          sendUpdates: "all",
+          requestBody: event,
+        })
+        .then((event: any) => {
+          res.json({ success: true, message: "Event wurde gebucht", event: event });
+        })
+        .catch(err => {
+          res.status(400).json({ error: err });
+        })
     })
     .catch(err => {
       res.status(400).json({ error: err });
@@ -177,15 +183,15 @@ export const freeBusy = async (user_id: string, start, end, event) => {
   const google_tokens = user.google_tokens;
   console.log('freeBusy: tokens: %o', google_tokens);
   oAuth2Client.setCredentials(google_tokens);
+  const items = user.pull_calendars.map(id => { return { id } });
+  console.log('freeBusy: item=%o', items);
   const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
   return calendar.freebusy.query({
     requestBody: {
       timeMin: start,
       timeMax: end,
       timeZone: "Europe/Berlin",
-      items: [
-        { id: "primary" }
-      ]
+      items
     }
   })
     .then(res => {

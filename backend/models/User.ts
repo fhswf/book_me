@@ -15,6 +15,8 @@ export interface User extends mongoose.Document {
   user_url: string;
   picture_url: string;
   google_tokens: GoogleTokens;
+  push_calendar: string;
+  pull_calendars: string[];
 };
 
 // User schema for the Database
