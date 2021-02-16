@@ -29,7 +29,7 @@ const App = () => {
         } else {
           setUser(res.data);
         }
-        if (!res.data.google_tokens.access_token) {
+        if (!res.data.google_tokens || !res.data.google_tokens.access_token) {
           setConnected(false);
         } else {
           setConnected(true);
