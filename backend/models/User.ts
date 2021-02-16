@@ -15,6 +15,8 @@ export interface User extends mongoose.Document {
   user_url: string;
   picture_url: string;
   google_tokens: GoogleTokens;
+  push_calendar: string;
+  pull_calendars: string[];
 };
 
 // User schema for the Database
@@ -71,6 +73,12 @@ const userSchema = new mongoose.Schema<User>(
       type: String,
       default: "Willkommen auf meiner Planungsseite",
     },
+    pull_calendars: {
+      type: Array,
+    },
+    push_calendar: {
+      type: String
+    }
   },
   {
     timestamps: true,

@@ -54,7 +54,7 @@ export const googleCallback = (req: Request, res: Response): void => {
     void oAuth2Client.getToken(code)
       .then(token => {
         saveTokens(user, token);
-        res.redirect(`${process.env.CLIENT_URL}/app`);
+        res.redirect(`${process.env.CLIENT_URL}/integration/select`);
       })
       .catch(error => {
         res.status(400).json({ message: "Error retrieving access token", error });
@@ -70,7 +70,7 @@ export const googleCallback = (req: Request, res: Response): void => {
  * @param {request} req
  * @param {response} res
  */
-export const insertEventToGoogleCal = (req: Request, res: Response): void => {
+export async function insertEventToGoogleCal(req: Request, res: Response): Promise<void> {
   const starttime = parse(<string>req.body.starttime, "yyyy-MM-dd HH:mm:ss", new Date());
   const endtime = addMinutes(starttime, req.body.event.duration);
 
@@ -94,13 +94,17 @@ export const insertEventToGoogleCal = (req: Request, res: Response): void => {
     ],
   };
 
-  const query = UserModel.findOne({ _id: req.user_id });
-  query.exec()
-    .then((user: User) => {
-      const google_tokens = user.google_tokens;
-      oAuth2Client.setCredentials(google_tokens);
-      void insertEvent(oAuth2Client, event)
-        .then(event => {
+  void UserModel.findOne({ _id: req.params.user_id })
+    .then(user => {
+      oAuth2Client.setCredentials(user.google_tokens);
+      void google.calendar({ version: "v3" }).events
+        .insert({
+          auth: oAuth2Client,
+          calendarId: user.push_calendar,
+          sendUpdates: "all",
+          requestBody: event,
+        })
+        .then((event: any) => {
           res.json({ success: true, message: "Event wurde gebucht", event: event });
         })
         .catch(err => {
@@ -109,7 +113,7 @@ export const insertEventToGoogleCal = (req: Request, res: Response): void => {
     })
     .catch(err => {
       res.status(400).json({ error: err });
-    });
+    })
 };
 
 /**
@@ -143,20 +147,51 @@ export const revokeScopes = (req: Request, res: Response): void => {
     });
 };
 
-export const freeBusy = async (user_id, start, end, event) => {
+/**
+ * Set authorization on oAuth2Client.
+ * @param user_id 
+ */
+export async function getAuth(user_id: string): Promise<OAuth2Client> {
+  return UserModel.findOne({ _id: user_id })
+    .exec()
+    .then((user: User) => {
+      const google_tokens = user.google_tokens;
+      oAuth2Client.setCredentials(google_tokens);
+      return oAuth2Client;
+    });
+}
+
+/**
+ * Get the calendarList of the user
+ * @param req 
+ * @param res 
+ */
+export async function getCalendarList(req: Request, res: Response) {
+  google.calendar({ version: "v3", auth: await getAuth(req.user_id) })
+    .calendarList.list()
+    .then(list => {
+      console.log("calendarList: %j", list);
+      res.json(list);
+    })
+    .catch(error => {
+      res.status(400).json({ error });
+    })
+}
+
+export const freeBusy = async (user_id: string, start, end, event) => {
   const user: User = await UserModel.findOne({ _id: user_id });
   const google_tokens = user.google_tokens;
   console.log('freeBusy: tokens: %o', google_tokens);
   oAuth2Client.setCredentials(google_tokens);
+  const items = user.pull_calendars.map(id => { return { id } });
+  console.log('freeBusy: item=%o', items);
   const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
   return calendar.freebusy.query({
     requestBody: {
       timeMin: start,
       timeMax: end,
       timeZone: "Europe/Berlin",
-      items: [
-        { id: "primary" }
-      ]
+      items
     }
   })
     .then(res => {
@@ -212,20 +247,4 @@ function saveTokens(user: string, token) {
     .catch(err => {
       console.error('saveTokens: %o', err)
     });
-
-  /**
-   * function to insert a event to the users google calendar
-   * @function
-   * @param {object} auth - The OAuth Client Object, which stores Tokens.
-   * @param {object} event - The event to insert into the calendar.
-   */
-  export function insertEvent(auth: OAuth2Client, event: Schema$Event): GaxiosPromise<Schema$Event> {
-    const calendar = google.calendar({ version: "v3", auth });
-    return calendar.events.insert(
-      {
-        auth: auth,
-        calendarId: "primary",
-        sendUpdates: "all",
-        requestBody: event,
-      });
-  }
+}

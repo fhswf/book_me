@@ -30,7 +30,6 @@ ReactDOM.render(
 
         <PrivateRoute
           path="/integration"
-          exact
           component={Calendarintegration}
         />
         <Route

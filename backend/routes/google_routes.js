@@ -10,6 +10,7 @@ const {
   googleCallback,
   revokeScopes,
   insertEventToGoogleCal,
+  getCalendarList
 } = require("../controller/google_controller");
 
 const { requireAuth } = require("../handlers/middleware");
@@ -33,6 +34,8 @@ router.delete("/revoke", requireAuth, revokeScopes);
  * @param {callback} middleware - Express middleware.
  */
 router.get("/generateUrl", requireAuth, generateAuthUrl);
+
+router.get("/calendarList", requireAuth, getCalendarList);
 
 /**
  * Callback function - Set in google developer console
