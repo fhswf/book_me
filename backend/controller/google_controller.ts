@@ -54,7 +54,7 @@ export const googleCallback = (req: Request, res: Response): void => {
     void oAuth2Client.getToken(code)
       .then(token => {
         saveTokens(user, token);
-        res.redirect(`${process.env.CLIENT_URL}/app`);
+        res.redirect(`${process.env.CLIENT_URL}/integration/select`);
       })
       .catch(error => {
         res.status(400).json({ message: "Error retrieving access token", error });
