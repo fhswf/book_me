@@ -190,7 +190,7 @@ const PullCalendars = ({ user, calendarList }) => {
         <div>
           <Button onClick={handleShow} color="primary"><FontAwesomeIcon icon={faEdit}></FontAwesomeIcon></Button>
           Check free time in calendars
-          <FormGroup>{pullCals}</FormGroup>
+          <FormGroup><ul>{pullCals}</ul></FormGroup>
         </div>
 
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
@@ -321,10 +321,10 @@ const Calendarintegration = () => {
       <div className="wrapcontent">
         <h4>Configuration</h4>
         <div className="wrapcalendar">
-          <div className="left">
+          <div className="half">
             <PushCalendar user={user} calendarList={calendarList} />
           </div>
-          <div className="right">
+          <div className="half">
             <PullCalendars user={user} calendarList={calendarList} />
           </div>
         </div>

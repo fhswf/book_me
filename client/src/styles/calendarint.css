@@ -13,6 +13,11 @@
   margin-top: 60px;
 }
 
+.integration button {
+  position: absolute;
+  right: 20px;
+}
+
 .integration .wrapcalendar {
   display: flex;
   flex-direction: row;
@@ -24,13 +29,22 @@
   border-radius: 6px;
   box-shadow: 0 1px 5px rgba(0, 74, 116, 0.15);
 }
+.integration .half {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+  width: 50%;
+}
 .integration .left {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
   width: 50%;
 }
 .integration .right {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
