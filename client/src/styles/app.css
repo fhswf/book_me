@@ -4,7 +4,6 @@ ul {
 
 .app {
   color: var(--text-color, #4d5055);
-  font-family: sans-serif;
 }
 
 .app .wrap-homebar {
@@ -80,7 +79,6 @@ ul {
 }
 
 .app .profileinfo {
-  font-family: "Montserrat", sans-serif;
   font-size: 13px;
 }
 
@@ -88,7 +86,6 @@ ul {
   cursor: pointer;
 }
 .app .calcon {
-  font-family: "Montserrat", sans-serif;
   font-size: 20px;
   max-width: 300px;
   float: right;

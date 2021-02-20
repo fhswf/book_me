@@ -132,13 +132,13 @@ export const revokeScopes = (req: Request, res: Response): void => {
       if (tokens.expiry_date <= Date.now()) {
         deleteTokens(userid);
       } else {
-        oAuth2Client.revokeToken(tokens.access_token, function (err) {
-          if (err) {
-            console.log(err);
-          } else {
+        oAuth2Client.revokeToken(tokens.access_token)
+          .then(value => {
             deleteTokens(userid);
-          }
-        });
+          })
+          .catch(err => {
+            console.log(err);
+          });
       }
       res.json({ msg: "ok" });
     })
