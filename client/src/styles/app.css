@@ -38,6 +38,8 @@ ul {
 }
 
 .app .wrap-event-list {
+  position: relative;
+  top: 50px;
   margin-right: auto;
   margin-left: auto;
   padding-right: 20px;

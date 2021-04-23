@@ -65,16 +65,7 @@ const App = () => {
   return (
     <div className="app">
       <AppNavbar />
-      <div className="wrap-homebar">
-        <div className="menu-wrapper">Personal Site</div>
-        <Navbar className="homebar">
-          <Nav>
-            <Nav.Link as={Link} to="/app">
-              Events
-            </Nav.Link>
-          </Nav>
-        </Navbar>
-      </div>
+
       <div className="wrap-event-list">
         <div className="event-list">
           <Table className="table-list">
