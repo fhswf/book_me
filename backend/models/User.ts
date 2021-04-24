@@ -20,6 +20,26 @@ export interface User extends mongoose.Document {
 };
 
 // User schema for the Database
+const tokenSchema = new mongoose.Schema<GoogleTokens>({
+  access_token: {
+    type: String,
+    default: null,
+  },
+  refresh_token: {
+    type: String,
+    default: null,
+  },
+  scope: {
+    type: String,
+    default: null,
+  },
+  expiry_date: {
+    type: Number,
+    default: null,
+  },
+});
+
+// User schema for the Database
 const userSchema = new mongoose.Schema<User>(
   {
     _id: {
@@ -33,22 +53,7 @@ const userSchema = new mongoose.Schema<User>(
       lowercase: true,
     },
     google_tokens: {
-      access_token: {
-        type: String,
-        default: null,
-      },
-      refresh_token: {
-        type: String,
-        default: null,
-      },
-      scope: {
-        type: String,
-        default: null,
-      },
-      expiry_date: {
-        type: Number,
-        default: null,
-      },
+      type: tokenSchema
     },
     name: {
       type: String,
