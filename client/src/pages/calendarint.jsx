@@ -7,7 +7,10 @@ import "../styles/calendarint.css";
 
 // Material UI
 import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
 import Checkbox from '@material-ui/core/Checkbox';
+import Container from '@material-ui/core/Container';
+
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -16,9 +19,12 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
+import Grid from '@material-ui/core/Grid';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
+import Paper from '@material-ui/core/Paper';
 import Select from '@material-ui/core/Select';
+import Typography from '@material-ui/core/Typography';
 
 //import { Button, Modal } from "react-bootstrap";
 import { getUserById, updateUser } from "../helpers/services/user_services";
@@ -308,27 +314,36 @@ const Calendarintegration = () => {
 
 
   return (
-    <div className="integration">
+    <div>
       <AppNavbar />
-      <div className="wrapcontent">
-        <div className="wrapcalendar">
-          <div className="left">
-            {iconGoogle} <h4 className="calendarName">Calendar</h4>
-          </div>
-          <div className="right">{renderConnectButton()}</div>
+      <Paper>
+        <div className="wrapcontent">
+          <Container>
+
+            <Typography>
+              {iconGoogle}
+              Calendar
+              </Typography>
+            {renderConnectButton()}
+          </Container>
         </div>
-      </div>
-      <div className="wrapcontent">
-        <h4>Configuration</h4>
-        <div className="wrapcalendar">
-          <div className="half">
-            <PushCalendar user={user} calendarList={calendarList} />
-          </div>
-          <div className="half">
-            <PullCalendars user={user} calendarList={calendarList} />
-          </div>
+        <div className="wrapcontent">
+          <Typography variant="h4">Configuration</Typography>
+          <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
+          >
+            <Card className="half">
+              <PushCalendar user={user} calendarList={calendarList} />
+            </Card>
+            <Card className="half">
+              <PullCalendars user={user} calendarList={calendarList} />
+            </Card>
+          </Grid>
         </div>
-      </div>
+      </Paper>
     </div>
   );
 };

@@ -2,12 +2,10 @@
   width: 100%;
   top: 0;
   left: 0;
-  background-color: #326980;
 }
+
 .landing {
   height: 100vh;
-  background-color: #bee2f0;
-  background-image: linear-gradient(135deg, #bee2f0 43%, #bdc0e0 76%);
 }
 
 .section {

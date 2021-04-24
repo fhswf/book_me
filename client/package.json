@@ -10,22 +10,23 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/react-fontawesome": "^0.1.11",
     "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
-    "axios": "^0.20.0",
-    "bootstrap": "^4.5.3",
+    "axios": "^0.21.1",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
+    "primeicons": "^4.1.0",
+    "primereact": "^6.0.2",
     "react": "^16.14.0",
     "react-available-times": "^1.4.0",
-    "react-bootstrap": "^1.4.0",
     "react-datepicker": "^3.3.0",
     "react-dom": "^16.14.0",
     "react-google-login": "^5.1.22",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.0",
+    "react-scripts": "^4.0.2",
     "react-time-picker": "^4.0.1",
     "react-toastify": "^6.0.9"
   },
@@ -51,6 +52,7 @@
     ]
   },
   "devDependencies": {
-    "dotenv-cli": "^4.0.0"
+    "dotenv-cli": "^4.0.0",
+    "node-sass": "^5.0.0"
   }
 }
