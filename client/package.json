@@ -1,8 +1,18 @@
 {
-  "name": "client",
-  "version": "0.1.0",
+  "name": "bookme-client",
+  "version": "1.0.0",
   "private": true,
   "homepage": "https://jupiter.fh-swf.de/bookme",
+  "contributors": [
+    {
+      "name": "Felix Hinnemann"
+    },
+    {
+      "name": "Christian Gawron",
+      "email": "gawron.christian@fh-swf.de"
+    }
+  ],
+  "license": "MIT",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.34",
     "@fortawesome/free-brands-svg-icons": "^5.15.1",
