@@ -4,6 +4,12 @@ import Datepicker from "../components/datepicker";
 
 import "../styles/booking.css";
 
+import { makeStyles } from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
+import Link from '@material-ui/core/Link';
+import Typography from '@material-ui/core/Typography';
+import { EventAvailable, HourglassFull, Room } from '@material-ui/icons';
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
@@ -70,25 +76,25 @@ const Booking = () => {
       <div className="booking">
         <div className="bookingwrapper">
           <div className="booking-header">
-            <h1>{iconCal} Bookme</h1>
+            <h1><EventAvailable style={{ fontSize: 40 }} color="primary" /> Bookme</h1>
           </div>
           <div className="booking-container">
             <div className="leftpanel">
               <div className="leftpanelcontent">
-                <a className="btn-back" onClick={handleBackClick}>
+                <Link onClick={handleBackClick}>
                   {iconArrowLeft}
-                </a>
+                </Link>
                 <div className="profileinfo">
-                  <img alt="profile" src={user.picture_url}/>
+                  <Avatar alt={user.name} src={user.picture_url} />
                   <h4 className="username">{user.name}</h4>
                   <h1 className="eventname">{event.name}</h1>
                 </div>
                 <div className="eventinfo">
                   <p className="eventdata">
-                    {iconTime} {event.duration} Minutes
+                    <HourglassFull /> {event.duration} Minutes
                   </p>
                   <p className="eventdata">
-                    {iconLocation} {event.location}
+                    <Room /> {event.location}
                   </p>
                 </div>
               </div>

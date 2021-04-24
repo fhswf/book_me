@@ -1,8 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import "bootstrap/dist/css/bootstrap.min.css";
+//import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
+
 
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
