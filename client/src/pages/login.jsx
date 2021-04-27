@@ -4,10 +4,15 @@ import { isAuthenticated, authenticate } from "../helpers/helpers";
 import { Redirect, Link, useHistory } from "react-router-dom";
 import { GoogleLogin } from "react-google-login";
 import { postGoogleLogin, postLogin } from "../helpers/services/auth_services";
+import { Button, TextField } from '@material-ui/core';
 import "../styles/login.css";
+
+/*
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
+*/
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSignInAlt,
@@ -18,6 +23,7 @@ import {
   faCalendar,
 } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+
 const iconSignIn = <FontAwesomeIcon icon={faSignInAlt} />;
 const iconUserPlus = <FontAwesomeIcon icon={faUserPlus} />;
 const iconEmail = <FontAwesomeIcon icon={faEnvelope} />;
@@ -109,33 +115,24 @@ const Login = () => {
         </div>
         <p>Login to your Bookme account</p>
         <div className="loginbox">
-          <Form onSubmit={handleOnSubmit}>
-            <Form.Group controlId="email">
-              <InputGroup>
-                <InputGroup.Prepend>
-                  <InputGroup.Text>{iconEmail}</InputGroup.Text>
-                </InputGroup.Prepend>
-                <Form.Control
-                  type="email"
-                  placeholder="name@example.com"
-                  onChange={handleChangeEvent("email")}
-                  value={email}
-                />
-              </InputGroup>
-            </Form.Group>
-            <Form.Group controlId="password">
-              <InputGroup>
-                <InputGroup.Prepend>
-                  <InputGroup.Text>{iconLock}</InputGroup.Text>
-                </InputGroup.Prepend>
-                <Form.Control
-                  type="password"
-                  placeholder="Password"
-                  onChange={handleChangeEvent("password")}
-                  value={password}
-                />
-              </InputGroup>
-            </Form.Group>
+          <form onSubmit={handleOnSubmit}>
+
+
+            <TextField
+              type="email"
+              label="Email"
+              placeholder="name@example.com"
+              onChange={handleChangeEvent("email")}
+              value={email}
+            />
+
+            <TextField
+              type="password"
+              label="Password"
+              onChange={handleChangeEvent("password")}
+              value={password}
+            />
+
 
             <Button variant="primary" type="submit">
               {iconSignIn} {changeBtnTxt}
@@ -169,7 +166,7 @@ const Login = () => {
             >
               {iconUserPlus} Sign up
             </Button>
-          </Form>
+          </form>
         </div>
       </div>
     </div>

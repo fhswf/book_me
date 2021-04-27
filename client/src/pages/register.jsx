@@ -8,10 +8,6 @@ import { postToRegister } from "../helpers/services/auth_services";
 
 import "../styles/register.css";
 
-/*------------ Bootstrap Stuff  --------------*/
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import Button from "react-bootstrap/Button";
 
 /*------------Font Awesome Icons --------------*/
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -94,82 +90,11 @@ const Register = ({ history }) => {
         <div className="calIcon" onClick={onIconClick}>
           {iconCal} Bookme
         </div>
+
         <p>Sign up for Bookme</p>
-        <div className="registerbox">
-          <Form onSubmit={handleOnSubmit}>
-            <Form.Group controlId="name">
-              <InputGroup>
-                <InputGroup.Prepend>
-                  <InputGroup.Text>{iconUser}</InputGroup.Text>
-                </InputGroup.Prepend>
-                <Form.Control
-                  type="name"
-                  placeholder="Name"
-                  onChange={handleChangeEvent("name")}
-                  value={name}
-                />
-              </InputGroup>
-            </Form.Group>
+        To be done via Auth0.
 
-            <Form.Group controlId="email">
-              <InputGroup>
-                <InputGroup.Prepend>
-                  <InputGroup.Text>{iconEmail}</InputGroup.Text>
-                </InputGroup.Prepend>
-                <Form.Control
-                  type="email"
-                  placeholder="name@example.com"
-                  onChange={handleChangeEvent("email")}
-                  value={email}
-                />
-              </InputGroup>
-            </Form.Group>
 
-            <Form.Group controlId="password">
-              <InputGroup>
-                <InputGroup.Prepend>
-                  <InputGroup.Text>{iconLock}</InputGroup.Text>
-                </InputGroup.Prepend>
-                <Form.Control
-                  type="password"
-                  placeholder="Password"
-                  onChange={handleChangeEvent("password")}
-                  value={password}
-                />
-              </InputGroup>
-            </Form.Group>
-
-            <Form.Group controlId="password2">
-              <InputGroup>
-                <InputGroup.Prepend>
-                  <InputGroup.Text>{iconLock}</InputGroup.Text>
-                </InputGroup.Prepend>
-                <Form.Control
-                  type="password"
-                  placeholder="Reapeat password"
-                  onChange={handleChangeEvent("password2")}
-                  value={password2}
-                />
-              </InputGroup>
-            </Form.Group>
-
-            <Button variant="primary" type="submit">
-              {iconUserPlus} {changeBtnTxt}
-            </Button>
-
-            <p>Already got an Account?</p>
-
-            <Button
-              variant="info"
-              as={Link}
-              to="/login"
-              role="button"
-              target="_self"
-            >
-              {iconSignIn} Sign in
-            </Button>
-          </Form>
-        </div>
       </div>
     </div>
   );
