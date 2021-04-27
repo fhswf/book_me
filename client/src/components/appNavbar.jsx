@@ -18,6 +18,8 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuIcon from '@material-ui/icons/Menu';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles } from '@material-ui/core/styles';
 
 //import "../styles/topbar.scss";
@@ -118,6 +120,15 @@ const AppNavbar = () => {
     (<MenuItem onClick={handleLogout}>Log Out</MenuItem>) :
     (<MenuItem onClick={handleLogin}>Log In</MenuItem>)
 
+  const userMenu = (
+    <>
+      < MenuItem onClick={handleMenuClose} >
+        <ListItemIcon><CalendarTodayIcon fontSize="small" /></ListItemIcon>
+        <ListItemText>Profile</ListItemText></MenuItem>
+      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+    </>
+  )
+
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -128,8 +139,7 @@ const AppNavbar = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      {userMenu}
       {loginout}
     </Menu>
   );

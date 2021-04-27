@@ -1,11 +1,15 @@
 import React from "react";
+
+/*
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+*/
+
 import { Redirect, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { isAuthenticated } from "../helpers/helpers";
 import { postToActivate } from "../helpers/services/auth_services";
-
+import { Button } from '@material-ui/core';
 import "../styles/activation.css";
 
 /*------------Font Awesome Icons --------------*/
@@ -38,7 +42,7 @@ const Activate = ({ match }) => {
       <div className="activate-container">
         <h3>{iconCal} Welcome to Bookme</h3>
         <div className="activatebox">
-          <Form onSubmit={handleOnSubmit}>
+          <form onSubmit={handleOnSubmit}>
             <Button variant="primary" type="submit">
               {iconUserPlus} Activate your Account
             </Button>
@@ -51,7 +55,7 @@ const Activate = ({ match }) => {
             >
               {iconSignIn} Sign in
             </Button>
-          </Form>
+          </form>
         </div>
       </div>
     </div>

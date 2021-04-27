@@ -4,7 +4,10 @@ import "../styles/finished.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
+/*
 import { Button } from "react-bootstrap";
+*/
+import { Button } from '@material-ui/core';
 const iconCal = <FontAwesomeIcon icon={faCalendar} />;
 
 const Finished = () => {

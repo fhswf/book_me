@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 
 import "../styles/details.css";
+/*
 import { Form, InputGroup, Button } from "react-bootstrap";
+*/
+import { Button, TextField } from '@material-ui/core';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,
@@ -91,56 +94,44 @@ const Bookdetails = () => {
               <h4>{iconCal} Bookme</h4>
             </div>
             <div className="wrapform">
-              <Form onSubmit={handleOnSubmit}>
-                <Form.Group controlId="name">
-                  <Form.Label>Name*</Form.Label>
-                  <InputGroup>
-                    <InputGroup.Prepend>
-                      <InputGroup.Text>{iconUser}</InputGroup.Text>
-                    </InputGroup.Prepend>
-                    <Form.Control
-                      type="name"
-                      placeholder="Name"
-                      onChange={handleChangeEvent("name")}
-                      value={name}
-                    />
-                  </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="email">
-                  <Form.Label>E-Mail*</Form.Label>
-                  <InputGroup>
-                    <InputGroup.Prepend>
-                      <InputGroup.Text>{iconEmail}</InputGroup.Text>
-                    </InputGroup.Prepend>
-                    <Form.Control
-                      type="email"
-                      placeholder="name@example.com"
-                      onChange={handleChangeEvent("email")}
-                      value={email}
-                    />
-                  </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="description">
-                  <Form.Label>Description</Form.Label>
-                  <InputGroup>
-                    <Form.Control
-                      as="textarea"
-                      type="description"
-                      placeholder="Anything that could be helpful for me"
-                      onChange={handleChangeEvent("description")}
-                      value={description}
-                    />
-                  </InputGroup>
-                </Form.Group>
+              <form onSubmit={handleOnSubmit}>
+
+                <TextField
+                  type="text"
+                  label="Name"
+                  required
+                  onChange={handleChangeEvent("name")}
+                  value={name}
+                />
+
+
+                <TextField
+                  type="email"
+                  label="Email"
+                  required
+                  placeholder="name@example.com"
+                  onChange={handleChangeEvent("email")}
+                  value={email}
+                />
+
+                <TextField
+                  type="text"
+                  label="Additional information"
+                  placeholder="Anything that could be helpful to prepare the appointment"
+                  multiline
+                  onChange={handleChangeEvent("description")}
+                  value={description}
+                />
+
                 <Button variant="primary" type="submit">
                   Confirm
                 </Button>
-              </Form>
+              </form>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 

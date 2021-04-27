@@ -1,8 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-
-  "start_url": "http://localhost:3000/bookme/landing",
+  "short_name": "APPointment",
+  "name": "APPointment",
+  "start_url": "%PUBLIC_URL%/bookme/landing",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"

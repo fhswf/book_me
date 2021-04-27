@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
 import { useHistory, useLocation } from "react-router-dom";
-import { Button } from "react-bootstrap";
+
+import { Button } from '@material-ui/core';
+
 import { ToastContainer, toast } from "react-toastify";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -94,13 +96,13 @@ const Datepicker = () => {
 
   function setAvailableTimes(selectedDay) {
     getAvailableTimes(selectedDay, event.url, user._id)
-    .then((res) => {
-      console.log('slots: %j', res.data);
-      setSlots(res.data);
-    })
-    .catch((err) => {
-      toast.error('failed to get available times')
-    });
+      .then((res) => {
+        console.log('slots: %j', res.data);
+        setSlots(res.data);
+      })
+      .catch((err) => {
+        toast.error('failed to get available times')
+      });
   }
 
   const getTimes = () => {

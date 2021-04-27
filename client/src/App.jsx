@@ -4,10 +4,12 @@ import { getUserById } from "./helpers/services/user_services";
 import EventList from "./components/eventlist";
 import AppNavbar from "./components/appNavbar";
 
+import { Button, Table } from '@material-ui/core';
+
 import { signout } from "./helpers/helpers";
 
 import "./styles/app.css";
-import { Navbar, Nav, Table, Button } from "react-bootstrap";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
@@ -27,6 +29,7 @@ const App = () => {
           signout();
           history.push("/landing");
         } else {
+          console.log("getUserById: %o", res)
           setUser(res.data);
         }
         if (!res.data.google_tokens || !res.data.google_tokens.access_token) {
@@ -43,13 +46,13 @@ const App = () => {
   const renderConnectButton = () => {
     if (connected) {
       return (
-        <Button className="mybtn" as={Link} to="/addevent">
+        <Button href="addevent">
           {iconPlus} Add Event
         </Button>
       );
     } else {
       return (
-        <Link className="calcon" as={Link} to="/integration">
+        <Link className="calcon" as={Link} href="integration">
           You need to connect your Calendar first, before you can add Events!
         </Link>
       );
@@ -58,10 +61,11 @@ const App = () => {
 
   const renderList = () => {
     if (connected) {
-      return <EventList></EventList>;
+      return <EventList url={user.user_url} />;
     }
   };
 
+  // TODO: Remove Table
   return (
     <div className="app">
       <AppNavbar />
