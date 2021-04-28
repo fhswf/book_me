@@ -2,19 +2,31 @@ import React, { useEffect, useState } from "react";
 
 import { useParams, useHistory } from "react-router-dom";
 
-import "../styles/planing.css";
+import { makeStyles } from '@material-ui/core/styles';
+import { Avatar, Box, Card, CardHeader, CardContent, Container, Grid, IconButton, Link, Paper, Typography } from '@material-ui/core';
+import HourglassFullIcon from '@material-ui/icons/HourglassFull';
+import ScheduleIcon from '@material-ui/icons/Schedule';
+import RoomIcon from '@material-ui/icons/Room';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { getActiveEvents } from "../helpers/services/event_services";
 import { getUserByUrl } from "../helpers/services/user_services";
-const iconArrowLeft = <FontAwesomeIcon icon={faArrowLeft} />;
-const iconArrowRight = <FontAwesomeIcon icon={faArrowRight} />;
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    display: 'grid',
+    gridTemplateColumns: '1.5em 1fr',
+    gridGap: theme.spacing(1),
+    alignItems: "center",
+    verticalAlign: "center",
+    paddingBottom: "16px",
+  }
+}));
 
 const Planing = () => {
   const history = useHistory();
+  const classes = useStyles();
 
-  let { user_url } = useParams();
+  const { user_url } = useParams();
 
   const [connected, setConnected] = useState(false);
   const [events, setEvents] = useState([]);
@@ -22,6 +34,7 @@ const Planing = () => {
     name: "",
     welcome: "",
   });
+
 
   useEffect(() => {
     getUserByUrl(user_url)
@@ -67,40 +80,76 @@ const Planing = () => {
     event.preventDefault();
     history.push("/app");
   };
+
   const renderEventlist = () => {
     if (!connected) {
       return <h4 className="noevents">No Events to book</h4>;
     } else {
       return (
-        <ul>
-          {events.map((events) => (
-            <li
-              key={events._id}
-              onClick={function (event) {
-                event.preventDefault();
-                handleOnClick(events);
-              }}
-            >
-              {events.name} {iconArrowRight}
-            </li>
-          ))}
-        </ul>
+        <Grid
+          container
+          spacing={3}
+          direction="row"
+          justify="flex-start"
+          alignItems="flex-start" >
+          {
+            events.map((event) => (
+              <Grid item>
+                <Card>
+                  <CardHeader
+                    avatar={
+                      <Avatar alt={user.name} src={user.picture_url} />
+                    }
+                    action={
+                      <IconButton aria-label="schedule" onClick={(evt) => {
+                        evt.preventDefault();
+                        handleOnClick(event);
+                      }}>
+                        <ScheduleIcon />
+                      </IconButton>
+                    }
+                    title={event.name}
+
+                  />
+                  <CardContent>
+                    <div className={classes.container}>
+                      <div lassName={classes.item}>
+                        <HourglassFullIcon />
+                      </div>
+                      <div className={classes.item}>
+                        {event.duration + " minutes"}
+                      </div>
+
+                      <div className={classes.item}>
+                        <RoomIcon />
+                      </div>
+                      <div className={classes.item}>
+                        {event.location}
+                      </div>
+                    </div>
+                    {event.description}
+                  </CardContent>
+
+                </Card>
+              </Grid>
+            ))
+          }
+        </Grid >
       );
     }
   };
 
   return (
-    <div className="planing">
-      <div className="eventcontainer">
-        <div className="planingborder">
-          <div className="planingdetails">
-            <h1>{user.name}</h1>
-            <h3>{user.welcome}</h3>
-          </div>
-        </div>
-        <div className="planinglist">{renderEventlist()}</div>
-      </div>
-    </div>
+    <Container>
+
+      <Typography variant="h3" gutterBottom>Schedule an appointment with {user.name}</Typography>
+      Please select the type of appointment you need and click on the schedule button to book it.
+      You will get a list of available slots in my schedule.
+      <Box p="1em">
+        {renderEventlist()}
+      </Box>
+
+    </Container>
   );
 };
 

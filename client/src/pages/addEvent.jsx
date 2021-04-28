@@ -23,15 +23,9 @@ import { spacing } from '@material-ui/system';
 import { makeStyles } from '@material-ui/core/styles';
 
 import AppNavbar from "../components/appNavbar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faCalendarCheck,
-} from "@fortawesome/free-solid-svg-icons";
 import { saveUserEvent } from "../helpers/services/event_services";
 
-const iconArrowLeft = <FontAwesomeIcon icon={faArrowLeft} />;
-const calendarCheck = <FontAwesomeIcon icon={faCalendarCheck} size="1x" />;
+
 
 const useStyles = makeStyles((theme) => ({
   row: {
@@ -436,74 +430,37 @@ const AddEvent = () => {
                       cbEndTime={handleOnChange("endtimewen")}
                     />
 
-                    <Grid item xs={6}>
-                      <TextField
-                        type="time"
-                        label="Thu"
-                        placeholder="Starttime"
-                        onChange={handleOnChange("starttimethu")}
-                        value={starttimethu}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        type="time"
-                        placeholder="Endtime"
-                        onChange={handleOnChange("endtimethu")}
-                        value={endtimethu}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        type="time"
-                        label="Fri"
-                        placeholder="Starttime"
-                        onChange={handleOnChange("starttimefri")}
-                        value={starttimefri}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        type="time"
-                        placeholder="Endtime"
-                        onChange={handleOnChange("endtimefri")}
-                        value={endtimefri}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        type="time"
-                        label="Sat"
-                        placeholder="Starttime"
-                        onChange={handleOnChange("starttimesat")}
-                        value={starttimesat}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        type="time"
-                        placeholder="Endtime"
-                        onChange={handleOnChange("endtimesat")}
-                        value={endtimesat}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        type="time"
-                        label="Sun"
-                        placeholder="Starttime"
-                        onChange={handleOnChange("starttimesun")}
-                        value={starttimesun}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        type="time"
-                        placeholder="Endtime"
-                        onChange={handleOnChange("endtimesun")}
-                        value={endtimesun}
-                      />
-                    </Grid>
+                    <TimesForDay
+                      day="Thu"
+                      start={starttimethu}
+                      end={endtimethu}
+                      cbStartTime={handleOnChange("starttimethu")}
+                      cbEndTime={handleOnChange("endtimethu")}
+                    />
+
+                    <TimesForDay
+                      day="Fri"
+                      start={starttimefri}
+                      end={endtimefri}
+                      cbStartTime={handleOnChange("starttimefri")}
+                      cbEndTime={handleOnChange("endtimefri")}
+                    />
+
+                    <TimesForDay
+                      day="Sat"
+                      start={starttimesat}
+                      end={endtimesat}
+                      cbStartTime={handleOnChange("starttimesat")}
+                      cbEndTime={handleOnChange("endtimesat")}
+                    />
+
+                    <TimesForDay
+                      day="Sun"
+                      start={starttimesun}
+                      end={endtimesun}
+                      cbStartTime={handleOnChange("starttimesun")}
+                      cbEndTime={handleOnChange("endtimesun")}
+                    />
 
                   </Grid>
                 </Grid>

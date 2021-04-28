@@ -6,24 +6,11 @@ import "../styles/details.css";
 import { Form, InputGroup, Button } from "react-bootstrap";
 */
 import { Button, TextField } from '@material-ui/core';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEnvelope,
-  faUser,
-  faArrowLeft,
-  faMapMarkerAlt,
-  faHourglass,
-  faCalendar,
-} from "@fortawesome/free-solid-svg-icons";
+
 import { insertIntoGoogle } from "../helpers/services/google_services";
 import { toast, ToastContainer } from "react-toastify";
 
-const iconEmail = <FontAwesomeIcon icon={faEnvelope} />;
-const iconUser = <FontAwesomeIcon icon={faUser} />;
-const iconArrowLeft = <FontAwesomeIcon icon={faArrowLeft} />;
-const iconLocation = <FontAwesomeIcon icon={faMapMarkerAlt} />;
-const iconTime = <FontAwesomeIcon icon={faHourglass} />;
-const iconCal = <FontAwesomeIcon icon={faCalendar} />;
+
 
 const Bookdetails = () => {
   const history = useHistory();
@@ -72,7 +59,7 @@ const Bookdetails = () => {
           <div className="detailsleft">
             <div className="leftpanelcontent">
               <a className="btn-back" onClick={handleBackClick}>
-                {iconArrowLeft}
+                "iconArrowLeft"
               </a>
               <div className="profileinfo">
                 <h4 className="username">{username}</h4>
@@ -80,10 +67,10 @@ const Bookdetails = () => {
               </div>
               <div className="eventinfo">
                 <p className="eventdata">
-                  {iconTime} {event.duration} Minutes
+                  "iconTime" {event.duration} Minutes
                 </p>
                 <p className="eventdata">
-                  {iconLocation} {event.location}
+                  "iconLocation" {event.location}
                 </p>
                 <p className="time">{time}</p>
               </div>
@@ -91,7 +78,7 @@ const Bookdetails = () => {
           </div>
           <div className="detailsright">
             <div>
-              <h4>{iconCal} Bookme</h4>
+              <h4>"iconCal" Bookme</h4>
             </div>
             <div className="wrapform">
               <form onSubmit={handleOnSubmit}>

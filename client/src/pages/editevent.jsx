@@ -21,13 +21,7 @@ import { toast } from "react-toastify";
 import { getEventByID, updateEvent } from "../helpers/services/event_services";
 import { useHistory } from "react-router-dom";
 import { signout } from "../helpers/helpers";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faCalendarCheck,
-} from "@fortawesome/free-solid-svg-icons";
 
-const iconArrowLeft = <FontAwesomeIcon icon={faArrowLeft} />;
 
 const EditEvent = ({ match }) => {
   const eventID = match.params.id;
@@ -210,7 +204,7 @@ const EditEvent = ({ match }) => {
           <div className="subheader">
             <div className="header-back">
               <a className="btn-back" onClick={handleBackClick}>
-                {iconArrowLeft}
+                "iconArrowLeft"
               </a>
             </div>
             <div className="headertitel">

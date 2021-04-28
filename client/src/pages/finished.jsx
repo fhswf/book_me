@@ -2,13 +2,10 @@ import React from "react";
 import { useLocation, Link } from "react-router-dom";
 import "../styles/finished.css";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 /*
 import { Button } from "react-bootstrap";
 */
 import { Button } from '@material-ui/core';
-const iconCal = <FontAwesomeIcon icon={faCalendar} />;
 
 const Finished = () => {
   const location = useLocation();
@@ -20,7 +17,7 @@ const Finished = () => {
     <div className="finished">
       <div className="wrapper">
         <div className="finishedbox">
-          <p className="icon">{iconCal} Bookme</p>
+          <p className="icon">Bookme</p>
           <h2 className="title">
             You booked the appointment "{event.name}" on
           </h2>
