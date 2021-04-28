@@ -13,24 +13,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 */
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSignInAlt,
-  faUserPlus,
-  faEnvelope,
-  faLock,
-  faSpinner,
-  faCalendar,
-} from "@fortawesome/free-solid-svg-icons";
-import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
-const iconSignIn = <FontAwesomeIcon icon={faSignInAlt} />;
-const iconUserPlus = <FontAwesomeIcon icon={faUserPlus} />;
-const iconEmail = <FontAwesomeIcon icon={faEnvelope} />;
-const iconLock = <FontAwesomeIcon icon={faLock} />;
-const iconSpinner = <FontAwesomeIcon icon={faSpinner} pulse />;
-const iconCal = <FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>;
-const iconGoogle = <FontAwesomeIcon icon={faGoogle}></FontAwesomeIcon>;
 
 const Login = () => {
   const history = useHistory();
@@ -73,7 +56,7 @@ const Login = () => {
   const handleOnSubmit = (event) => {
     event.preventDefault();
     if (email && password) {
-      setFormData({ ...formData, changeBtnTxt: iconSpinner });
+      setFormData({ ...formData, changeBtnTxt: "Waiting" });
       postLogin(email, password)
         .then((res) => {
           authenticate(res, () => {
@@ -81,7 +64,7 @@ const Login = () => {
               ...formData,
               email: "",
               password: "",
-              changeBtnTxt: iconSpinner,
+              changeBtnTxt: "Waiting",
             });
             isAuthenticated();
             toast.success(`Hey ${res.data.user.name}, Welcome back!`);
@@ -111,7 +94,7 @@ const Login = () => {
       <ToastContainer />
       <div className="login-container">
         <div className="calIcon" onClick={onIconClick}>
-          {iconCal} Bookme
+          Bookme
         </div>
         <p>Login to your Bookme account</p>
         <div className="loginbox">
@@ -135,7 +118,7 @@ const Login = () => {
 
 
             <Button variant="primary" type="submit">
-              {iconSignIn} {changeBtnTxt}
+              {changeBtnTxt}
             </Button>
 
             <p></p>
@@ -150,7 +133,7 @@ const Login = () => {
                   onClick={renderProps.onClick}
                   disabled={renderProps.disabled}
                 >
-                  {iconGoogle} Sign in with Google
+                  Sign in with Google
                 </Button>
               )}
             ></GoogleLogin>
@@ -164,7 +147,7 @@ const Login = () => {
               role="button"
               target="_self"
             >
-              {iconUserPlus} Sign up
+              Sign up
             </Button>
           </form>
         </div>

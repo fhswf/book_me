@@ -13,16 +13,6 @@ import { Button } from '@material-ui/core';
 import "../styles/activation.css";
 
 /*------------Font Awesome Icons --------------*/
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUserPlus,
-  faSignInAlt,
-  faCalendar,
-} from "@fortawesome/free-solid-svg-icons";
-
-const iconUserPlus = <FontAwesomeIcon icon={faUserPlus} />;
-const iconSignIn = <FontAwesomeIcon icon={faSignInAlt} />;
-const iconCal = <FontAwesomeIcon icon={faCalendar} size="xs" />;
 
 const Activate = ({ match }) => {
   const handleOnSubmit = (e) => {
@@ -40,11 +30,11 @@ const Activate = ({ match }) => {
     <div className="activate">
       <ToastContainer autoClose={2500} />
       <div className="activate-container">
-        <h3>{iconCal} Welcome to Bookme</h3>
+        <h3> Welcome to Bookme</h3>
         <div className="activatebox">
           <form onSubmit={handleOnSubmit}>
             <Button variant="primary" type="submit">
-              {iconUserPlus} Activate your Account
+              Activate your Account
             </Button>
             <p>Already got an Account?</p>
             <Button
@@ -53,7 +43,7 @@ const Activate = ({ match }) => {
               role="button"
               target="_self"
             >
-              {iconSignIn} Sign in
+              Sign in
             </Button>
           </form>
         </div>

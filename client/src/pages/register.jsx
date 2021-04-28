@@ -9,24 +9,7 @@ import { postToRegister } from "../helpers/services/auth_services";
 import "../styles/register.css";
 
 
-/*------------Font Awesome Icons --------------*/
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSignInAlt,
-  faSpinner,
-  faUserPlus,
-  faEnvelope,
-  faUser,
-  faLock,
-  faCalendar,
-} from "@fortawesome/free-solid-svg-icons";
-const iconSpinner = <FontAwesomeIcon icon={faSpinner} pulse />;
-const iconSignIn = <FontAwesomeIcon icon={faSignInAlt} />;
-const iconUserPlus = <FontAwesomeIcon icon={faUserPlus} />;
-const iconEmail = <FontAwesomeIcon icon={faEnvelope} />;
-const iconUser = <FontAwesomeIcon icon={faUser} />;
-const iconLock = <FontAwesomeIcon icon={faLock} />;
-const iconCal = <FontAwesomeIcon icon={faCalendar} />;
+
 
 const Register = ({ history }) => {
   const [formData, setFormData] = useState({
@@ -46,7 +29,7 @@ const Register = ({ history }) => {
     event.preventDefault();
     if (name && email && password) {
       if (password === password2) {
-        setFormData({ ...formData, changeBtnTxt: iconSpinner });
+        setFormData({ ...formData, changeBtnTxt: "wait" });
         postToRegister(name, email, password)
           .then((res) => {
             toast.success(res.data.message);
@@ -88,7 +71,7 @@ const Register = ({ history }) => {
       {isAuthenticated() ? <Redirect to="/" /> : null}
       <div className="register-container">
         <div className="calIcon" onClick={onIconClick}>
-          {iconCal} Bookme
+          Bookme
         </div>
 
         <p>Sign up for Bookme</p>

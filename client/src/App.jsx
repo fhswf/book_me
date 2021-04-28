@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link as RouterLink, useHistory } from "react-router-dom";
 import { getUserById } from "./helpers/services/user_services";
-import EventList from "./components/eventlist";
+import EventList from "./components/eventList";
 import AppNavbar from "./components/appNavbar";
 
-import { Button, Table } from '@material-ui/core';
+import { Box, Button, Container, Grid, Link, Paper, Typography } from '@material-ui/core';
+import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
+import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
+
+import AddIcon from '@material-ui/icons/Add';
 
 import { signout } from "./helpers/helpers";
-
-import "./styles/app.css";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-
-const iconPlus = <FontAwesomeIcon icon={faPlus} size="xs" />;
 
 const App = () => {
   const history = useHistory();
@@ -39,20 +35,21 @@ const App = () => {
         }
       })
       .catch((err) => {
-        toast.error(err);
+        // TODO: Add SnackBar
+        //toast.error(err);
       });
   }, []);
 
   const renderConnectButton = () => {
     if (connected) {
       return (
-        <Button href="addevent">
-          {iconPlus} Add Event
-        </Button>
+        <Button href="addevent" variant="contained" startIcon={<AddIcon />}>
+          Add Event Type
+        </Button >
       );
     } else {
       return (
-        <Link className="calcon" as={Link} href="integration">
+        <Link component={RouterLink} className="calcon" as={Link} to="integration">
           You need to connect your Calendar first, before you can add Events!
         </Link>
       );
@@ -67,32 +64,30 @@ const App = () => {
 
   // TODO: Remove Table
   return (
-    <div className="app">
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <AppNavbar />
+      <Paper>
+        <Box p="1em">
+          <Typography variant="h3" gutterBottom>My Event Types</Typography>
+          <Grid container justify="space-between" alignItems="center">
+            <Grid item>
+              {user.name}<br />
+              <Link
+                component={RouterLink}
+                to={"/users/" + user.user_url}
+              >
+                {history.createHref({ pathname: `/users/${user.user_url}` })}
+              </Link>
+            </Grid>
+            <Grid item>{renderConnectButton()}</Grid>
+          </Grid>
+        </Box>
 
-      <div className="wrap-event-list">
-        <div className="event-list">
-          <Table className="table-list">
-            <tbody>
-              <tr>
-                <td className="profileinfo">
-                  {user.name}
-                  <br></br>
-
-                  <a
-                    href={process.env.REACT_APP_URL + "/users/" + user.user_url}
-                  >
-                    Your Link: {user.user_url}
-                  </a>
-                </td>
-                <td className="addeventbtn">{renderConnectButton()}</td>
-              </tr>
-            </tbody>
-          </Table>
+        <Box p="1em">
           {renderList()}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Paper>
+    </LocalizationProvider>
   );
 };
 
