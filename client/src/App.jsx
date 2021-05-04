@@ -62,14 +62,13 @@ const App = () => {
     }
   };
 
-  // TODO: Remove Table
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <AppNavbar />
-      <Paper>
+      <Container>
         <Box p="1em">
           <Typography variant="h3" gutterBottom>My Event Types</Typography>
-          <Grid container justify="space-between" alignItems="center">
+          <Grid container justifyContent="space-between" alignItems="center">
             <Grid item>
               {user.name}<br />
               <Link
@@ -86,7 +85,7 @@ const App = () => {
         <Box p="1em">
           {renderList()}
         </Box>
-      </Paper>
+      </Container>
     </LocalizationProvider>
   );
 };
