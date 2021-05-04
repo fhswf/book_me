@@ -1,25 +1,16 @@
 import React, { useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 
-import "../styles/details.css";
-/*
-import { Form, InputGroup, Button } from "react-bootstrap";
-*/
-import { Button, TextField } from '@material-ui/core';
-
+import { Box, Button, Grid, TextField } from '@material-ui/core';
 import { insertIntoGoogle } from "../helpers/services/google_services";
-import { toast, ToastContainer } from "react-toastify";
 
 
-
-const Bookdetails = () => {
+const Bookdetails = (props) => {
   const history = useHistory();
-  const location = useLocation();
-  const username = location.state.name;
-  const userid = location.state.userid;
-  const event = location.state.event;
-  let time = location.state.selected.toString().split("G")[0];
-  time = time.slice(0, -4);
+  const start = props.start;
+  const userid = props.userid;
+  const username = props.username;
+  const event = props.event;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -31,94 +22,69 @@ const Bookdetails = () => {
   const handleOnSubmit = (e) => {
     e.preventDefault();
     if (name && email) {
-      insertIntoGoogle(userid, event, time, name, email, description).then(
+      insertIntoGoogle(username, event, start, name, email, description).then(
         () => {
-          toast.success("Event successfully booked!");
+          //toast.success("Event successfully booked!");
           history.push({
             pathname: `/booked`,
-            state: { username, event, time },
+            state: { userid: userid, event, time: start },
           });
         }
       );
     } else {
-      toast.error("Please fill in your name and email!");
+      //toast.error("Please fill in your name and email!");
     }
   };
-  const handleChangeEvent = (text) => (event) => {
+
+  const handleOnChange = (text) => (event) => {
     setFormData({ ...formData, [text]: event.target.value });
+    props.onChange(formData);
   };
   const handleBackClick = (event) => {
     event.preventDefault();
     history.goBack();
   };
   return (
-    <div className="details">
-      <ToastContainer> </ToastContainer>
-      <div className="detailswrapper">
-        <div className="detailscontainer">
-          <div className="detailsleft">
-            <div className="leftpanelcontent">
-              <a className="btn-back" onClick={handleBackClick}>
-                "iconArrowLeft"
-              </a>
-              <div className="profileinfo">
-                <h4 className="username">{username}</h4>
-                <h1 className="eventname">{event.name}</h1>
-              </div>
-              <div className="eventinfo">
-                <p className="eventdata">
-                  "iconTime" {event.duration} Minutes
-                </p>
-                <p className="eventdata">
-                  "iconLocation" {event.location}
-                </p>
-                <p className="time">{time}</p>
-              </div>
-            </div>
-          </div>
-          <div className="detailsright">
-            <div>
-              <h4>"iconCal" Bookme</h4>
-            </div>
-            <div className="wrapform">
-              <form onSubmit={handleOnSubmit}>
 
-                <TextField
-                  type="text"
-                  label="Name"
-                  required
-                  onChange={handleChangeEvent("name")}
-                  value={name}
-                />
-
-
-                <TextField
-                  type="email"
-                  label="Email"
-                  required
-                  placeholder="name@example.com"
-                  onChange={handleChangeEvent("email")}
-                  value={email}
-                />
-
-                <TextField
-                  type="text"
-                  label="Additional information"
-                  placeholder="Anything that could be helpful to prepare the appointment"
-                  multiline
-                  onChange={handleChangeEvent("description")}
-                  value={description}
-                />
-
-                <Button variant="primary" type="submit">
-                  Confirm
-                </Button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div >
-    </div >
+    <Grid container alignItems="stretch" direction="column">
+      <Grid item>
+        <TextField
+          label="Name"
+          required
+          fullWidth
+          helperText="Please provide your name"
+          margin="normal"
+          onChange={handleOnChange("name")}
+          variant="filled"
+          value={formData.name}
+        />
+      </Grid>
+      <Grid item>
+        <TextField
+          label="Email"
+          type="email"
+          required
+          fullWidth
+          helperText="You will receive a confirmation email"
+          margin="normal"
+          onChange={handleOnChange("email")}
+          variant="filled"
+          value={formData.email}
+        />
+      </Grid>
+      <Grid item>
+        <TextField
+          label="description"
+          multiline
+          minRows="4"
+          helperText="Please share anything that will help prepare for our meeting"
+          margin="normal"
+          onChange={handleOnChange("description")}
+          variant="filled"
+          value={formData.description}
+        />
+      </Grid>
+    </Grid>
   );
 };
 

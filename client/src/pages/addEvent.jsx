@@ -4,19 +4,8 @@ import { useHistory } from "react-router";
 import { toast } from "react-toastify";
 import { signout } from "../helpers/helpers";
 
-/*
 import {
-  Form,
-  FormGroup,
-  InputGroup,
-  Button,
-  FormControl,
-  Accordion,
-  Card,
-} from "react-bootstrap";
-*/
-import {
-  Accordion, Box, Button, Card, Container, Divider, FormControl, FormGroup, FormLabel, FormHelperText, Grid,
+  Box, Button, Card, Container, Divider, FilledInput, FormControl, FormGroup, FormLabel, FormHelperText, Grid,
   Input, InputAdornment, InputLabel, MenuItem, Select, TextField, Paper
 } from '@material-ui/core';
 import { spacing } from '@material-ui/system';
@@ -57,6 +46,7 @@ const TimesForDay = (props) => {
     props.cbEndTime(event);
   }
 
+  // TODO: Add Stepper
   return (
     <>
       <Grid item xs={6}>
@@ -370,7 +360,7 @@ const AddEvent = () => {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <FormControl margin="normal">
-                      <Input
+                      <FilledInput
                         id="rangedays"
                         value={rangedays}
                         type="number"

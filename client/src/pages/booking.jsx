@@ -1,18 +1,84 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import StaticDatePicker from '@material-ui/lab/StaticDatePicker';
+import { StaticDatePicker, PickersDay } from '@material-ui/lab';
 import Datepicker from "../components/datepicker";
 
-import { makeStyles } from '@material-ui/core/styles';
-import { Avatar, Button, Container, Link, Paper, Stepper, Step, StepLabel, TextField, Typography } from '@material-ui/core';
+import { createMuiTheme, makeStyles, responsiveFontSizes, ThemeProvider, StylesProvider } from '@material-ui/core/styles';
+import { Avatar, Box, Button, Container, Grid, Link, Paper, Stepper, Step, StepLabel, TextField, Typography } from '@material-ui/core';
 import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import { EventAvailable, HourglassFull, Room, Schedule } from '@material-ui/icons';
 
 import { getUserByUrl } from "../helpers/services/user_services";
 import { getEventByUrlAndUser } from "../helpers/services/event_services";
+import { getAvailableTimes } from "../helpers/services/event_services";
+import clsx from 'clsx';
+import de from "date-fns/locale/de";
+import { addMinutes, format } from 'date-fns';
+import Bookdetails from "./bookdetails";
+import { insertIntoGoogle } from "../helpers/services/google_services";
+
+
+const theme = createMuiTheme({
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          width: "100%"
+        }
+      }
+    },
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          borderRadius: "50%"
+        }
+      }
+    },
+    MuiTypography: {
+      defaultProps: {
+        variantMapping: {
+          h1: 'h3',
+          h2: 'h4',
+          h3: 'h5',
+          h4: 'h5',
+          h5: 'h6',
+          h6: 'h6',
+        },
+      },
+    },
+  },
+  typography: {
+    // In Chinese and Japanese the characters are usually larger,
+    // so a smaller fontsize may be appropriate.
+    //fontSize: 12,
+  },
+});
 
 const useStyles = makeStyles((theme) => ({
+  picker: {
+    "& button": {
+      borderRadius: "50%",
+      "&.highlight": {
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
+        '&:hover, &:focus': {
+          backgroundColor: theme.palette.primary.light,
+        },
+      },
+    },
+  },
+
+
+  date: {
+    borderRadius: "50%",
+  },
+  header: {
+    "&.MuiTypography-root": {
+      marginTop: "16px",
+      marginBottom: "8px",
+    },
+  },
   root: {
     width: '100%',
   },
@@ -36,8 +102,10 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateColumns: '1.5em 1fr',
     gridGap: theme.spacing(1),
     alignItems: "center",
-    verticalAlign: "center",
     paddingBottom: "16px",
+  },
+  slots: {
+    maxHeight: "300px",
   }
 }));
 
@@ -57,7 +125,10 @@ const Booking = () => {
     location: "",
     duration: "",
   });
-  const [date, setDate] = useState(new Date())
+  const [selectedDate, setDate] = useState(Date())
+  const [slots, setSlots] = useState([])
+  const [selectedTime, setTime] = useState()
+  const [details, setDetails] = useState()
 
   useEffect(() => {
     getUserByUrl(data.user_url)
@@ -85,7 +156,7 @@ const Booking = () => {
       .catch((err) => {
         return err;
       });
-  }, [data.user_url, date.url]);
+  }, [data.user_url, selectedDate.url]);
 
   const handleBackClick = (event) => {
     event.preventDefault();
@@ -134,141 +205,226 @@ const Booking = () => {
     setActiveStep(0);
   };
 
+  const handleDateChange = (newValue) => {
+    console.log('date: %o', newValue);
+    getAvailableTimes(newValue, event.url, user._id)
+      .then((res) => {
+        console.log('slots: %j', res.data);
+        setSlots(res.data);
+      })
+      .catch((err) => {
+        console.error('failed to get available times')
+      });
+    setActiveStep(1);
+    setDate(newValue);
+  }
 
   const steps = ['Choose date', 'Choose time', 'Provide details'];
 
+  const DAYS = ['sun', 'mon', 'tue', 'wen', 'thu', 'fri', 'sat'];
+
+  const checkDay = (date) => {
+    if (!event.available) {
+      return false;
+    }
+    else {
+      return date > new Date() && event.available[DAYS[date.getDay()]].[0] !== "";
+    }
+  }
+
+  const renderPickerDay = (date, selectedDates, pickersDayProps) => {
+
+    return (
+      <PickersDay
+        {...pickersDayProps}
+        disableMargin
+        disabled={!checkDay(date)}
+        className={clsx({
+          [classes.date]: true,
+          "highlight": checkDay(date)
+        })}
+
+      />
+    );
+  }
+
+  const getTimes = () => {
+    if (slots) {
+      let times = []
+      for (let slot of slots) {
+        let start = new Date(slot.start);
+        let end = new Date(slot.end);
+        console.log("start: %s, end: %s", start, end);
+        let s = start;
+        while (s < end) {
+          times.push(s);
+          s = addMinutes(s, event.duration);
+        }
+      }
+      return times;
+    }
+    else {
+      return []
+    }
+  }
+
+  const handleTime = (time) => (event) => {
+    console.log("target: %o %o", event.target.dataset, event.target)
+    console.log("time: %o", time)
+    setActiveStep(2);
+    setTime(time);
+  }
+
+  const renderSlots = () => {
+    console.log("renderSlots: %o", slots);
+    const times = getTimes();
+    return (
+      <>
+        <Grid className={classes.slots} spacing={2} container direction="column" alignItems="flex-start">
+          {times.map((time) => (<Grid item><Button variant="contained" onClick={handleTime(time)}>{format(time, "HH:mm")}</Button></Grid>))}
+        </Grid>
+      </>
+    )
+  }
+
+  const handleDetailChange = (details) => {
+    console.log("details: %o", details);
+    setDetails(details);
+  }
+
+  const handleSubmit = (e) => {
+    console.log("onSubmit");
+    e.preventDefault();
+    insertIntoGoogle(user._id, event, selectedTime, details.name, details.email, details.description).then(
+      () => {
+        //toast.success("Event successfully booked!");
+        history.push({
+          pathname: `/booked`,
+          state: { userid: user.name, event, time: selectedTime },
+        });
+      }
+    );
+
+  }
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Container>
-        <Typography variant="h3" gutterBottom>Schedule an appointment</Typography>
-        <Avatar alt={user.name} src={user.picture_url} /> <Typography variant="h4" gutterBottom>{event.name}</Typography>
-        <div className={classes.container}>
+      <ThemeProvider theme={theme}>
+        <Container>
+          <Typography variant="h3" component="h1" gutterBottom>Schedule an appointment</Typography>
 
-          <div className={classes.item}>
-            <HourglassFull />
-          </div>
-          <div className={classes.item}>
-            {event.duration + " minutes"}
-          </div>
-
-          <div className={classes.item}>
-            <Room />
-          </div>
-          <div className={classes.item}>
-            {event.location}
-          </div>
-        </div>
-
-
-        <Stepper activeStep={activeStep}>
-          {steps.map((label, index) => {
-            const stepProps = {};
-            const labelProps = {};
-            if (isStepOptional(index)) {
-              labelProps.optional = (
-                <Typography variant="caption">Optional</Typography>
-              );
-            }
-            if (isStepSkipped(index)) {
-              stepProps.completed = false;
-            }
-            return (
-              <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps}>{label}</StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
-
-        {activeStep === steps.length ? (
-          <React.Fragment>
-            <Typography className={classes.instructions}>
-              All steps completed - you&apos;re finished
-          </Typography>
-            <div className={classes.buttonWrapper}>
-              <div className={classes.spacer} />
-              <Button onClick={handleReset}>Reset</Button>
+          <div className={classes.container}>
+            <div className={classes.item}>
+              <Avatar sx={{ width: 24, height: 24 }} alt={user.name} src={user.picture_url} size />
             </div>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <Typography className={classes.instructions}>
-              Step {activeStep + 1}
-            </Typography>
-            <div className={classes.buttonWrapper}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                className={classes.button}
-              >
-                Back
-            </Button>
-              <div className={classes.spacer} />
-              {isStepOptional(activeStep) && (
-                <Button
-                  color="inherit"
-                  onClick={handleSkip}
-                  className={classes.button}
-                >
-                  Skip
-                </Button>
-              )}
-
-              <Button onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-              </Button>
+            <div className={classes.item}>
+              {event.name}
             </div>
-          </React.Fragment>
-        )}
-
-        <Paper>
-          <StaticDatePicker
-            displayStaticWrapperAs="desktop"
-            value={date}
-            onChange={(newValue) => {
-              setDate(newValue);
-            }}
-            renderInput={(params) => <TextField {...params} variant="standard" />}
-          />
-        </Paper>
-
-        <div className="booking">
-          <div className="bookingwrapper">
-            <div className="booking-header">
-              <h1><EventAvailable style={{ fontSize: 40 }} color="primary" /> Bookme</h1>
+            <div className={classes.item}>
+              <HourglassFull />
             </div>
-            <div className="booking-container">
-              <div className="leftpanel">
-                <div className="leftpanelcontent">
-                  <Link onClick={handleBackClick}>
-                    back
-                </Link>
-                  <div className="profileinfo">
-                    <Avatar alt={user.name} src={user.picture_url} />
-                    <h4 className="username">{user.name}</h4>
-                    <h1 className="eventname">{event.name}</h1>
+            <div className={classes.item}>
+              {event.duration + " minutes"}
+            </div>
+
+            <div className={classes.item}>
+              <Room />
+            </div>
+            <div className={classes.item}>
+              {event.location}
+            </div>
+          </div>
+
+          <Paper>
+            <form onSubmit={handleSubmit}>
+              <Box pt="1em" m="2em">
+                <Stepper activeStep={activeStep}>
+                  {steps.map((label, index) => {
+                    const stepProps = {};
+                    const labelProps = {};
+                    if (isStepOptional(index)) {
+                      labelProps.optional = (
+                        <Typography variant="caption">Optional</Typography>
+                      );
+                    }
+                    if (isStepSkipped(index)) {
+                      stepProps.completed = false;
+                    }
+                    return (
+                      <Step key={label} {...stepProps}>
+                        <StepLabel {...labelProps}>{label}</StepLabel>
+                      </Step>
+                    );
+                  })}
+                </Stepper>
+
+                <React.Fragment>
+                  <Typography className={classes.instructions}>
+                    Step {activeStep + 1}
+                  </Typography>
+                  <div className={classes.buttonWrapper}>
+                    <Button
+                      color="inherit"
+                      disabled={activeStep === 0}
+                      onClick={handleBack}
+                      className={classes.button}
+                    >
+                      Back
+                 </Button>
+                    <div className={classes.spacer} />
+                    {isStepOptional(activeStep) && (
+                      <Button
+                        color="inherit"
+                        onClick={handleSkip}
+                        className={classes.button}
+                      >
+                        Skip
+                      </Button>
+                    )}
+
+                    {activeStep === steps.length - 1 ?
+                      <Button variant="contained" type="submit">Book appointment</Button> : ""
+                    }
                   </div>
-                  <div className="eventinfo">
-                    <p className="eventdata">
-                      <HourglassFull /> {event.duration} Minutes
-                  </p>
-                    <p className="eventdata">
-                      <Room /> {event.location}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="panel">
-                <div className="wrappanel">
-                  <h2 className="pickertitel">Choose a date</h2>
-                  <Datepicker options={(data.url, event, user)}></Datepicker>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
+                </React.Fragment>
+
+                <Grid container spacing={2} >
+
+                  <Grid item hidden={activeStep != 0}>
+                    <StaticDatePicker
+                      displayStaticWrapperAs="desktop"
+                      value={selectedDate}
+                      className={classes.picker}
+                      onChange={handleDateChange}
+                      renderDay={renderPickerDay}
+                      renderInput={(params) => <TextField {...params} variant="standard" />}
+                    />
+                  </Grid>
+
+
+                  <Grid item hidden={activeStep != 1}>
+                    {renderSlots()}
+                  </Grid>
+
+
+                  {activeStep > 1 ? (
+                    <Grid item>
+                      <Bookdetails
+                        userid={user._id} username={user.name}
+                        event={event}
+                        start={selectedTime.valueOf()} end={addMinutes(selectedTime, event.duration).valueOf()}
+                        onChange={handleDetailChange}
+                      />
+                    </Grid>
+                  ) : ""}
+                </Grid>
+              </Box>
+            </form>
+          </Paper>
+
+
+        </Container>
+      </ThemeProvider>
     </LocalizationProvider>
   );
 };
