@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { genSalt, hash } from "bcryptjs";
 
-export interface GoogleTokens {
+export interface GoogleTokens extends mongoose.Document {
   access_token?: string;
   refresh_token?: string;
   scope?: string;
