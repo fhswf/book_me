@@ -5,12 +5,12 @@
  */
 import { Day, Event, EventModel } from "../models/Event";
 import { freeBusy } from "./google_controller";
-import  { validationResult } from "express-validator";
+import { validationResult } from "express-validator";
 import { errorHandler } from "../handlers/errorhandler";
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { Request, Response } from "express";
 
-const DAYS = [ Day.SUN, Day.MON, Day.TUE, Day.WED, Day.THU, Day.FRI, Day.SAT,  ]
+const DAYS = [Day.SUN, Day.MON, Day.TUE, Day.WED, Day.THU, Day.FRI, Day.SAT,]
 
 /**
  * Middleware to get available times for one weekday of a given user
@@ -35,13 +35,13 @@ export const getAvailableTimesForDay = (req: Request, res: Response): void => {
       const slot = event.available[day];
       let start = new Date(date);
       console.log("start: %o, %j", start, slot)
-      start.setHours(Number.parseInt(slot[0].substring(0, 2)), 
-                     Number.parseInt(slot[0].substring(3, 5)), 0);
+      start.setHours(Number.parseInt(slot[0].substring(0, 2)),
+        Number.parseInt(slot[0].substring(3, 5)), 0);
       console.log("start: %o", start);
       start = zonedTimeToUtc(start, 'Europe/Berlin');
       let end = new Date(date);
-      end.setHours(Number.parseInt(slot[1].substring(0, 2)), 
-                   Number.parseInt(slot[1].substring(3, 5)), 0);
+      end.setHours(Number.parseInt(slot[1].substring(0, 2)),
+        Number.parseInt(slot[1].substring(3, 5)), 0);
       end = zonedTimeToUtc(end, 'Europe/Berlin');
       console.log('TZ: %s', process.env.TZ);
       console.log("event: %j %o %s %s", event, slot, start, end);
@@ -120,13 +120,9 @@ export const addEventController = (req: Request, res: Response): void => {
  */
 export const deleteEventController = (req: Request, res: Response): void => {
   const eventid = req.params.id;
-  void EventModel.findByIdAndDelete(eventid, function (err) {
-    if (err) {
-      return res.status(400).json({ error: err });
-    } else {
-      return res.status(200).json({ msg: "Successfully deleted the Event" });
-    }
-  });
+  void EventModel.findByIdAndDelete(eventid)
+    .then(() => { res.status(200).json({ msg: "Successfully deleted the Event" }) })
+    .catch((err) => { res.status(400).json({ error: err }) });
 };
 
 /**
@@ -139,12 +135,12 @@ export const getEventListController = (req: Request, res: Response): void => {
   const userid = req.user_id;
   const query = EventModel.find({ user: userid });
   void query.exec()
-  .then((event) => {
+    .then((event) => {
       res.status(200).json(event);
-  })
-  .catch((err) => {
+    })
+    .catch((err) => {
       res.status(400).json({ error: err });
-  });
+    });
 };
 
 /**

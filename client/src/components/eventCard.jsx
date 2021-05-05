@@ -1,0 +1,91 @@
+import React, { useState } from "react";
+import { useHistory, Link as RouterLink } from "react-router-dom";
+import { signout } from "../helpers/helpers";
+import { deleteEvent } from "../helpers/services/event_services";
+import { Button, Card, CardActions, CardContent, CardHeader, Grid, IconButton, Link, Snackbar, Switch } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import ShareIcon from '@material-ui/icons/Share';
+import { useStyles } from "./eventList";
+
+export function EventCard(props) {
+
+  const [active, setActive] = useState(props.event.isActive);
+  const [success, setSuccess] = useState(false);
+  const [failure, setFailure] = useState(false);
+  const token = props.token;
+  const classes = useStyles();
+  const history = useHistory();
+
+  const toggleActive = (evt) => {
+    setActive(evt.target.checked);
+    props.setActive(active);
+  };
+
+  const handleCopy = () => {
+    let loc = window.location;
+    let url = history.createHref({ pathname: `/users/${props.url}/${props.event.url}` });
+    url = loc.protocol + '//' + loc.host + url;
+    console.log('url: %s', url);
+
+    navigator.clipboard.writeText(url)
+      .then(() => setSuccess(true))
+      .catch((err) => {
+        console.log('err: %o', err);
+        setFailure(true);
+      });
+  };
+
+  const handleDelete = () => {
+    deleteEvent(token, props.event._id).then((res) => {
+      if (res.data.success === false) {
+        signout();
+        history.push("/landing");
+      }
+    });
+  };
+
+  return (
+    <>
+      <Grid item xs={12} sm={6}>
+
+        <Card>
+          <CardHeader
+            action={
+              <IconButton aria-label="settings" component={Link} to={`/editevent/${props.event._id}`}>
+                <EditIcon />
+              </IconButton>}
+            title={props.event.name}
+            subheader={<span>{props.event.duration} min</span>} />
+          <CardContent>{props.event.description}</CardContent>
+          <CardActions disableSpacing>
+            <Switch
+              checked={active}
+              onChange={toggleActive}
+              size="small"
+              name="active"
+              color="primary"
+              inputProps={{ 'aria-label': 'active' }} />
+            <Button aria-label="copy link" startIcon={<ShareIcon />} onClick={handleCopy}>
+              Copy link
+            </Button>
+            <IconButton aria-label="delete" className={classes.delete} onClick={handleDelete}>
+              <DeleteIcon />
+            </IconButton>
+          </CardActions>
+        </Card>
+      </Grid>
+      <Snackbar open={success} autoHideDuration={2000} onClose={() => { setSuccess(false); }}>
+        <Alert severity="success">
+          Link copied to clipboard!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={failure}>
+        <Alert severity="failure">
+          Could not copy link to clipboard!
+        </Alert>
+      </Snackbar>
+    </>
+  );
+}
