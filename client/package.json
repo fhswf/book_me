@@ -1,16 +1,24 @@
 {
-  "name": "client",
-  "version": "0.1.0",
+  "name": "bookme-client",
+  "version": "1.0.0",
   "private": true,
   "homepage": "https://jupiter.fh-swf.de/bookme",
+  "contributors": [
+    {
+      "name": "Felix Hinnemann"
+    },
+    {
+      "name": "Christian Gawron",
+      "email": "gawron.christian@fh-swf.de"
+    }
+  ],
+  "license": "MIT",
+  "proxy": "https://jupiter.fh-swf.de/",
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.34",
-    "@fortawesome/free-brands-svg-icons": "^5.15.1",
-    "@fortawesome/free-regular-svg-icons": "^5.15.1",
-    "@fortawesome/free-solid-svg-icons": "^5.15.1",
-    "@fortawesome/react-fontawesome": "^0.1.11",
-    "@material-ui/core": "^4.11.3",
-    "@material-ui/icons": "^4.11.2",
+    "@emotion/styled": "^11.3.0",
+    "@material-ui/core": "^5.0.0-alpha.32",
+    "@material-ui/icons": "^5.0.0-alpha.29",
+    "@material-ui/lab": "^5.0.0-alpha.32",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -18,12 +26,10 @@
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
-    "primeicons": "^4.1.0",
-    "primereact": "^6.0.2",
-    "react": "^16.14.0",
+    "react": "^17.0.0",
     "react-available-times": "^1.4.0",
     "react-datepicker": "^3.3.0",
-    "react-dom": "^16.14.0",
+    "react-dom": "^17.0.0",
     "react-google-login": "^5.1.22",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.2",

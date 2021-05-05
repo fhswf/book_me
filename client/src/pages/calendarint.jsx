@@ -6,8 +6,9 @@ import AppNavbar from "../components/appNavbar";
 import "../styles/calendarint.css";
 
 // Material UI
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
+import { Card, CardHeader, CardContent, IconButton } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import Container from '@material-ui/core/Container';
 
@@ -30,13 +31,10 @@ import Typography from '@material-ui/core/Typography';
 import { getUserById, updateUser } from "../helpers/services/user_services";
 import { deleteAccess, getAuthUrl, getCalendarList } from "../helpers/services/google_services";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import EditIcon from '@material-ui/icons/Edit';
+
 import { ToastContainer, toast } from "react-toastify";
-const iconGoogle = (
-  <FontAwesomeIcon icon={faGoogle} size="3x"></FontAwesomeIcon>
-);
+import { Avatar } from "@material-ui/core";
 
 
 const renderCalendarList = (calendarList, state, setState, single = false) => {
@@ -125,13 +123,17 @@ const PushCalendar = ({ user, calendarList }) => {
   const pushCal = calendarList.items.find(item => item.id === user.push_calendar);
   return (
     <>
-      <div>
-        <Button onClick={handleShow} color="primary"><FontAwesomeIcon icon={faEdit}></FontAwesomeIcon></Button>
-          Add appointments to calendar
-          <div className="calendar">
-          {pushCal.summaryOverride ? pushCal.summaryOverride : pushCal.summary}
-        </div>
-      </div>
+      <CardHeader
+        action={
+          <IconButton onClick={handleShow}>
+            <EditIcon />
+          </IconButton>}
+        title="Add appointments to calendar"
+      />
+      <CardContent>
+        {pushCal.summaryOverride ? pushCal.summaryOverride : pushCal.summary}
+      </CardContent>
+
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Calendar</DialogTitle>
@@ -193,11 +195,16 @@ const PullCalendars = ({ user, calendarList }) => {
     user.pull_calendars.forEach(item => _selected[item] = true);
     return (
       <>
-        <div>
-          <Button onClick={handleShow} color="primary"><FontAwesomeIcon icon={faEdit}></FontAwesomeIcon></Button>
-          Check free time in calendars
+        <CardHeader
+          action={
+            <IconButton onClick={handleShow}>
+              <EditIcon />
+            </IconButton>}
+          title="Check free time in calendars"
+        />
+        <CardContent>
           <FormGroup><ul>{pullCals}</ul></FormGroup>
-        </div>
+        </CardContent>
 
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">Calendar</DialogTitle>
@@ -298,13 +305,13 @@ const Calendarintegration = () => {
   const renderConnectButton = () => {
     if (connected) {
       return (
-        <Button className="connectbtn" onClick={revokeScopes}>
+        <Button variant="contained" onClick={revokeScopes}>
           Disconnect from Google
         </Button>
       );
     } else {
       return (
-        <Button className="connectbtn" href={url.url}>
+        <Button variant="contained" href={url.url}>
           Connect Google Calendar
         </Button>
       );
@@ -314,37 +321,47 @@ const Calendarintegration = () => {
 
 
   return (
-    <div>
+    <>
       <AppNavbar />
       <Paper>
-        <div className="wrapcontent">
-          <Container>
 
-            <Typography>
-              {iconGoogle}
-              Calendar
-              </Typography>
-            {renderConnectButton()}
-          </Container>
-        </div>
-        <div className="wrapcontent">
-          <Typography variant="h4">Configuration</Typography>
+        <Box p="1em">
+          <Typography variant="h3" gutterBottom>My Calendar</Typography>
+
+
+          <Grid container direction="row" justify="space-between" alignItems="center">
+            <Grid item>
+              <img src="/icons/google_calendar_icon.svg" width="32" />
+            </Grid>
+            <Grid item>
+              {renderConnectButton()}
+            </Grid>
+          </Grid>
+
+        </Box>
+
+        <Box p="1em">
+
+          <Typography variant="h4" gutterBottom>Configuration</Typography>
+
           <Grid
             container
             direction="row"
-            justify="center"
-            alignItems="center"
+            justify="space-between"
+            alignItems="flex-start"
           >
-            <Card className="half">
+            <Card>
               <PushCalendar user={user} calendarList={calendarList} />
             </Card>
-            <Card className="half">
+            <Card>
               <PullCalendars user={user} calendarList={calendarList} />
             </Card>
           </Grid>
-        </div>
+
+
+        </Box>
       </Paper>
-    </div>
+    </>
   );
 };
 
