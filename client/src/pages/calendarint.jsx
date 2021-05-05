@@ -8,9 +8,7 @@ import "../styles/calendarint.css";
 // Material UI
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import { Card, CardHeader, CardContent, IconButton } from '@material-ui/core';
-import Checkbox from '@material-ui/core/Checkbox';
-import Container from '@material-ui/core/Container';
+import { Card, CardHeader, CardContent, Checkbox, Container, IconButton } from '@material-ui/core';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -69,23 +67,21 @@ const renderCalendarList = (calendarList, state, setState, single = false) => {
     )
   }
   else {
-    const items = calendarList.items.map(item => {
-      return (
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={state[item.id]}
-              onChange={event => {
-                state[event.target.name] = event.target.checked;
-                setState(state);
-              }}
-              name={item.id}
-            />
-          }
-          label={item.summaryOverride ? item.summaryOverride : item.summary}
-        />
-      )
-    })
+    const items = calendarList.items.map(item =>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={state[item.id]}
+            onChange={event => {
+              console.log("onChange: %s %o\n%o", event.target.name, event.target.checked, state)
+              setState({ ...state, [event.target.name]: event.target.checked });
+            }}
+            name={item.id}
+          />
+        }
+        label={item.summaryOverride ? item.summaryOverride : item.summary}
+      />
+    )
 
     return (
       <FormGroup>{items}</FormGroup>
@@ -94,8 +90,9 @@ const renderCalendarList = (calendarList, state, setState, single = false) => {
 }
 
 const PushCalendar = ({ user, calendarList }) => {
+  const pushCal = calendarList ? calendarList.items.find(item => item.id === user.push_calendar) : undefined;
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(undefined);
+  const [selected, setSelected] = useState(pushCal);
 
   const token = JSON.parse(localStorage.getItem("access_token"));
   const handleClose = () => setOpen(false);
@@ -120,7 +117,6 @@ const PushCalendar = ({ user, calendarList }) => {
 
   console.log('pushCalendar: %o %o', user, calendarList);
 
-  const pushCal = calendarList.items.find(item => item.id === user.push_calendar);
   return (
     <>
       <CardHeader
@@ -158,8 +154,13 @@ const PushCalendar = ({ user, calendarList }) => {
 }
 
 const PullCalendars = ({ user, calendarList }) => {
+
+  const pullCals = calendarList ? calendarList.items
+    .filter(item => user.pull_calendars.includes(item.id))
+    .map(cal => (<li>{cal.summaryOverride ? cal.summaryOverride : cal.summary}</li>)) : undefined;
+
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(undefined);
+  const [selected, setSelected] = useState(pullCals);
 
   const token = JSON.parse(localStorage.getItem("access_token"));
   const handleClose = () => setOpen(false);
@@ -187,9 +188,6 @@ const PullCalendars = ({ user, calendarList }) => {
   if (!user || !calendarList) {
     return (<div></div>)
   } else {
-    const pullCals = calendarList.items
-      .filter(item => user.pull_calendars.includes(item.id))
-      .map(cal => (<li>{cal.summaryOverride ? cal.summaryOverride : cal.summary}</li>))
 
     let _selected = {};
     user.pull_calendars.forEach(item => _selected[item] = true);
@@ -323,15 +321,14 @@ const Calendarintegration = () => {
   return (
     <>
       <AppNavbar />
-      <Paper>
+      <Container>
 
+        <Typography variant="h3" gutterBottom>My Calendar</Typography>
         <Box p="1em">
-          <Typography variant="h3" gutterBottom>My Calendar</Typography>
 
-
-          <Grid container direction="row" justify="space-between" alignItems="center">
+          <Grid container direction="row" spacing={2} justify="space-between" alignItems="center">
             <Grid item>
-              <img src="/icons/google_calendar_icon.svg" width="32" />
+              <img class="icon" src="/icons/google_calendar_icon.svg" width="32" /> Google Calendar
             </Grid>
             <Grid item>
               {renderConnectButton()}
@@ -340,14 +337,14 @@ const Calendarintegration = () => {
 
         </Box>
 
+        <Typography variant="h4" gutterBottom>Configuration</Typography>
         <Box p="1em">
-
-          <Typography variant="h4" gutterBottom>Configuration</Typography>
 
           <Grid
             container
+            spacing={2}
             direction="row"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="flex-start"
           >
             <Card>
@@ -360,7 +357,7 @@ const Calendarintegration = () => {
 
 
         </Box>
-      </Paper>
+      </Container>
     </>
   );
 };
