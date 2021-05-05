@@ -46,7 +46,7 @@ export async function insertIntoGoogle(
   email,
   description
 ) {
-  const starttime = moment(time).format("YYYY-MM-DD HH:mm:ss");
+  const starttime = time.valueOf();
   const response = axios.post(
     `${process.env.REACT_APP_API_URI}/google/insertEvent/${user_id}`,
     {
