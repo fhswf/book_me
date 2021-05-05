@@ -6,10 +6,9 @@ import AppNavbar from "../components/appNavbar";
 import "../styles/calendarint.css";
 
 // Material UI
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import Checkbox from '@material-ui/core/Checkbox';
-import Container from '@material-ui/core/Container';
+import { Card, CardHeader, CardContent, Checkbox, Container, IconButton } from '@material-ui/core';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -30,13 +29,10 @@ import Typography from '@material-ui/core/Typography';
 import { getUserById, updateUser } from "../helpers/services/user_services";
 import { deleteAccess, getAuthUrl, getCalendarList } from "../helpers/services/google_services";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import EditIcon from '@material-ui/icons/Edit';
+
 import { ToastContainer, toast } from "react-toastify";
-const iconGoogle = (
-  <FontAwesomeIcon icon={faGoogle} size="3x"></FontAwesomeIcon>
-);
+import { Avatar } from "@material-ui/core";
 
 
 const renderCalendarList = (calendarList, state, setState, single = false) => {
@@ -71,23 +67,21 @@ const renderCalendarList = (calendarList, state, setState, single = false) => {
     )
   }
   else {
-    const items = calendarList.items.map(item => {
-      return (
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={state[item.id]}
-              onChange={event => {
-                state[event.target.name] = event.target.checked;
-                setState(state);
-              }}
-              name={item.id}
-            />
-          }
-          label={item.summaryOverride ? item.summaryOverride : item.summary}
-        />
-      )
-    })
+    const items = calendarList.items.map(item =>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={state[item.id]}
+            onChange={event => {
+              console.log("onChange: %s %o\n%o", event.target.name, event.target.checked, state)
+              setState({ ...state, [event.target.name]: event.target.checked });
+            }}
+            name={item.id}
+          />
+        }
+        label={item.summaryOverride ? item.summaryOverride : item.summary}
+      />
+    )
 
     return (
       <FormGroup>{items}</FormGroup>
@@ -96,8 +90,9 @@ const renderCalendarList = (calendarList, state, setState, single = false) => {
 }
 
 const PushCalendar = ({ user, calendarList }) => {
+  const pushCal = calendarList ? calendarList.items.find(item => item.id === user.push_calendar) : undefined;
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(undefined);
+  const [selected, setSelected] = useState(pushCal);
 
   const token = JSON.parse(localStorage.getItem("access_token"));
   const handleClose = () => setOpen(false);
@@ -122,16 +117,19 @@ const PushCalendar = ({ user, calendarList }) => {
 
   console.log('pushCalendar: %o %o', user, calendarList);
 
-  const pushCal = calendarList.items.find(item => item.id === user.push_calendar);
   return (
     <>
-      <div>
-        <Button onClick={handleShow} color="primary"><FontAwesomeIcon icon={faEdit}></FontAwesomeIcon></Button>
-          Add appointments to calendar
-          <div className="calendar">
-          {pushCal.summaryOverride ? pushCal.summaryOverride : pushCal.summary}
-        </div>
-      </div>
+      <CardHeader
+        action={
+          <IconButton onClick={handleShow}>
+            <EditIcon />
+          </IconButton>}
+        title="Add appointments to calendar"
+      />
+      <CardContent>
+        {pushCal.summaryOverride ? pushCal.summaryOverride : pushCal.summary}
+      </CardContent>
+
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Calendar</DialogTitle>
@@ -156,8 +154,13 @@ const PushCalendar = ({ user, calendarList }) => {
 }
 
 const PullCalendars = ({ user, calendarList }) => {
+
+  const pullCals = calendarList ? calendarList.items
+    .filter(item => user.pull_calendars.includes(item.id))
+    .map(cal => (<li>{cal.summaryOverride ? cal.summaryOverride : cal.summary}</li>)) : undefined;
+
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(undefined);
+  const [selected, setSelected] = useState(pullCals);
 
   const token = JSON.parse(localStorage.getItem("access_token"));
   const handleClose = () => setOpen(false);
@@ -185,19 +188,21 @@ const PullCalendars = ({ user, calendarList }) => {
   if (!user || !calendarList) {
     return (<div></div>)
   } else {
-    const pullCals = calendarList.items
-      .filter(item => user.pull_calendars.includes(item.id))
-      .map(cal => (<li>{cal.summaryOverride ? cal.summaryOverride : cal.summary}</li>))
 
     let _selected = {};
     user.pull_calendars.forEach(item => _selected[item] = true);
     return (
       <>
-        <div>
-          <Button onClick={handleShow} color="primary"><FontAwesomeIcon icon={faEdit}></FontAwesomeIcon></Button>
-          Check free time in calendars
+        <CardHeader
+          action={
+            <IconButton onClick={handleShow}>
+              <EditIcon />
+            </IconButton>}
+          title="Check free time in calendars"
+        />
+        <CardContent>
           <FormGroup><ul>{pullCals}</ul></FormGroup>
-        </div>
+        </CardContent>
 
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">Calendar</DialogTitle>
@@ -298,13 +303,13 @@ const Calendarintegration = () => {
   const renderConnectButton = () => {
     if (connected) {
       return (
-        <Button className="connectbtn" onClick={revokeScopes}>
+        <Button variant="contained" onClick={revokeScopes}>
           Disconnect from Google
         </Button>
       );
     } else {
       return (
-        <Button className="connectbtn" href={url.url}>
+        <Button variant="contained" href={url.url}>
           Connect Google Calendar
         </Button>
       );
@@ -314,37 +319,46 @@ const Calendarintegration = () => {
 
 
   return (
-    <div>
+    <>
       <AppNavbar />
-      <Paper>
-        <div className="wrapcontent">
-          <Container>
+      <Container>
 
-            <Typography>
-              {iconGoogle}
-              Calendar
-              </Typography>
-            {renderConnectButton()}
-          </Container>
-        </div>
-        <div className="wrapcontent">
-          <Typography variant="h4">Configuration</Typography>
+        <Typography variant="h3" gutterBottom>My Calendar</Typography>
+        <Box p="1em">
+
+          <Grid container direction="row" spacing={2} justify="space-between" alignItems="center">
+            <Grid item>
+              <img class="icon" src="/icons/google_calendar_icon.svg" width="32" /> Google Calendar
+            </Grid>
+            <Grid item>
+              {renderConnectButton()}
+            </Grid>
+          </Grid>
+
+        </Box>
+
+        <Typography variant="h4" gutterBottom>Configuration</Typography>
+        <Box p="1em">
+
           <Grid
             container
+            spacing={2}
             direction="row"
-            justify="center"
-            alignItems="center"
+            justifyContent="space-between"
+            alignItems="flex-start"
           >
-            <Card className="half">
+            <Card>
               <PushCalendar user={user} calendarList={calendarList} />
             </Card>
-            <Card className="half">
+            <Card>
               <PullCalendars user={user} calendarList={calendarList} />
             </Card>
           </Grid>
-        </div>
-      </Paper>
-    </div>
+
+
+        </Box>
+      </Container>
+    </>
   );
 };
 

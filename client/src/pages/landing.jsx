@@ -5,25 +5,10 @@ import "../styles/landing.css";
 import { isAuthenticated } from "../helpers/helpers";
 import { Link, Redirect } from "react-router-dom";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCalendar,
-  faCalendarCheck,
-  faShare,
-  faCheck,
-  faSignInAlt,
-  faUserPlus,
-} from "@fortawesome/free-solid-svg-icons";
+
 
 import AppNavbar from "../components/appNavbar";
 import Paper from '@material-ui/core/Paper';
-
-const iconCal = <FontAwesomeIcon icon={faCalendar} />;
-const iconAddCal = <FontAwesomeIcon icon={faCalendarCheck} size="10x" />;
-const iconShare = <FontAwesomeIcon icon={faShare} size="10x" />;
-const iconCheck = <FontAwesomeIcon icon={faCheck} size="10x" />;
-const signIn = <FontAwesomeIcon icon={faSignInAlt} />;
-const signUp = <FontAwesomeIcon icon={faUserPlus} />;
 
 const Landing = () => {
   return (
@@ -38,9 +23,7 @@ const Landing = () => {
               <div className="steps">
                 <div className="row">
                   <div className="stepone">
-                    <div className="step-image">
-                      <div className="icon">{iconAddCal}</div>
-                    </div>
+
                     <div className="step-description">
                       <p>
                         <strong>Create Events</strong>
@@ -55,9 +38,7 @@ const Landing = () => {
                 </div>
                 <div className="row">
                   <div className="steptwo">
-                    <div className="step-image second">
-                      <div className="icon">{iconShare}</div>
-                    </div>
+
                     <div className="step-description">
                       <p>
                         <strong>Share your Link</strong>
@@ -69,9 +50,7 @@ const Landing = () => {
                 </div>
                 <div className="row">
                   <div className="stepthree">
-                    <div className="step-image thrid">
-                      <div className="icon">{iconCheck}</div>
-                    </div>
+
                     <div className="step-description">
                       <p>
                         <strong>Done! Congrats!</strong>
