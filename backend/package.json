@@ -1,5 +1,5 @@
 {
-  "name": "bookme",
+  "name": "bookme-backend",
   "version": "1.0.0",
   "description": "",
   "repository": {
@@ -15,7 +15,15 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "doc": "jsdoc -c jsdoc.json"
   },
-  "author": "Felix Hinnemann",
+  "contributors": [
+    {
+      "name": "Felix Hinnemann"
+    },
+    {
+      "name": "Christian Gawron",
+      "email": "gawron.christian@fh-swf.de"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",

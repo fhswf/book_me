@@ -1,42 +1,134 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import { StaticDatePicker, PickersDay } from '@material-ui/lab';
 import Datepicker from "../components/datepicker";
 
-import "../styles/booking.css";
-
-import { makeStyles } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
-import Link from '@material-ui/core/Link';
-import Typography from '@material-ui/core/Typography';
-import { EventAvailable, HourglassFull, Room } from '@material-ui/icons';
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faMapMarkerAlt,
-  faHourglass,
-  faCalendar,
-} from "@fortawesome/free-solid-svg-icons";
+import { createMuiTheme, makeStyles, responsiveFontSizes, ThemeProvider, StylesProvider } from '@material-ui/core/styles';
+import { Avatar, Box, Button, Container, Grid, Link, Paper, Stepper, Step, StepLabel, TextField, Typography } from '@material-ui/core';
+import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
+import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
+import { EventAvailable, HourglassFull, Room, Schedule } from '@material-ui/icons';
 
 import { getUserByUrl } from "../helpers/services/user_services";
 import { getEventByUrlAndUser } from "../helpers/services/event_services";
-const iconArrowLeft = <FontAwesomeIcon icon={faArrowLeft} />;
-const iconLocation = <FontAwesomeIcon icon={faMapMarkerAlt} />;
-const iconTime = <FontAwesomeIcon icon={faHourglass} />;
-const iconCal = <FontAwesomeIcon icon={faCalendar} />;
+import { getAvailableTimes } from "../helpers/services/event_services";
+import clsx from 'clsx';
+import de from "date-fns/locale/de";
+import { addMinutes, format } from 'date-fns';
+import Bookdetails from "./bookdetails";
+import { insertIntoGoogle } from "../helpers/services/google_services";
+
+
+const theme = createMuiTheme({
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          width: "100%"
+        }
+      }
+    },
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          borderRadius: "50%"
+        }
+      }
+    },
+    MuiTypography: {
+      defaultProps: {
+        variantMapping: {
+          h1: 'h3',
+          h2: 'h4',
+          h3: 'h5',
+          h4: 'h5',
+          h5: 'h6',
+          h6: 'h6',
+        },
+      },
+    },
+  },
+  typography: {
+    // In Chinese and Japanese the characters are usually larger,
+    // so a smaller fontsize may be appropriate.
+    //fontSize: 12,
+  },
+});
+
+const useStyles = makeStyles((theme) => ({
+  picker: {
+    "& button": {
+      borderRadius: "50%",
+      "&.highlight": {
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
+        '&:hover, &:focus': {
+          backgroundColor: theme.palette.primary.light,
+        },
+      },
+    },
+  },
+
+
+  date: {
+    borderRadius: "50%",
+  },
+  header: {
+    "&.MuiTypography-root": {
+      marginTop: "16px",
+      marginBottom: "8px",
+    },
+  },
+  root: {
+    width: '100%',
+  },
+  buttonWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    padding: '16px 0 0',
+  },
+  button: {
+    marginRight: theme.spacing(1),
+  },
+  spacer: {
+    flex: '1 1 auto',
+  },
+  instructions: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+  },
+  container: {
+    display: 'grid',
+    gridTemplateColumns: '1.5em 1fr',
+    gridGap: theme.spacing(1),
+    alignItems: "center",
+    paddingBottom: "16px",
+  },
+  slots: {
+    maxHeight: "300px",
+  }
+}));
 
 const Booking = () => {
   const data = useParams();
   const history = useHistory();
+  const classes = useStyles();
+
 
   const [user, setUser] = useState({
     name: "No User under that Link",
   });
+  const [activeStep, setActiveStep] = React.useState(0);
+  const [skipped, setSkipped] = React.useState(new Set());
   const [event, setEvent] = useState({
     name: "",
     location: "",
     duration: "",
   });
+  const [selectedDate, setDate] = useState(Date())
+  const [slots, setSlots] = useState([])
+  const [selectedTime, setTime] = useState()
+  const [details, setDetails] = useState()
 
   useEffect(() => {
     getUserByUrl(data.user_url)
@@ -64,51 +156,276 @@ const Booking = () => {
       .catch((err) => {
         return err;
       });
-  }, []);
+  }, [data.user_url, selectedDate.url]);
 
   const handleBackClick = (event) => {
     event.preventDefault();
     history.goBack();
   };
 
+  const isStepOptional = (step) => {
+    return false;
+  };
+
+  const isStepSkipped = (step) => {
+    return skipped.has(step);
+  };
+
+  const handleNext = () => {
+    let newSkipped = skipped;
+    if (isStepSkipped(activeStep)) {
+      newSkipped = new Set(newSkipped.values());
+      newSkipped.delete(activeStep);
+    }
+
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setSkipped(newSkipped);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleSkip = () => {
+    if (!isStepOptional(activeStep)) {
+      // You probably want to guard against something like this,
+      // it should never occur unless someone's actively trying to break something.
+      throw new Error("You can't skip a step that isn't optional.");
+    }
+
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setSkipped((prevSkipped) => {
+      const newSkipped = new Set(prevSkipped.values());
+      newSkipped.add(activeStep);
+      return newSkipped;
+    });
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
+  const handleDateChange = (newValue) => {
+    console.log('date: %o', newValue);
+    getAvailableTimes(newValue, event.url, user._id)
+      .then((res) => {
+        console.log('slots: %j', res.data);
+        setSlots(res.data);
+      })
+      .catch((err) => {
+        console.error('failed to get available times')
+      });
+    setActiveStep(1);
+    setDate(newValue);
+  }
+
+  const steps = ['Choose date', 'Choose time', 'Provide details'];
+
+  const DAYS = ['sun', 'mon', 'tue', 'wen', 'thu', 'fri', 'sat'];
+
+  const checkDay = (date) => {
+    if (!event.available) {
+      return false;
+    }
+    else {
+      return date > new Date() && event.available[DAYS[date.getDay()]].[0] !== "";
+    }
+  }
+
+  const renderPickerDay = (date, selectedDates, pickersDayProps) => {
+
+    return (
+      <PickersDay
+        {...pickersDayProps}
+        disableMargin
+        disabled={!checkDay(date)}
+        className={clsx({
+          [classes.date]: true,
+          "highlight": checkDay(date)
+        })}
+
+      />
+    );
+  }
+
+  const getTimes = () => {
+    if (slots) {
+      let times = []
+      for (let slot of slots) {
+        let start = new Date(slot.start);
+        let end = new Date(slot.end);
+        console.log("start: %s, end: %s", start, end);
+        let s = start;
+        while (s < end) {
+          times.push(s);
+          s = addMinutes(s, event.duration);
+        }
+      }
+      return times;
+    }
+    else {
+      return []
+    }
+  }
+
+  const handleTime = (time) => (event) => {
+    console.log("target: %o %o", event.target.dataset, event.target)
+    console.log("time: %o", time)
+    setActiveStep(2);
+    setTime(time);
+  }
+
+  const renderSlots = () => {
+    console.log("renderSlots: %o", slots);
+    const times = getTimes();
+    return (
+      <>
+        <Grid className={classes.slots} spacing={2} container direction="column" alignItems="flex-start">
+          {times.map((time) => (<Grid item><Button variant="contained" onClick={handleTime(time)}>{format(time, "HH:mm")}</Button></Grid>))}
+        </Grid>
+      </>
+    )
+  }
+
+  const handleDetailChange = (details) => {
+    console.log("details: %o", details);
+    setDetails(details);
+  }
+
+  const handleSubmit = (e) => {
+    console.log("onSubmit");
+    e.preventDefault();
+    insertIntoGoogle(user._id, event, selectedTime, details.name, details.email, details.description).then(
+      () => {
+        //toast.success("Event successfully booked!");
+        history.push({
+          pathname: `/booked`,
+          state: { userid: user.name, event, time: selectedTime },
+        });
+      }
+    );
+
+  }
+
   return (
-    <div>
-      <div className="booking">
-        <div className="bookingwrapper">
-          <div className="booking-header">
-            <h1><EventAvailable style={{ fontSize: 40 }} color="primary" /> Bookme</h1>
-          </div>
-          <div className="booking-container">
-            <div className="leftpanel">
-              <div className="leftpanelcontent">
-                <Link onClick={handleBackClick}>
-                  {iconArrowLeft}
-                </Link>
-                <div className="profileinfo">
-                  <Avatar alt={user.name} src={user.picture_url} />
-                  <h4 className="username">{user.name}</h4>
-                  <h1 className="eventname">{event.name}</h1>
-                </div>
-                <div className="eventinfo">
-                  <p className="eventdata">
-                    <HourglassFull /> {event.duration} Minutes
-                  </p>
-                  <p className="eventdata">
-                    <Room /> {event.location}
-                  </p>
-                </div>
-              </div>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <ThemeProvider theme={theme}>
+        <Container>
+          <Typography variant="h3" component="h1" gutterBottom>Schedule an appointment</Typography>
+
+          <div className={classes.container}>
+            <div className={classes.item}>
+              <Avatar sx={{ width: 24, height: 24 }} alt={user.name} src={user.picture_url} size />
             </div>
-            <div className="panel">
-              <div className="wrappanel">
-                <h2 className="pickertitel">Choose a date</h2>
-                <Datepicker options={(data.url, event, user)}></Datepicker>
-              </div>
+            <div className={classes.item}>
+              {event.name}
+            </div>
+            <div className={classes.item}>
+              <HourglassFull />
+            </div>
+            <div className={classes.item}>
+              {event.duration + " minutes"}
+            </div>
+
+            <div className={classes.item}>
+              <Room />
+            </div>
+            <div className={classes.item}>
+              {event.location}
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+
+          <Paper>
+            <form onSubmit={handleSubmit}>
+              <Box pt="1em" m="2em">
+                <Stepper activeStep={activeStep}>
+                  {steps.map((label, index) => {
+                    const stepProps = {};
+                    const labelProps = {};
+                    if (isStepOptional(index)) {
+                      labelProps.optional = (
+                        <Typography variant="caption">Optional</Typography>
+                      );
+                    }
+                    if (isStepSkipped(index)) {
+                      stepProps.completed = false;
+                    }
+                    return (
+                      <Step key={label} {...stepProps}>
+                        <StepLabel {...labelProps}>{label}</StepLabel>
+                      </Step>
+                    );
+                  })}
+                </Stepper>
+
+                <React.Fragment>
+                  <Typography className={classes.instructions}>
+                    Step {activeStep + 1}
+                  </Typography>
+                  <div className={classes.buttonWrapper}>
+                    <Button
+                      color="inherit"
+                      disabled={activeStep === 0}
+                      onClick={handleBack}
+                      className={classes.button}
+                    >
+                      Back
+                 </Button>
+                    <div className={classes.spacer} />
+                    {isStepOptional(activeStep) && (
+                      <Button
+                        color="inherit"
+                        onClick={handleSkip}
+                        className={classes.button}
+                      >
+                        Skip
+                      </Button>
+                    )}
+
+                    {activeStep === steps.length - 1 ?
+                      <Button variant="contained" type="submit">Book appointment</Button> : ""
+                    }
+                  </div>
+                </React.Fragment>
+
+                <Grid container spacing={2} >
+
+                  <Grid item hidden={activeStep != 0}>
+                    <StaticDatePicker
+                      displayStaticWrapperAs="desktop"
+                      value={selectedDate}
+                      className={classes.picker}
+                      onChange={handleDateChange}
+                      renderDay={renderPickerDay}
+                      renderInput={(params) => <TextField {...params} variant="standard" />}
+                    />
+                  </Grid>
+
+
+                  <Grid item hidden={activeStep != 1}>
+                    {renderSlots()}
+                  </Grid>
+
+
+                  {activeStep > 1 ? (
+                    <Grid item>
+                      <Bookdetails
+                        userid={user._id} username={user.name}
+                        event={event}
+                        start={selectedTime.valueOf()} end={addMinutes(selectedTime, event.duration).valueOf()}
+                        onChange={handleDetailChange}
+                      />
+                    </Grid>
+                  ) : ""}
+                </Grid>
+              </Box>
+            </form>
+          </Paper>
+
+
+        </Container>
+      </ThemeProvider>
+    </LocalizationProvider>
   );
 };
 
