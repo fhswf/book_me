@@ -340,8 +340,6 @@ const Calendarintegration = () => {
         <Typography variant="h4" gutterBottom>Configuration</Typography>
         <Box p="1em">
 
-
-
           <Grid
             container
             spacing={2}
