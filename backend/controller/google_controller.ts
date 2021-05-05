@@ -71,7 +71,7 @@ export const googleCallback = (req: Request, res: Response): void => {
  * @param {response} res
  */
 export async function insertEventToGoogleCal(req: Request, res: Response): Promise<void> {
-  const starttime = parse(<string>req.body.starttime, "yyyy-MM-dd HH:mm:ss", new Date());
+  const starttime = new Date(Number.parseInt(req.body.starttime));
   const endtime = addMinutes(starttime, req.body.event.duration);
 
 
