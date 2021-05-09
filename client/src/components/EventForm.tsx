@@ -20,7 +20,8 @@ import {
 } from "@material-ui/core";
 import { Add, Delete } from "@material-ui/icons";
 import { TimesForDay } from "./timesForDay";
-import { EventFormProps, Event, Day, DayNames, Slot } from "../pages/editevent";
+import { EventFormProps } from "../pages/editevent";
+import { Day, DayNames, Event, Slot } from "../types/ModelTypes";
 
 type EditSlotProps = {
   day: Day;

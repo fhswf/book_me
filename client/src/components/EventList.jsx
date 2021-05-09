@@ -51,26 +51,5 @@ function EventList(props) {
   );
 }
 
-/*
-     <Card>
-      <CardHeader action={
-        <IconButton aria-label="settings" component={Link} href={`/editevent/${_event._id}`}>
-          <MoreVertIcon />
-        </IconButton>
-      }>{_event.name}</CardHeader>
-      <CardContent></CardContent>
-      <CardActions>
-        <IconButton aria-label="copy link" onClick={handleCopy(_event)}>
-          <ShareIcon /> Copy link
-                </IconButton>
-        <IconButton aria-label="delete" onClick={handleDelete(_event)} >
-          <DeleteIcon />
-        </IconButton>
-      </CardActions>
-    </Card>
-*/
-
-
-
 
 export default EventList;

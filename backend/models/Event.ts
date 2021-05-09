@@ -1,45 +1,13 @@
 import * as mongoose from 'mongoose';
 
+import { Day, Event } from 'types/ModelTypes'
 
-//export interface Available {
-//  mon: []
-//}
 
-export enum Day {
-  SUN = "sun", 
-  MON = "mon", 
-  TUE = "tue", 
-  WED = "wed", 
-  THU = "thu", 
-  FRI = "fri", 
-  SAT = "sat"
-}
 
-export type EventSlot = Array<string>;
 
-export interface Event extends mongoose.Document {
-  user: string;
-  name: string;
-  location: string;
-  description: string;
-  duration: number;
-  url: string;
-  isActive: boolean;
-  
-  rangedays: number;
+interface EventDocument extends Event, mongoose.Document { }
 
-  calendardays: boolean;
-
-  /** reserved buffer before an event (in minutes) */
-  bufferbefore: number;
-
-  /** reserved buffer after an event (in minutes) */
-  bufferafter: number;
-
-  available: Record<Day, EventSlot>;
-};
-
-const eventSchema = new mongoose.Schema<Event>({
+const eventSchema = new mongoose.Schema<EventDocument>({
   user: {
     type: String,
     required: true,
@@ -134,4 +102,4 @@ const eventSchema = new mongoose.Schema<Event>({
 
 eventSchema.index({ user: 1, url: 1 }, { unique: true });
 
-export const EventModel = mongoose.model<Event>("Event", eventSchema);
+export const EventModel = mongoose.model<EventDocument>("Event", eventSchema);
