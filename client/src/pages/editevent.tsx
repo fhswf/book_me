@@ -17,69 +17,7 @@ import { getEventByID, updateEvent } from "../helpers/services/event_services";
 import { useHistory } from "react-router-dom";
 import { signout } from "../helpers/helpers";
 import { EventForm } from "../components/EventForm";
-
-export enum Day {
-  MONDAY,
-  TUESDAY,
-  WEDNESDAY,
-  THURSDAY,
-  FRIDAY,
-  SATURDAY,
-  SUNDAY,
-}
-
-export const DayNames = {
-  [Day.MONDAY]: "Mon",
-  [Day.TUESDAY]: "Tue",
-  [Day.WEDNESDAY]: "Wed",
-  [Day.THURSDAY]: "Thu",
-  [Day.FRIDAY]: "Fri",
-  [Day.SATURDAY]: "Sat",
-  [Day.SUNDAY]: "Sun",
-};
-
-export type Slot = {
-  start: string;
-  end: string;
-};
-
-type Slots = Record<Day, Slot[]>;
-
-export type Event = {
-  name: string;
-  location: string;
-  description: string;
-  duration: number;
-  isActive: boolean;
-  eventurl: string;
-  rangedays: number;
-  calendardays: boolean;
-  bufferafter: number;
-  bufferbefore: number;
-  slots: Slots;
-};
-
-const EMPTY_EVENT: Event = {
-  name: "",
-  location: "",
-  description: "",
-  duration: 0,
-  isActive: false,
-  eventurl: "",
-  rangedays: 0,
-  calendardays: false,
-  bufferafter: 0,
-  bufferbefore: 0,
-  slots: {
-    [Day.MONDAY]: [],
-    [Day.TUESDAY]: [],
-    [Day.WEDNESDAY]: [],
-    [Day.THURSDAY]: [],
-    [Day.FRIDAY]: [],
-    [Day.SATURDAY]: [],
-    [Day.SUNDAY]: [],
-  },
-};
+import { Day, EMPTY_EVENT, Event, Slot } from "../types/ModelTypes";
 
 export type EventFormProps = {
   event: Event;

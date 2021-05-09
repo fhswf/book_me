@@ -7,7 +7,7 @@ import { Alert } from '@material-ui/lab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import ShareIcon from '@material-ui/icons/Share';
-import { useStyles } from "./eventList";
+import { useStyles } from "./EventList";
 
 export function EventCard(props) {
 
