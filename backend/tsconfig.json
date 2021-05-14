@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "allowJs": true,
     "strict": false,
     "baseUrl": "./",
     "outDir": "build",
@@ -26,12 +27,8 @@
       ]
     }
   },
-  "files": [
-    "controller/google_controller.ts"
-  ],
   "include": [
-    "./**/*.ts",
-    "./**/*.js",
+    "./**/*",
     "./.eslintrc.js"
   ],
   "exclude": [

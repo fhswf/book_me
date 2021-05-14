@@ -9,10 +9,11 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --config \"./nodemon.json\" ",
+    "start": "node build/server.js",
     "server": "nodemon server.ts",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "tsc",
     "doc": "jsdoc -c jsdoc.json"
   },
   "contributors": [
