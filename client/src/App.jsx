@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { getUserById } from "./helpers/services/user_services";
-import EventList from "./components/eventList";
+import EventList from "./components/EventList";
 import AppNavbar from "./components/appNavbar";
 
 import { Box, Button, Container, Grid, Link, Paper, Typography } from '@material-ui/core';
