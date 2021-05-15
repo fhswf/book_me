@@ -17,11 +17,27 @@ import {
   Checkbox,
   FormLabel,
   FormGroup,
+  makeStyles,
 } from "@material-ui/core";
 import { Add, Delete } from "@material-ui/icons";
 import { TimesForDay } from "./timesForDay";
 import { EventFormProps } from "../pages/editevent";
 import { Day, DayNames, Event, Slot } from "@fhswf/bookme-common";
+
+export const useStyles = makeStyles((theme) => ({
+  row: {
+    alignItems: "baseline",
+  },
+  label: {
+    fontSize: "0.7rem",
+    display: "block",
+    paddingTop: "2ex",
+    marginBottom: "-1ex",
+  },
+  sep: {
+    padding: "0.8ex",
+  },
+}));
 
 type EditSlotProps = {
   day: Day;
@@ -30,6 +46,7 @@ type EditSlotProps = {
 };
 
 const EditSlot = (props: EditSlotProps) => {
+  const classes = useStyles();
   const [slots, setSlots] = useState<Slot[]>([]);
 
   useEffect(() => {
@@ -83,6 +100,7 @@ const EditSlot = (props: EditSlotProps) => {
         <Grid item xs={2}>
           <FormControl>
             <FormControlLabel
+              className={classes.label}
               control={
                 <Checkbox checked={slots.length > 0} onChange={handleCheck} />
               }
@@ -95,7 +113,7 @@ const EditSlot = (props: EditSlotProps) => {
             {slots.map((slot, index) => (
               <>
                 <Grid item xs={12}>
-                  <FormGroup row spacing="normal">
+                  <FormGroup row className={classes.row} spacing="normal">
                     <TextField
                       type="time"
                       margin="normal"
@@ -103,7 +121,7 @@ const EditSlot = (props: EditSlotProps) => {
                       onChange={changeTime("start", index)}
                       value={slot.start}
                     />
-                    <span>&nbsp;–&nbsp;</span>
+                    <span className={classes.sep}>&nbsp;–&nbsp;</span>
                     <TextField
                       type="time"
                       margin="normal"
@@ -321,7 +339,7 @@ export const EventForm = (props: EventFormProps): JSX.Element => {
             {[0, 1, 2, 3, 4, 5, 6].map((day) => (
               <EditSlot
                 day={day}
-                slots={formData.slots[day as Day]}
+                slots={formData.available[day as Day]}
                 onChange={onChangeSlot(day)}
               />
             ))}

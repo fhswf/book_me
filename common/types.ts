@@ -31,6 +31,7 @@ export type Slot = {
 export type Slots = Record<Day, Slot[]>;
 
 export type Event = {
+  _id?: string;
   name: string;
   location: string;
   description: string;
