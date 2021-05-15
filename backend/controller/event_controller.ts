@@ -4,7 +4,7 @@
  * @module event_controller
  */
 import { EventModel } from "../models/Event";
-import { Day, Event, Slot } from "types/ModelTypes";
+import { Day } from "@fhswf/bookme-common";
 import { freeBusy } from "./google_controller";
 import { validationResult } from "express-validator";
 import { errorHandler } from "../handlers/errorhandler";
@@ -125,7 +125,7 @@ export const deleteEventController = (req: Request, res: Response): void => {
     .then(() => {
       res.status(200).json({ msg: "Successfully deleted the Event" });
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(400).json({ error: err });
     });
 };
@@ -140,10 +140,10 @@ export const getEventListController = (req: Request, res: Response): void => {
   const userid = req.user_id;
   const query = EventModel.find({ user: userid });
   void query.exec()
-    .then((event) => {
+    .then(event => {
       res.status(200).json(event);
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(400).json({ error: err });
     });
 };
@@ -176,13 +176,14 @@ export const getActiveEventsController = (req: Request, res: Response): void => 
 export const getEventByIdController = (req: Request, res: Response): void => {
   const event_id = req.params.id;
   const query = EventModel.findById({ _id: event_id });
-  void query.exec(function (err, event) {
-    if (err) {
-      res.status(400).json({ error: err });
-    } else {
+  void query.exec()
+    .then(event => {
+      console.log("getEvent: %s %o", event_id, event);
       res.status(200).json(event);
-    }
-  });
+    })
+    .catch(err => {
+      res.status(400).json({ error: err });
+    });
 };
 
 /**
