@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { signout } from "../helpers/helpers";
 
 import {
-  Box, Button, Card, Container, Divider, FilledInput, FormControl, FormGroup, FormLabel, FormHelperText, Grid,
+  Box, Button, Card, Container, Divider, FilledInput, FormControl, FormHelperText, Grid,
   Input, InputAdornment, InputLabel, MenuItem, Select, TextField, Paper
 } from '@material-ui/core';
 import { spacing } from '@material-ui/system';
@@ -13,10 +13,11 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import AppNavbar from "../components/appNavbar";
 import { saveUserEvent } from "../helpers/services/event_services";
+import { TimesForDay } from "../components/timesForDay";
 
 
 
-const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles((theme) => ({
   row: {
     alignItems: 'baseline'
   },
@@ -31,48 +32,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }
 ))
-
-const TimesForDay = (props) => {
-  const classes = useStyles();
-  const [formData, setFormData] = useState({ start: props.start, end: props.end });
-
-  const cbStartTime = (event) => {
-    setFormData({ ...formData, start: event.target.value });
-    props.cbStartTime(event);
-  }
-
-  const cbEndTime = (event) => {
-    setFormData({ ...formData, end: event.target.value });
-    props.cbEndTime(event);
-  }
-
-  // TODO: Add Stepper
-  return (
-    <>
-      <Grid item xs={6}>
-        <FormLabel className={classes.label} spacing="normal">{props.day}</FormLabel>
-        <FormGroup row className={classes.row} spacing="normal">
-          <TextField
-            type="time"
-            margin="normal"
-            placeholder="Starttime"
-            onChange={cbStartTime}
-            value={formData.start}
-          />
-          <span className={classes.sep}>&nbsp;–&nbsp;</span>
-          <TextField
-            type="time"
-            margin="normal"
-            placeholder="Endtime"
-            onChange={cbEndTime}
-            value={formData.end}
-          />
-        </FormGroup>
-      </Grid>
-    </>
-  )
-}
-
 
 const AddEvent = () => {
   const history = useHistory();
