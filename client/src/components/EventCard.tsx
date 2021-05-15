@@ -20,12 +20,13 @@ import EditIcon from "@material-ui/icons/Edit";
 import ShareIcon from "@material-ui/icons/Share";
 import { useStyles } from "./EventList";
 import { Event } from "@fhswf/bookme-common";
-import { GoogleTokens } from "../../../backend/models/User";
 
 type EventCardProps = {
   event: Event;
   token: string;
   url: string;
+  setActive: (active: boolean) => void;
+  onDelete: (event: Event) => void;
 };
 
 export const EventCard = (props: EventCardProps) => {
@@ -65,6 +66,9 @@ export const EventCard = (props: EventCardProps) => {
         history.push("/landing");
       }
     });
+    if (props.onDelete) {
+      props.onDelete(props.event);
+    }
   };
 
   return (

@@ -3,23 +3,24 @@ import { useHistory } from "react-router-dom";
 import { signout } from "../helpers/helpers";
 import { updateEvent } from "../helpers/services/event_services";
 
-import { Grid } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Grid } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 
 import { getUsersEvents } from "../helpers/services/event_services";
-import { EventCard } from "./eventCard";
+import { EventCard } from "./EventCard";
+import { Event } from "@fhswf/bookme-common";
 
 export const useStyles = makeStyles((theme) => ({
   delete: {
-    marginLeft: 'auto',
-  }
+    marginLeft: "auto",
+  },
 }));
 
 function EventList(props) {
-  const token = JSON.parse(localStorage.getItem("access_token"));
+  const token = JSON.parse(localStorage.getItem("access_token") as string);
   const history = useHistory();
 
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
     getUsersEvents(token).then((res) => {
@@ -27,19 +28,33 @@ function EventList(props) {
         signout();
         history.push("/landing");
       } else {
-        console.log('events: %o', res.data);
+        console.log("events: %o", res.data);
         setEvents(res.data);
       }
     });
   }, [token, history]);
 
-  const list = events.length == 0 ? (<div>No events yet, create one</div>) :
-    events.map((event, index) =>
-      <EventCard
-        event={event}
-        url={props.url}
-        setActive={(active) => { events[index].isActive = active; updateEvent(token, events[index]); }}
-        token={token} />
+  const onDelete = (event: Event) => {
+    setEvents(events.filter((ev) => ev._id !== event._id));
+  };
+
+  const list =
+    events.length == 0 ? (
+      <div>No events yet, create one</div>
+    ) : (
+      events.map((event, index) => (
+        <EventCard
+          event={event}
+          url={props.url}
+          setActive={(active) => {
+            const event = events[index];
+            event.isActive = active;
+            updateEvent(token, event._id, event);
+          }}
+          token={token}
+          onDelete={onDelete}
+        />
+      ))
     );
 
   return (
@@ -69,8 +84,5 @@ function EventList(props) {
       </CardActions>
     </Card>
 */
-
-
-
 
 export default EventList;
