@@ -21,7 +21,7 @@ import {
 import { Add, Delete } from "@material-ui/icons";
 import { TimesForDay } from "./timesForDay";
 import { EventFormProps } from "../pages/editevent";
-import { Day, DayNames, Event, Slot } from "../types/ModelTypes";
+import { Day, DayNames, Event, Slot } from "@fhswf/bookme-common";
 
 type EditSlotProps = {
   day: Day;
@@ -64,14 +64,14 @@ const EditSlot = (props: EditSlotProps) => {
     setSlots(slots.filter((slot, idx) => index !== idx));
   };
 
-  const changeTime = (key: keyof Slot, index: number) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    console.log("ChangeTime: %s %d %o", key, index, event.target.value);
-    let _slots = slots.slice();
-    _slots[index][key] = event.target.value;
-    setSlots(_slots);
-  };
+  const changeTime =
+    (key: keyof Slot, index: number) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      console.log("ChangeTime: %s %d %o", key, index, event.target.value);
+      let _slots = slots.slice();
+      _slots[index][key] = event.target.value;
+      setSlots(_slots);
+    };
 
   return (
     <>
@@ -317,11 +317,11 @@ export const EventForm = (props: EventFormProps): JSX.Element => {
                 </FormHelperText>
               </FormControl>
             </Grid>
-
+            {console.log("formData: %o", formData)}
             {[0, 1, 2, 3, 4, 5, 6].map((day) => (
               <EditSlot
                 day={day}
-                slots={formData.slots[day as Day]}
+                slots={formData.available[day as Day]}
                 onChange={onChangeSlot(day)}
               />
             ))}
