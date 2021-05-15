@@ -1,0 +1,43 @@
+{
+  "name": "@fhswf/bookme-common",
+  "version": "1.0.3",
+  "description": "Common types for backend and frontend",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fhswf/book_me.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "main": "types.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "doc": "jsdoc -c jsdoc.json"
+  },
+  "contributors": [
+    {
+      "name": "Christian Gawron",
+      "email": "gawron.christian@fh-swf.de"
+    }
+  ],
+  "license": "MIT",
+  "files": [
+    "*.js",
+    "*.ts"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/git": "^9.0.0",
+    "@semantic-release/github": "^7.2.0",
+    "@semantic-release/npm": "^7.0.10",
+    "@semantic-release/release-notes-generator": "^9.0.1",
+    "eslint": "^7.19.0",
+    "jsdoc": "^0.0.0",
+    "semantic-release": "^17.3.9",
+    "semantic-release-monorepo": "^7.0.4",
+    "typescript": "^4.1.3"
+  }
+}

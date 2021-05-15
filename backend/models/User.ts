@@ -1,4 +1,4 @@
-import * as mongoose from 'mongoose';
+import { Document, Schema, model } from 'mongoose';
 import { genSalt, hash } from "bcryptjs";
 
 export interface GoogleTokens extends mongoose.Document {
@@ -8,7 +8,7 @@ export interface GoogleTokens extends mongoose.Document {
   expiry_date?: number;
 }
 
-export interface User extends mongoose.Document {
+export interface User {
   email: string;
   name: string;
   password: string;
@@ -19,8 +19,14 @@ export interface User extends mongoose.Document {
   pull_calendars: string[];
 };
 
+interface GoogleTokensDocument extends GoogleTokens, Document {
+}
+
+interface UserDocument extends User, Document {
+}
+
 // User schema for the Database
-const tokenSchema = new mongoose.Schema<GoogleTokens>({
+const tokenSchema = new Schema<GoogleTokensDocument>({
   access_token: {
     type: String,
     default: null,
@@ -40,7 +46,7 @@ const tokenSchema = new mongoose.Schema<GoogleTokens>({
 });
 
 // User schema for the Database
-const userSchema = new mongoose.Schema<User>(
+const userSchema = new Schema<UserDocument>(
   {
     _id: {
       type: String,
@@ -91,7 +97,7 @@ const userSchema = new mongoose.Schema<User>(
 );
 
 userSchema.pre("save", function (next) {
-  let user: User = <User>this;
+  const user: UserDocument = this;
 
   // only hash the password if it has been modified (or is new)
   if (!user.isModified("password")) {
@@ -116,4 +122,4 @@ userSchema.pre("save", function (next) {
   });
 });
 
-export const UserModel = mongoose.model<User>("User", userSchema);
+export const UserModel = model<UserDocument>("User", userSchema);

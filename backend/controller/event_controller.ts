@@ -3,14 +3,15 @@
 /**
  * @module event_controller
  */
-import { Day, Event, EventModel } from "../models/Event";
+import { EventModel } from "../models/Event";
+import { Day, Event, Slot } from "types/ModelTypes";
 import { freeBusy } from "./google_controller";
 import { validationResult } from "express-validator";
 import { errorHandler } from "../handlers/errorhandler";
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { Request, Response } from "express";
 
-const DAYS = [Day.SUN, Day.MON, Day.TUE, Day.WED, Day.THU, Day.FRI, Day.SAT,]
+//const DAYS = [Day.SUN, Day.MON, Day.TUE, Day.WED, Day.THU, Day.FRI, Day.SAT,]
 
 /**
  * Middleware to get available times for one weekday of a given user
@@ -21,7 +22,7 @@ const DAYS = [Day.SUN, Day.MON, Day.TUE, Day.WED, Day.THU, Day.FRI, Day.SAT,]
 export const getAvailableTimesForDay = (req: Request, res: Response): void => {
   console.log('getAvailableTimesForDay: %s', req.query.day);
   const date = new Date(<string>req.query.day);
-  const day = DAYS[date.getDay()];
+  const day = <Day>(date.getDay());
   const eventurl = <string>req.query.eventurl;
   const userid = <string>req.query.user;
   const query = EventModel.findOne({ url: eventurl, user: userid }).select(
@@ -32,16 +33,16 @@ export const getAvailableTimesForDay = (req: Request, res: Response): void => {
       res.status(400).json({ erorr: err });
     } else {
       console.log("Event: %o; day: %o, %o", event, day, event.available[day]);
-      const slot = event.available[day];
+      const slot = event.available[day][0];
       let start = new Date(date);
       console.log("start: %o, %j", start, slot)
-      start.setHours(Number.parseInt(slot[0].substring(0, 2)),
-        Number.parseInt(slot[0].substring(3, 5)), 0);
+      start.setHours(Number.parseInt(slot.start.substring(0, 2)),
+        Number.parseInt(slot.start.substring(3, 5)), 0);
       console.log("start: %o", start);
       start = zonedTimeToUtc(start, 'Europe/Berlin');
       let end = new Date(date);
-      end.setHours(Number.parseInt(slot[1].substring(0, 2)),
-        Number.parseInt(slot[1].substring(3, 5)), 0);
+      end.setHours(Number.parseInt(slot.end.substring(0, 2)),
+        Number.parseInt(slot.end.substring(3, 5)), 0);
       end = zonedTimeToUtc(end, 'Europe/Berlin');
       console.log('TZ: %s', process.env.TZ);
       console.log("event: %j %o %s %s", event, slot, start, end);
@@ -121,8 +122,12 @@ export const addEventController = (req: Request, res: Response): void => {
 export const deleteEventController = (req: Request, res: Response): void => {
   const eventid = req.params.id;
   void EventModel.findByIdAndDelete(eventid)
-    .then(() => { res.status(200).json({ msg: "Successfully deleted the Event" }) })
-    .catch((err) => { res.status(400).json({ error: err }) });
+    .then(() => {
+      res.status(200).json({ msg: "Successfully deleted the Event" });
+    })
+    .catch((err) => {
+      res.status(400).json({ error: err });
+    });
 };
 
 /**

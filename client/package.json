@@ -1,5 +1,5 @@
 {
-  "name": "bookme-client",
+  "name": "@fhswf/bookme-client",
   "version": "1.0.0",
   "private": true,
   "homepage": "https://jupiter.fh-swf.de/bookme",
@@ -12,16 +12,25 @@
       "email": "gawron.christian@fh-swf.de"
     }
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fhswf/book_me.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "license": "MIT",
   "proxy": "https://jupiter.fh-swf.de/",
   "dependencies": {
     "@emotion/styled": "^11.3.0",
+    "@fhswf/bookme-common": "^1.0.0",
     "@material-ui/core": "^5.0.0-alpha.32",
     "@material-ui/icons": "^5.0.0-alpha.29",
     "@material-ui/lab": "^5.0.0-alpha.32",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@types/react": "^17.0.5",
     "axios": "^0.21.1",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
@@ -58,6 +67,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-router-dom": "^5.1.7",
     "dotenv-cli": "^4.0.0",
     "node-sass": "^5.0.0"
   }

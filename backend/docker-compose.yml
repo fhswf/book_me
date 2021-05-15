@@ -3,6 +3,7 @@ version: "3"
 services:
   app:
     container_name: bookme
+    image: bookme:latest
     restart: always
     build: .
     env_file:
