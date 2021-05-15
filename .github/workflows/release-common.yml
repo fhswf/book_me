@@ -1,10 +1,12 @@
-name: release
+name: release-common
 
 # Run the workflow when a Pull Request is opened or when changes are pushed to master
 on:
   pull_request:
   push:
     branches: [master]
+  paths:
+    - "common/**"
 
 jobs:
   test:
@@ -53,6 +55,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release
+        working-directory: common
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
