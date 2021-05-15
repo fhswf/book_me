@@ -73,7 +73,7 @@ export const googleCallback = (req: Request, res: Response): void => {
 export async function insertEventToGoogleCal(req: Request, res: Response): Promise<void> {
   const starttime = new Date(Number.parseInt(req.body.starttime));
   const endtime = addMinutes(starttime, req.body.event.duration);
-
+  console.log("insertEvent: %s %o", req.body.starttime, starttime);
 
   const event: Schema$Event = {
     summary: <string>req.body.event.name + " with " + <string>req.body.name,
@@ -234,7 +234,7 @@ function deleteTokens(userid: string) {
  */
 function saveTokens(user: string, token) {
   const _KEYS = ["access_token", "refresh_token", "scope", "expiry_date"];
-  const google_tokens: GoogleTokens = {};
+  const google_tokens = {};
   _KEYS.forEach(key => {
     if (key in token.tokens && token.tokens[key]) {
       google_tokens[key] = <string>token.tokens[key];
