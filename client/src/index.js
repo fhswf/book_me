@@ -16,7 +16,7 @@ import AddEvent from "./pages/addEvent";
 import Planing from "./pages/planing";
 import NotFound from "./pages/notfound";
 import Booking from "./pages/booking";
-import EditEvent from "./pages/editevent";
+import EditEvent from "./pages/EditEvent";
 import PrivateRoute from "./routes/privateRoute";
 import Calendarintegration from "./pages/calendarint";
 import Bookdetails from "./pages/bookdetails";

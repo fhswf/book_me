@@ -27,7 +27,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 //import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 //import { faCalendar } from "@fortawesome/free-solid-svg-icons";
-import { getUserById } from "../helpers/services/user_services";
+import { getUserByToken } from "../helpers/services/user_services";
 //const iconCal = <FontAwesomeIcon icon={faCalendar} />;
 
 const useStyles = makeStyles((theme) => ({
@@ -72,7 +72,7 @@ const AppNavbar = () => {
   };
 
   useEffect(() => {
-    getUserById(token).then((res) => {
+    getUserByToken(token).then((res) => {
       setUser(res.data);
       setLink(process.env.REACT_APP_URL + "users/" + res.data.user_url);
     });

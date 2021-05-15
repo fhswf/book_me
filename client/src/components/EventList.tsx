@@ -9,6 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { getUsersEvents } from "../helpers/services/event_services";
 import { EventCard } from "./EventCard";
 import { Event } from "@fhswf/bookme-common";
+import { EventDocument } from "../../../backend/models/Event";
 
 export const useStyles = makeStyles((theme) => ({
   delete: {
@@ -16,11 +17,16 @@ export const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function EventList(props) {
+type EventListProps = {
+  url: string;
+  userid: string;
+};
+
+const EventList = (props: EventListProps) => {
   const token = JSON.parse(localStorage.getItem("access_token") as string);
   const history = useHistory();
 
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventDocument[]>([]);
 
   useEffect(() => {
     getUsersEvents(token).then((res) => {
@@ -49,6 +55,7 @@ function EventList(props) {
           setActive={(active) => {
             const event = events[index];
             event.isActive = active;
+            console.log("setActive: %o %o", event, active);
             updateEvent(token, event._id, event);
           }}
           token={token}
@@ -64,25 +71,6 @@ function EventList(props) {
       </Grid>
     </>
   );
-}
-
-/*
-     <Card>
-      <CardHeader action={
-        <IconButton aria-label="settings" component={Link} href={`/editevent/${_event._id}`}>
-          <MoreVertIcon />
-        </IconButton>
-      }>{_event.name}</CardHeader>
-      <CardContent></CardContent>
-      <CardActions>
-        <IconButton aria-label="copy link" onClick={handleCopy(_event)}>
-          <ShareIcon /> Copy link
-                </IconButton>
-        <IconButton aria-label="delete" onClick={handleDelete(_event)} >
-          <DeleteIcon />
-        </IconButton>
-      </CardActions>
-    </Card>
-*/
+};
 
 export default EventList;

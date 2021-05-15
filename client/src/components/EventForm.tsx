@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -21,7 +21,7 @@ import {
 } from "@material-ui/core";
 import { Add, Delete } from "@material-ui/icons";
 import { TimesForDay } from "./timesForDay";
-import { EventFormProps } from "../pages/editevent";
+import { EventFormProps } from "../pages/EditEvent";
 import { Day, DayNames, Event, Slot } from "@fhswf/bookme-common";
 
 export const useStyles = makeStyles((theme) => ({
@@ -51,7 +51,10 @@ const EditSlot = (props: EditSlotProps) => {
 
   useEffect(() => {
     setSlots(
-      props.slots.filter((slot) => slot.start.length > 0 && slot.end.length > 0)
+      props.slots.filter(
+        (slot) =>
+          slot.start && slot.start.length > 0 && slot.end && slot.end.length > 0
+      )
     );
   }, [props.slots]);
 
@@ -59,12 +62,15 @@ const EditSlot = (props: EditSlotProps) => {
     if (event.target.checked) {
       // ensure at least one entry
       if (slots.length == 0) {
-        setSlots([{ start: "09:00", end: "17:00" }]);
+        const _slots = [{ start: "09:00", end: "17:00" }];
+        setSlots(_slots);
+        props.onChange(_slots);
       }
     } else {
       // ensure no entry
       if (slots.length > 0) {
         setSlots([]);
+        props.onChange([]);
       }
     }
   };
@@ -74,11 +80,14 @@ const EditSlot = (props: EditSlotProps) => {
     let _slots = slots.slice();
     _slots.push({ start: "", end: "" });
     setSlots(_slots);
+    props.onChange(_slots);
   };
 
   const deleteSlot = (index) => () => {
     console.log("delete slot %d", index);
-    setSlots(slots.filter((slot, idx) => index !== idx));
+    const _slots = slots.filter((slot, idx) => index !== idx);
+    setSlots(_slots);
+    props.onChange(_slots);
   };
 
   const changeTime =
@@ -88,6 +97,7 @@ const EditSlot = (props: EditSlotProps) => {
       let _slots = slots.slice();
       _slots[index][key] = event.target.value;
       setSlots(_slots);
+      props.onChange(_slots);
     };
 
   return (
@@ -156,19 +166,38 @@ export const EventForm = (props: EventFormProps): JSX.Element => {
     setFormData(props.event);
   }, [props.event]);
 
-  const handleOnSubmit = (event: any) => {
+  const handleOnSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
     props.handleOnSubmit(formData);
   };
 
-  const handleOnChange = (key: keyof Event) => (event: any) => {
-    setChanged(true);
-    setFormData({ ...formData, [key]: event.target.value } as Event);
+  const generateSlug = (str: string) => {
+    if (!str) return "";
+    let slug = str.replace(" ", "_").toLocaleLowerCase();
+    console.log("generateSlug: %s %s", str, slug);
+    return slug;
   };
 
+  const handleOnChange =
+    (key: keyof Event) => (evt: ChangeEvent<HTMLInputElement>) => {
+      setChanged(true);
+      console.log("onChange: %o", evt);
+      if (key === "name" && formData.url === generateSlug(formData.name)) {
+        setFormData({
+          ...formData,
+          [key]: evt.target.value,
+          url: generateSlug(evt.target.value),
+        } as Event);
+      } else {
+        setFormData({ ...formData, [key]: evt.target.value } as Event);
+      }
+    };
+
   const onChangeSlot = (day: Day) => (slots: Slot[]) => {
+    setChanged(true);
     console.log("onChangeSlot: %d %o", day, slots);
+    formData.available[day] = slots;
+    setFormData(formData);
   };
 
   return (
@@ -223,8 +252,8 @@ export const EventForm = (props: EventFormProps): JSX.Element => {
               variant="filled"
               placeholder="awesome-meeting"
               helperText="Customizable part of the URL"
-              onChange={handleOnChange("eventurl")}
-              value={formData.eventurl}
+              onChange={handleOnChange("url")}
+              value={formData.url}
             />
           </div>
         </Box>

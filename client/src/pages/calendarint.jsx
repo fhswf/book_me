@@ -26,7 +26,7 @@ import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 
 //import { Button, Modal } from "react-bootstrap";
-import { getUserById, updateUser } from "../helpers/services/user_services";
+import { getUserByToken, updateUser } from "../helpers/services/user_services";
 import { deleteAccess, getAuthUrl, getCalendarList } from "../helpers/services/google_services";
 
 import EditIcon from '@material-ui/icons/Edit';
@@ -247,7 +247,7 @@ const Calendarintegration = () => {
   };
 
   useEffect(() => {
-    getUserById(token).then((res) => {
+    getUserByToken(token).then((res) => {
       if (res.data.success === false) {
         signout();
         history.push("/landing");
