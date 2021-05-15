@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 
-import { Day, Event } from 'types/ModelTypes'
+import { Day, Event } from '@fhswf/bookme-common'
 
 
 

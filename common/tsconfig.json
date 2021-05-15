@@ -4,7 +4,7 @@
     "allowJs": true,
     "strict": false,
     "baseUrl": "./",
-    "outDir": "build",
+    "outDir": ".",
     "removeComments": true,
     "sourceMap": true,
     "target": "es6",
@@ -16,24 +16,8 @@
     "types": [
       "node"
     ],
-    "typeRoots": [
-      "./types",
-      "node_modules/@types"
-    ],
-    "paths": {
-      "*": [
-        "*",
-        "../client/src/*"
-      ]
-    }
   },
-  "include": [
-    "./**/*",
-    "./.eslintrc.js"
+  "files": [
+    "types.ts",
   ],
-  "exclude": [
-    "./build",
-    "./src/public/"
-  ],
-  
 }
