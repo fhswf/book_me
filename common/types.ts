@@ -36,7 +36,7 @@ export type Event = {
   description: string;
   duration: number;
   isActive: boolean;
-  eventurl: string;
+  url: string;
   rangedays: number;
   calendardays: boolean;
   bufferafter: number;
@@ -50,7 +50,7 @@ export const EMPTY_EVENT: Event = {
   description: "",
   duration: 0,
   isActive: false,
-  eventurl: "",
+  url: "",
   rangedays: 0,
   calendardays: false,
   bufferafter: 0,
