@@ -3,12 +3,13 @@ import { GoogleTokens } from "../../../../backend/models/User";
 import { Event } from "@fhswf/bookme-common";
 
 export async function saveUserEvent(
-  token: GoogleTokens,
-  event: Event
+  token: string,
+  event: Event,
+  userid: string
 ) {
   const response = await axios.post(
     `${process.env.REACT_APP_API_URI}/events/addEvent`,
-    event,
+    { ...event, user: userid },
     {
       headers: {
         Authorization: "Bearer " + token,

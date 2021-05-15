@@ -1,6 +1,6 @@
 {
   "name": "@fhswf/bookme-common",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Common types for backend and frontend",
   "repository": {
     "type": "git",
