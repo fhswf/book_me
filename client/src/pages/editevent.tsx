@@ -17,7 +17,7 @@ import { getEventByID, updateEvent } from "../helpers/services/event_services";
 import { useHistory } from "react-router-dom";
 import { signout } from "../helpers/helpers";
 import { EventForm } from "../components/EventForm";
-import { Day, EMPTY_EVENT, Event, Slot } from "../types/ModelTypes";
+import { Day, EMPTY_EVENT, Event, Slot } from "@fhswf/bookme-common";
 
 export type EventFormProps = {
   event: Event;
@@ -37,7 +37,7 @@ const EditEvent = ({ match }): JSX.Element => {
         history.push("/landing");
       } else {
         console.log("editEvent: getEventById returned %o", res.data);
-        const slots: Record<Day, Slot[]> = {
+        const available: Record<Day, Slot[]> = {
           [Day.MONDAY]: [
             {
               start: res.data.available.mon[0] as string,
@@ -81,7 +81,7 @@ const EditEvent = ({ match }): JSX.Element => {
             },
           ],
         };
-        console.log("slots: %o", slots);
+        console.log("slots: %o", available);
         setFormData({
           name: res.data.name,
           location: res.data.location,
@@ -93,30 +93,27 @@ const EditEvent = ({ match }): JSX.Element => {
           bufferafter: res.data.bufferafter,
           bufferbefore: res.data.bufferbefore,
           calendardays: res.data.calendardays,
-          slots: slots,
+          available: available,
         });
       }
     });
   }, []);
 
   const saveEvent = (formData: Event) => {
-    if (formData && formData.name && formData.eventurl) {
-      updateEvent(token, eventID, formData)
-        .then((res) => {
-          if (res.data.success === false) {
-            signout();
-            history.push("/landing");
-          } else {
-            toast.success(res.data.msg);
-            history.push("/app");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      toast.error("Please fill in all required fields!");
-    }
+    updateEvent(token, eventID, formData)
+      .then((res) => {
+        if (res.data.success === false) {
+          signout();
+          history.push("/landing");
+        } else {
+          toast.success(res.data.msg);
+          history.push("/app");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Failed to save event type");
+      });
   };
 
   console.log("render: formData=%o", formData);

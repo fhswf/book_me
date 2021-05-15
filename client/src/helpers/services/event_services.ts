@@ -1,60 +1,14 @@
 import axios from "axios";
+import { GoogleTokens } from "../../../../backend/models/User";
+import { Event } from "@fhswf/bookme-common";
 
 export async function saveUserEvent(
-  token,
-  name,
-  location,
-  description,
-  isActive,
-  eventurl,
-  rangedays,
-  calendardays,
-  bufferbefore,
-  bufferafter,
-  duration,
-  starttimemon,
-  endtimemon,
-  starttimetue,
-  endtimetue,
-  starttimewen,
-  endtimewen,
-  starttimethu,
-  endtimethu,
-  starttimefri,
-  endtimefri,
-  starttimesat,
-  endtimesat,
-  starttimesun,
-  endtimesun
+  token: GoogleTokens,
+  event: Event
 ) {
   const response = await axios.post(
     `${process.env.REACT_APP_API_URI}/events/addEvent`,
-    {
-      name,
-      location,
-      description,
-      isActive,
-      eventurl,
-      rangedays,
-      calendardays,
-      bufferbefore,
-      bufferafter,
-      duration,
-      starttimemon,
-      endtimemon,
-      starttimetue,
-      endtimetue,
-      starttimewen,
-      endtimewen,
-      starttimethu,
-      endtimethu,
-      starttimefri,
-      endtimefri,
-      starttimesat,
-      endtimesat,
-      starttimesun,
-      endtimesun,
-    },
+    event,
     {
       headers: {
         Authorization: "Bearer " + token,
@@ -91,59 +45,15 @@ export async function getEventByID(token, id) {
 }
 
 export async function updateEvent(
-  token,
-  id,
-  name,
-  location,
-  description,
-  eventurl,
-  rangedays,
-  duration,
-  calendardays,
-  bufferafter,
-  bufferbefore,
-  starttimemon,
-  endtimemon,
-  starttimetue,
-  endtimetue,
-  starttimewen,
-  endtimewen,
-  starttimethu,
-  endtimethu,
-  starttimefri,
-  endtimefri,
-  starttimesat,
-  endtimesat,
-  starttimesun,
-  endtimesun,
-  isActive
+  token: GoogleTokens,
+  id: string,
+  event: Event
 ) {
-  const available = {
-    mon: [starttimemon, endtimemon],
-    tue: [starttimetue, endtimetue],
-    wen: [starttimewen, endtimewen],
-    thu: [starttimethu, endtimethu],
-    fri: [starttimefri, endtimefri],
-    sat: [starttimesat, endtimesat],
-    sun: [starttimesun, endtimesun],
-  };
-  console.log('available: %o', available);
+  console.log('available: %o', event.available);
   const response = await axios.put(
     `${process.env.REACT_APP_API_URI}/events/updateEvent/${id}`,
     {
-      data: {
-        name,
-        location,
-        description,
-        eventurl,
-        rangedays,
-        duration,
-        calendardays,
-        bufferafter,
-        bufferbefore,
-        available,
-        isActive,
-      },
+      data: event
     },
     {
       headers: {
