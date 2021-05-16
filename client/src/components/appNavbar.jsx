@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import React, { useCallback, useRef, useState, useEffect, useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { isAuthenticated, signout } from "../helpers/helpers";
 import { toast, ToastContainer } from "react-toastify";
@@ -21,14 +21,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles } from '@material-ui/core/styles';
+import { UserContext } from "../helpers/privateRoute";
 
-//import "../styles/topbar.scss";
-//import { Navbar, Nav, NavDropdown } from "react-bootstrap";
-
-//import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-//import { faCalendar } from "@fortawesome/free-solid-svg-icons";
-import { getUserByToken } from "../helpers/services/user_services";
-//const iconCal = <FontAwesomeIcon icon={faCalendar} />;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,12 +39,15 @@ const useStyles = makeStyles((theme) => ({
 const AppNavbar = () => {
   const classes = useStyles();
   const history = useHistory();
-  const [link, setLink] = useState("");
-  const [user, setUser] = useState();
+  const user = useContext(UserContext).user;
   const [anchorEl, setAnchorEl] = useState(null);
 
   const token = JSON.parse(localStorage.getItem("access_token"));
+  const link = user ? process.env.REACT_APP_URL + "users/" + user.user_url : "";
+
   const menu = useRef(null);
+
+  console.log('AppNavbar: user=%o', user);
 
   const handleLogout = () => {
     signout();
@@ -70,13 +67,6 @@ const AppNavbar = () => {
     document.body.removeChild(dummy);
     toast.success("Copied Link to Clipboard");
   };
-
-  useEffect(() => {
-    getUserByToken(token).then((res) => {
-      setUser(res.data);
-      setLink(process.env.REACT_APP_URL + "users/" + res.data.user_url);
-    });
-  }, []);
 
 
   const items = [
@@ -145,7 +135,7 @@ const AppNavbar = () => {
   );
 
   return (
-    <div>
+    <>
       <AppBar position="static">
         <Toolbar>
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu"
@@ -175,48 +165,7 @@ const AppNavbar = () => {
         </Toolbar>
       </AppBar>
       {renderMenu}
-    </div>
-    /*
-        <div className="appnavbar">
-          <ToastContainer />
-    
-    
-    
-          <div className="wrap-top-navbar">
-            <Navbar sticky="top" className="top-navbar">
-              <Navbar.Brand as={Link} to="/app">
-                {iconCal} Bookme{" "}
-              </Navbar.Brand>
-              <div className="content-end">
-                <Nav>
-                  <Nav.Link as={Link} to="/landing">
-                    Start
-                  </Nav.Link>
-                </Nav>
-                <Nav>
-                  <Nav.Link as={Link} to="/integration">
-                    Calendar Integration
-                  </Nav.Link>
-                </Nav>
-                <Nav>
-                  <NavDropdown title="Account">
-                    <NavDropdown.Item as={Link} to="/integration">
-                      Calendar Integration
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={copyToClipboard}>
-                      Share your Link!
-                    </NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={handleLogout}>
-                      Logout
-                    </NavDropdown.Item>
-                  </NavDropdown>
-                </Nav>
-              </div>
-            </Navbar>
-          </div>
-        </div>
-        */
+    </>
   );
 };
 
