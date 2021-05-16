@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
-import { getUserByToken } from "../helpers/services/user_services";
 import EventList from "../components/EventList";
 import AppNavbar from "../components/appNavbar";
 
@@ -10,39 +9,25 @@ import {
   Container,
   Grid,
   Link,
-  Paper,
   Typography,
 } from "@material-ui/core";
 
 import AddIcon from "@material-ui/icons/Add";
 
-import { signout } from "../helpers/helpers";
 import { UserContext } from "../helpers/privateRoute";
 
 const App = () => {
   const history = useHistory();
-  const token = JSON.parse(localStorage.getItem("access_token") as string);
   const user = useContext(UserContext).user;
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    getUserByToken(token)
-      .then((res) => {
-        if (res.data.success === false) {
-          signout();
-          history.push("/landing");
-        }
-        if (!res.data.google_tokens || !res.data.google_tokens.access_token) {
-          setConnected(false);
-        } else {
-          setConnected(true);
-        }
-      })
-      .catch((err) => {
-        // TODO: Add SnackBar
-        //toast.error(err);
-      });
-  }, []);
+    if (!user || !user.google_tokens || !user.google_tokens.access_token) {
+      setConnected(false);
+    } else {
+      setConnected(true);
+    }
+  }, [user]);
 
   const addEventButton = () => {
     if (connected) {
