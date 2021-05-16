@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { toast } from "react-toastify";
 import { signout } from "../helpers/helpers";
@@ -13,7 +13,7 @@ import { saveUserEvent } from "../helpers/services/event_services";
 import { TimesForDay } from "../components/timesForDay";
 import { Day, EMPTY_EVENT, Event, Slot } from "@fhswf/bookme-common";
 import { EventForm } from "../components/EventForm";
-import { getUserByToken } from "../helpers/services/user_services";
+import { UserContext } from "../helpers/privateRoute";
 
 export const useStyles = makeStyles((theme) => ({
   row: {
@@ -35,15 +35,8 @@ type AddEventProps = {};
 const AddEvent = (props: AddEventProps) => {
   const history = useHistory();
   const token = JSON.parse(localStorage.getItem("access_token"));
-
   const [formData, setFormData] = useState(EMPTY_EVENT);
-  const [user, setUser] = useState("");
-
-  useEffect(() => {
-    getUserByToken(token).then((res) => {
-      setUser(res.data);
-    });
-  }, []);
+  const user = useContext(UserContext).user;
 
   const saveEvent = (formData: Event) => {
     saveUserEvent(token, formData, user._id)
