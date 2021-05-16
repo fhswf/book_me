@@ -34,10 +34,17 @@ export const getUser = (req: Request, res: Response): void => {
     });
 };
 
+/** Filter out the google_tokens key from user.
+ * This is necessary since we do *not* want to overwrite the google_tokens 
+ * since the client only has the access_token, not the refresh_token!
+ */
+const filterUser = (user) => Object.keys(user)
+  .filter(key => key != 'google_tokens')
+  .reduce((obj, key) => { obj[key] = user[key]; return obj }, {});
 
 export const putUser = (req: Request, res: Response): void => {
   const userid = req.user_id;
-  const user = <User>req.body.data;
+  const user = filterUser(req.body.data as User);
   console.log('putUser: %o', user);
   void UserModel.findByIdAndUpdate(userid, user,
     {
