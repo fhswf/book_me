@@ -8,12 +8,12 @@ import { Container } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import { makeStyles } from "@material-ui/core/styles";
 
-import AppNavbar from "../components/appNavbar";
+import AppNavbar from "../components/AppNavbar";
 import { saveUserEvent } from "../helpers/services/event_services";
-import { TimesForDay } from "../components/timesForDay";
+import { TimesForDay } from "../components/TimesForDay";
 import { Day, EMPTY_EVENT, Event, Slot } from "@fhswf/bookme-common";
 import { EventForm } from "../components/EventForm";
-import { UserContext } from "../helpers/privateRoute";
+import { UserContext } from "../helpers/PrivateRoute";
 
 export const useStyles = makeStyles((theme) => ({
   row: {
@@ -34,29 +34,31 @@ type AddEventProps = {};
 
 const AddEvent = (props: AddEventProps) => {
   const history = useHistory();
-  const token = JSON.parse(localStorage.getItem("access_token"));
+  const token = JSON.parse(localStorage.getItem("access_token") as string);
   const [formData, setFormData] = useState(EMPTY_EVENT);
   const user = useContext(UserContext).user;
 
   const saveEvent = (formData: Event) => {
-    saveUserEvent(token, formData, user._id)
-      .then((res) => {
-        if (res.data.success === false) {
-          signout();
-          history.push("/landing");
-        } else {
-          toast.success(res.data.msg);
-          history.push("/app");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Failed to save event type");
-      });
+    if (user) {
+      saveUserEvent(token, formData, user._id)
+        .then((res) => {
+          if (res.data.success === false) {
+            signout();
+            history.push("/landing");
+          } else {
+            toast.success(res.data.msg);
+            history.push("/app");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Failed to save event type");
+        });
+    }
   };
 
   const theme = {
-    spacing: (value) => value * 2,
+    spacing: (value: number) => value * 2,
   };
 
   return (
