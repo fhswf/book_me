@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { FormGroup, FormLabel, Grid, TextField } from "@material-ui/core";
 import { useStyles } from "../pages/AddEvent";
 
-export const TimesForDay = (props) => {
+export type TimesForDayProps = {
+    start: 
+};
+
+export const TimesForDay = (props: TimesForDayProps) => {
   const classes = useStyles();
   const [start, setStart] = useState(props.start);
   const [end, setEnd] = useState(props.end);
