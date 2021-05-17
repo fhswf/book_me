@@ -4,7 +4,12 @@ import ReactDOM from "react-dom";
 //import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
 
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  RouteComponentProps,
+  Switch,
+} from "react-router-dom";
 
 import App from "./pages/App";
 import Register from "./pages/Register";
@@ -16,7 +21,7 @@ import Planning from "./pages/Planning";
 import NotFound from "./pages/NotFound";
 import Booking from "./pages/Booking";
 import EditEvent from "./pages/EditEvent";
-import PrivateRoute from "./helpers/PrivateRoute";
+import PrivateRoute from "./components/PrivateRoute";
 import Calendarintegration from "./pages/CalendarInt";
 import Bookdetails from "./pages/BookDetails";
 import Finished, { FinishedProps } from "./pages/Finished";
@@ -28,13 +33,11 @@ ReactDOM.render(
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <BrowserRouter basename="/bookme">
         <Switch>
-          <PrivateRoute path="/app" exact>
-            <App />
-          </PrivateRoute>
+          <PrivateRoute path="/app" exact component={App} />
           <PrivateRoute path="/addevent" exact component={AddEvent} />
           <PrivateRoute path="/editevent/:id" exact component={EditEvent} />
-
           <PrivateRoute path="/integration" component={Calendarintegration} />
+
           <Route
             path="/users/:user_url/:url/:date"
             exact

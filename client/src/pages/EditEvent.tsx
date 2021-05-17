@@ -14,7 +14,7 @@ import {
 import Switch from "@material-ui/core/Switch";
 import { toast } from "react-toastify";
 import { getEventByID, updateEvent } from "../helpers/services/event_services";
-import { useHistory } from "react-router-dom";
+import { RouteComponentProps, useHistory } from "react-router-dom";
 import { signout } from "../helpers/helpers";
 import { EventForm } from "../components/EventForm";
 import { Day, EMPTY_EVENT, Event, Slot } from "@fhswf/bookme-common";
@@ -24,8 +24,10 @@ export type EventFormProps = {
   handleOnSubmit: (evt: Event) => void;
 };
 
-const EditEvent = ({ match }): JSX.Element => {
-  const eventID = match.params.id;
+export type EditEventProps = RouteComponentProps<{ id: string }> & {};
+
+const EditEvent = (props: EditEventProps): JSX.Element => {
+  const eventID = props.match.params.id;
   const token = JSON.parse(localStorage.getItem("access_token"));
   const history = useHistory();
   const [formData, setFormData] = useState<Event>(EMPTY_EVENT);
