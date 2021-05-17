@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AppNavbar from "../components/appNavbar";
+import AppNavbar from "../components/AppNavbar";
 
 import "../styles/addevent.css";
 import {

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import EventList from "../components/EventList";
-import AppNavbar from "../components/appNavbar";
+import AppNavbar from "../components/AppNavbar";
 
 import {
   Box,
@@ -14,7 +14,7 @@ import {
 
 import AddIcon from "@material-ui/icons/Add";
 
-import { UserContext } from "../helpers/privateRoute";
+import { UserContext } from "../helpers/PrivateRoute";
 
 const App = () => {
   const history = useHistory();

@@ -1,15 +1,26 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Component, useEffect, useMemo, useState } from "react";
 import { Route, Redirect, useHistory } from "react-router-dom";
 import { isAuthenticated, signout } from "./helpers";
 import { getUserByToken } from "./services/user_services";
+import { User } from "@fhswf/bookme-common";
+import { UserDocument } from "./UserDocument";
 
 /**
  * Context containing the currently logged in user
  */
-export const UserContext = React.createContext({ user: null });
+export const UserContext = React.createContext<{ user: UserDocument | null }>({
+  user: null,
+});
 
-const PrivateRoute = ({ component: Component, ...rest }) => {
-  const [user, setUser] = useState(null);
+type PrivateRouteProps = {
+  path: string;
+  exact?: boolean;
+  component?: (props: any) => JSX.Element;
+  children?: JSX.Element;
+};
+
+const PrivateRoute = (p: PrivateRouteProps) => {
+  const [user, setUser] = useState<UserDocument>();
   const token = JSON.parse(localStorage.getItem("access_token") as string);
   const history = useHistory();
 
@@ -24,20 +35,30 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
           setUser(res.data);
         }
       })
-      .catch((err) => {
+      .catch(() => {
         // TODO: Add SnackBar
         //toast.error(err);
       });
   }, [history, token]);
 
+  const getChildren = (props: any, childProps: any) => {
+    console.log("getChild: %o %o %o", props, props.component, props.children);
+    if (props.children) {
+      return props.children;
+    } else {
+      return <p.component {...childProps} />;
+    }
+  };
+
   return (
     <Route
-      {...rest}
+      path={p.path}
+      exact={p.exact}
       render={(props) =>
         isAuthenticated() ? (
           user ? (
             <UserContext.Provider value={{ user: user }}>
-              <Component {...props} />
+              {getChildren(p, props)}
             </UserContext.Provider>
           ) : (
             <span>Waiting to get User</span>

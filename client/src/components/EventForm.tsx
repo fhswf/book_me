@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
+import DOM from "react-dom";
 import {
   Box,
   Button,
@@ -20,7 +21,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Add, Delete } from "@material-ui/icons";
-import { TimesForDay } from "./timesForDay";
+import { TimesForDay } from "./TimesForDay";
 import { EventFormProps } from "../pages/EditEvent";
 import { Day, DayNames, Event, Slot } from "@fhswf/bookme-common";
 
@@ -83,7 +84,7 @@ const EditSlot = (props: EditSlotProps) => {
     props.onChange(_slots);
   };
 
-  const deleteSlot = (index) => () => {
+  const deleteSlot = (index: number) => () => {
     console.log("delete slot %d", index);
     const _slots = slots.filter((slot, idx) => index !== idx);
     setSlots(_slots);
@@ -123,7 +124,7 @@ const EditSlot = (props: EditSlotProps) => {
             {slots.map((slot, index) => (
               <>
                 <Grid item xs={12}>
-                  <FormGroup row className={classes.row} spacing="normal">
+                  <FormGroup row className={classes.row}>
                     <TextField
                       type="time"
                       margin="normal"
@@ -191,6 +192,18 @@ export const EventForm = (props: EventFormProps): JSX.Element => {
       } else {
         setFormData({ ...formData, [key]: evt.target.value } as Event);
       }
+    };
+
+  interface EvtType {
+    value: number;
+  }
+
+  const handleSelect =
+    <X extends EvtType>(key: keyof Event) =>
+    (evt: ChangeEvent<X>) => {
+      setChanged(true);
+      console.log("onChange: %o", evt);
+      setFormData({ ...formData, [key]: evt.target.value } as Event);
     };
 
   const onChangeSlot = (day: Day) => (slots: Slot[]) => {
@@ -271,7 +284,7 @@ export const EventForm = (props: EventFormProps): JSX.Element => {
                   labelId="duration-label"
                   id="duration"
                   value={formData.duration}
-                  onChange={handleOnChange("duration")}
+                  onChange={handleSelect("duration")}
                 >
                   <MenuItem value={15}>15 min</MenuItem>
                   <MenuItem value={30}>30 min</MenuItem>
@@ -291,7 +304,7 @@ export const EventForm = (props: EventFormProps): JSX.Element => {
                     labelId="buffer-before-label"
                     id="buffer-before"
                     value={formData.bufferbefore}
-                    onChange={handleOnChange("bufferbefore")}
+                    onChange={handleSelect("bufferbefore")}
                   >
                     <MenuItem value={0}>none</MenuItem>
                     <MenuItem value={5}>5 min</MenuItem>
@@ -310,7 +323,7 @@ export const EventForm = (props: EventFormProps): JSX.Element => {
                     labelId="buffer-after-label"
                     id="buffer-after"
                     value={formData.bufferafter}
-                    onChange={handleOnChange("bufferafter")}
+                    onChange={handleSelect("bufferafter")}
                   >
                     <MenuItem value={0}>none</MenuItem>
                     <MenuItem value={5}>5 min</MenuItem>
@@ -353,11 +366,11 @@ export const EventForm = (props: EventFormProps): JSX.Element => {
                 <Select
                   labelId="weekend-label"
                   id="weekend"
-                  value={formData.calendardays}
-                  onChange={handleOnChange("calendardays")}
+                  value={formData.calendardays ? 1 : 0}
+                  onChange={handleSelect("calendardays")}
                 >
-                  <MenuItem value={false}>Working Days</MenuItem>
-                  <MenuItem value={true}>All Days</MenuItem>
+                  <MenuItem value={0}>Working Days</MenuItem>
+                  <MenuItem value={1}>All Days</MenuItem>
                 </Select>
                 <FormHelperText>
                   Is this event avalable on weekends?

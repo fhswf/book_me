@@ -9,7 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { getUsersEvents } from "../helpers/services/event_services";
 import { EventCard } from "./EventCard";
 import { Event } from "@fhswf/bookme-common";
-import { EventDocument } from "../../../backend/models/Event";
+import { EventDocument } from "../helpers/EventDocument";
 
 export const useStyles = makeStyles((theme) => ({
   delete: {
@@ -40,7 +40,7 @@ const EventList = (props: EventListProps) => {
     });
   }, [token, history]);
 
-  const onDelete = (event: Event) => {
+  const onDelete = (event: EventDocument) => {
     setEvents(events.filter((ev) => ev._id !== event._id));
   };
 
@@ -66,7 +66,12 @@ const EventList = (props: EventListProps) => {
 
   return (
     <>
-      <Grid container spacing={3} justify="space-around" alignItems="stretch">
+      <Grid
+        container
+        spacing={3}
+        justifyItems="space-around"
+        alignItems="stretch"
+      >
         {list}
       </Grid>
     </>

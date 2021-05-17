@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { signout } from "../helpers/helpers";
-import AppNavbar from "../components/appNavbar";
+import AppNavbar from "../components/AppNavbar";
 
 import "../styles/calendarint.css";
 
@@ -44,7 +44,7 @@ import EditIcon from "@material-ui/icons/Edit";
 
 import { ToastContainer, toast } from "react-toastify";
 import { Avatar } from "@material-ui/core";
-import { UserContext } from "../helpers/privateRoute";
+import { UserContext } from "../helpers/PrivateRoute";
 
 const renderCalendarList = (calendarList, state, setState, single = false) => {
   console.log("renderCalendarList: %o", state);
@@ -279,7 +279,7 @@ const Calendarintegration = () => {
         signout();
         history.push("/landing");
       }
-      setConnected(false, window.location.reload());
+      setConnected(false);
     });
   };
 
@@ -336,7 +336,7 @@ const Calendarintegration = () => {
       );
     } else {
       return (
-        <Button variant="contained" href={url.url}>
+        <Button variant="contained" href={url}>
           Connect Google Calendar
         </Button>
       );
@@ -355,12 +355,13 @@ const Calendarintegration = () => {
             container
             direction="row"
             spacing={2}
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item>
               <img
-                class="icon"
+                className="icon"
+                alt="Google Calendar"
                 src="/icons/google_calendar_icon.svg"
                 width="32"
               />{" "}

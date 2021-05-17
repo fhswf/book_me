@@ -7,19 +7,19 @@ import "react-toastify/dist/ReactToastify.css";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import App from "./pages/App";
-import Register from "./pages/register";
-import Activate from "./pages/activate";
-import Login from "./pages/login";
-import Landing from "./pages/landing";
-import AddEvent from "./pages/addEvent";
-import Planing from "./pages/planing";
-import NotFound from "./pages/notfound";
-import Booking from "./pages/booking";
+import Register from "./pages/Register";
+import Activate from "./pages/Activate";
+import Login from "./pages/Login";
+import Landing from "./pages/Landing";
+import AddEvent from "./pages/AddEvent";
+import Planning from "./pages/Planning";
+import NotFound from "./pages/NotFound";
+import Booking from "./pages/Booking";
 import EditEvent from "./pages/EditEvent";
-import PrivateRoute from "./helpers/privateRoute";
-import Calendarintegration from "./pages/calendarint";
-import Bookdetails from "./pages/bookdetails";
-import Finished from "./pages/finished";
+import PrivateRoute from "./helpers/PrivateRoute";
+import Calendarintegration from "./pages/CalendarInt";
+import Bookdetails from "./pages/BookDetails";
+import Finished, { FinishedProps } from "./pages/Finished";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
 
@@ -28,7 +28,9 @@ ReactDOM.render(
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <BrowserRouter basename="/bookme">
         <Switch>
-          <PrivateRoute path="/app" exact component={App} />
+          <PrivateRoute path="/app" exact>
+            <App />
+          </PrivateRoute>
           <PrivateRoute path="/addevent" exact component={AddEvent} />
           <PrivateRoute path="/editevent/:id" exact component={EditEvent} />
 
@@ -41,7 +43,7 @@ ReactDOM.render(
           <Route
             path="/booked"
             exact
-            render={(props) => <Finished {...props} />}
+            render={(props: FinishedProps) => <Finished {...props} />}
           />
 
           <Route
@@ -63,7 +65,7 @@ ReactDOM.render(
           <Route
             path="/users/:user_url"
             exact
-            render={(props) => <Planing {...props} />}
+            render={(props) => <Planning {...props} />}
           />
           <Route
             path="/users/:user_url/:url"
