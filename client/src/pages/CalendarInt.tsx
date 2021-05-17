@@ -44,7 +44,7 @@ import EditIcon from "@material-ui/icons/Edit";
 
 import { ToastContainer, toast } from "react-toastify";
 import { Avatar } from "@material-ui/core";
-import { UserContext } from "../helpers/PrivateRoute";
+import { UserContext } from "../components/PrivateRoute";
 
 const renderCalendarList = (calendarList, state, setState, single = false) => {
   console.log("renderCalendarList: %o", state);
