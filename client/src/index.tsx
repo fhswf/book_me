@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import {
   BrowserRouter,
+  Redirect,
   Route,
   RouteComponentProps,
   Switch,
@@ -27,12 +28,21 @@ import Bookdetails from "./pages/BookDetails";
 import Finished, { FinishedProps } from "./pages/Finished";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
+import { isAuthenticated } from "./helpers/helpers";
 
 ReactDOM.render(
   <React.StrictMode>
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <BrowserRouter basename="/bookme">
         <Switch>
+          <Route exact path="/">
+            {isAuthenticated() ? (
+              <Redirect to="/app" />
+            ) : (
+              <Redirect to="/landing" />
+            )}
+          </Route>
+
           <PrivateRoute path="/app" exact component={App} />
           <PrivateRoute path="/addevent" exact component={AddEvent} />
           <PrivateRoute path="/editevent/:id" exact component={EditEvent} />
