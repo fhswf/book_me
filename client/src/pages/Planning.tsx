@@ -13,6 +13,8 @@ import {
   Grid,
   IconButton,
   Typography,
+  Fab,
+  CardActions,
 } from "@material-ui/core";
 import HourglassFullIcon from "@material-ui/icons/HourglassFull";
 import ScheduleIcon from "@material-ui/icons/Schedule";
@@ -93,25 +95,14 @@ const Planning = (props: any) => {
           container
           spacing={3}
           direction="row"
-          justifyContent="flex-start"
-          alignItems="flex-start"
+          justifyContent="space-evenly"
+          alignItems="stretch"
         >
           {events.map((event) => (
-            <Grid item>
+            <Grid item sm={4} xs={6}>
               <Card>
                 <CardHeader
                   avatar={<Avatar alt={user.name} src={user.picture_url} />}
-                  action={
-                    <IconButton
-                      aria-label="schedule"
-                      onClick={(evt) => {
-                        evt.preventDefault();
-                        handleOnClick(event);
-                      }}
-                    >
-                      <ScheduleIcon />
-                    </IconButton>
-                  }
                   title={event.name}
                 />
                 <CardContent>
@@ -130,6 +121,18 @@ const Planning = (props: any) => {
                   </div>
                   {event.description}
                 </CardContent>
+                <CardActions>
+                  <IconButton
+                    color="primary"
+                    aria-label="schedule"
+                    onClick={(evt) => {
+                      evt.preventDefault();
+                      handleOnClick(event);
+                    }}
+                  >
+                    <ScheduleIcon />
+                  </IconButton>
+                </CardActions>
               </Card>
             </Grid>
           ))}
