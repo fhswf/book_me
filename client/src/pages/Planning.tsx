@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useParams, useHistory } from "react-router-dom";
 
@@ -15,6 +15,7 @@ import {
   Typography,
   Fab,
   CardActions,
+  Button,
 } from "@material-ui/core";
 import HourglassFullIcon from "@material-ui/icons/HourglassFull";
 import ScheduleIcon from "@material-ui/icons/Schedule";
@@ -122,16 +123,17 @@ const Planning = (props: any) => {
                   {event.description}
                 </CardContent>
                 <CardActions>
-                  <IconButton
+                  <Button
                     color="primary"
                     aria-label="schedule"
                     onClick={(evt) => {
                       evt.preventDefault();
                       handleOnClick(event);
                     }}
+                    startIcon={<ScheduleIcon />}
                   >
-                    <ScheduleIcon />
-                  </IconButton>
+                    Schedule event
+                  </Button>
                 </CardActions>
               </Card>
             </Grid>
