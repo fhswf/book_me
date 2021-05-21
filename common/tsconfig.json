@@ -15,9 +15,9 @@
     "importHelpers": true,
     "types": [
       "node"
-    ],
+    ]
   },
   "files": [
-    "types.ts",
-  ],
+    "src/types.ts"
+  ]
 }
