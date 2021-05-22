@@ -1,6 +1,33 @@
-import { IntervalSet } from "./types"
+import { Day, IntervalSet, Slots } from "./types"
 import { describe, it } from "mocha"
 import { expect } from "chai"
+
+
+describe('Slots', () => {
+    let date1 = new Date("2021-05-17")
+    let date2 = new Date("2021-05-20")
+    let date3 = new Date("2021-06-01")
+    let slots: Slots = {
+        [Day.SUNDAY]: [],
+        [Day.MONDAY]: [{ start: '10:00', end: '12:00' }, { start: '14:00', end: '17:00' }],
+        [Day.TUESDAY]: [],
+        [Day.WEDNESDAY]: [],
+        [Day.THURSDAY]: [],
+        [Day.FRIDAY]: [],
+        [Day.SATURDAY]: [],
+    }
+
+    it('constructor should create slots with length 2', () => {
+        let result = new IntervalSet(date1, date2, slots);
+        expect(result.length).to.equal(2);
+        expect(result[0].start instanceof Date).to.be.true;
+    });
+    it('constructor should create slots with length 2', () => {
+        let result = new IntervalSet(date1, date3, slots);
+        expect(result.length).to.equal(6);
+        expect(result[0].start instanceof Date).to.be.true;
+    });
+})
 
 describe('TimeIntervals', () => {
     let date1 = new Date("2020-10-21")
