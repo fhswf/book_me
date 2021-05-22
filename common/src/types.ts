@@ -228,8 +228,10 @@ export class IntervalSet extends Array<TimeRange> {
       let y = other[j]
       let start: Date = null
       let end: Date = null
-      // we start first
-      if (x.start > y.start) {
+      // we have the first restriction if
+      // - our first start time is later
+      // - if starts are equal, our first end time is earlier
+      if (x.start > y.start || (x.start.getTime() == y.start.getTime() && x.end < y.end)) {
         if (x.end > y.start) {
           // intersection
           start = x.start
@@ -238,8 +240,6 @@ export class IntervalSet extends Array<TimeRange> {
             result.push({ start, end })
           }
         }
-        j++
-        continue
       }
       else {
         if (y.end > x.start) {
@@ -250,8 +250,11 @@ export class IntervalSet extends Array<TimeRange> {
             result.push({ start, end })
           }
         }
+      }
+      if (x.end < y.end) {
         i++
-        continue
+      } else {
+        j++
       }
     }
 

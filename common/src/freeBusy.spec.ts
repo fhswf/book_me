@@ -1,4 +1,4 @@
-import { Day, IntervalSet, Slots } from "./types"
+import { Day, IntervalSet, Slots } from "../src/types"
 import { describe, it } from "mocha"
 import { expect } from "chai"
 
@@ -29,6 +29,19 @@ describe('Slots', () => {
     });
 })
 
+describe('Test for issue with freeBusy', () => {
+    let r1 = new IntervalSet(new Date("2021-05-25T12:43:00.000Z"), new Date("2021-05-27T12:43:00.000Z"))
+    let r2 = new IntervalSet([
+        { "start": new Date("2021-05-25T12:43:00.000Z"), "end": new Date("2021-05-26T11:00:00.000Z") },
+        { "start": new Date("2021-05-26T13:30:00.000Z"), "end": new Date("2021-05-26T15:00:00.000Z") },
+        { "start": new Date("2021-05-26T16:00:00.000Z"), "end": new Date("2021-05-26T16:30:00.000Z") },
+        { "start": new Date("2021-05-26T17:00:00.000Z"), "end": new Date("2021-05-27T12:43:00.000Z") }])
+
+    r1 = r1.intersect(r2)
+    console.log(r1)
+    expect(r1.length).to.equal(4);
+})
+
 describe('TimeIntervals', () => {
     let date1 = new Date("2020-10-21")
     let date2 = new Date("2020-10-22")
@@ -36,6 +49,8 @@ describe('TimeIntervals', () => {
     let date4 = new Date("2020-10-24")
     let date5 = new Date("2020-10-25")
     let date6 = new Date("2020-10-26")
+    let date7 = new Date("2020-10-27")
+    let date8 = new Date("2020-10-28")
 
     it('constructor should create slots with length 1', () => {
         let result = new IntervalSet(new Date("2020-10-21"), new Date("2020-10-30"));
@@ -200,6 +215,35 @@ describe('TimeIntervals', () => {
         expect(res.length).to.equal(1);
         expect(res[0].start).to.equal(date2);
         expect(res[0].end).to.equal(date3);
+    });
+    it('intersect interval sets', () => {
+        let i1 = new IntervalSet([{ start: date1, end: date6 }]);
+        let i2 = new IntervalSet([{ start: date1, end: date2 }, { start: date3, end: date4 }, { start: date5, end: date6 }]);
+        let res = i1.intersect(i2);
+        expect(res.length).to.equal(3);
+        expect(res[0].start).to.equal(date1);
+        expect(res[0].end).to.equal(date2);
+        expect(res[1].start).to.equal(date3);
+        expect(res[1].end).to.equal(date4);
+        expect(res[2].start).to.equal(date5);
+        expect(res[2].end).to.equal(date6);
+    });
+    it('intersect interval sets', () => {
+        let i1 = new IntervalSet([{ start: date1, end: date8 }]);
+        let i2 = new IntervalSet([{ start: date1, end: date2 },
+        { start: date3, end: date4 },
+        { start: date5, end: date6 },
+        { start: date7, end: date8 }]);
+        let res = i1.intersect(i2);
+        expect(res.length).to.equal(4);
+        expect(res[0].start).to.equal(date1);
+        expect(res[0].end).to.equal(date2);
+        expect(res[1].start).to.equal(date3);
+        expect(res[1].end).to.equal(date4);
+        expect(res[2].start).to.equal(date5);
+        expect(res[2].end).to.equal(date6);
+        expect(res[3].start).to.equal(date7);
+        expect(res[3].end).to.equal(date8);
     });
 
     it('invert interval set', () => {

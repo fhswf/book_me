@@ -1,6 +1,6 @@
 {
   "name": "@fhswf/bookme-common",
-  "version": "1.0.7",
+  "version": "1.1.5",
   "description": "Common types for backend and frontend",
   "repository": {
     "type": "git",
@@ -9,7 +9,8 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "main": "types.js",
+  "main": "./lib/types.js",
+  "types": "./lib/types.d.ts",
   "scripts": {
     "test": "ts-mocha -p tsconfig.json src/**/*.spec.ts",
     "build": "tsc",
@@ -23,8 +24,9 @@
   ],
   "license": "MIT",
   "files": [
-    "*.js",
-    "*.ts"
+    "lib/*.js",
+    "lib/*.ts",
+    "lib/*.map"
   ],
   "devDependencies": {
     "@semantic-release/changelog": "^5.0.1",
@@ -39,8 +41,7 @@
     "@types/mocha": "^8.2.2",
     "chai": "^4.3.4",
     "eslint": "^7.19.0",
-    "jest": "^26.6.3",
-    "jsdoc": "^0.0.0",
+    "jsdoc": "^3.6.7",
     "jshint": "^2.12.0",
     "semantic-release": "^17.4.3",
     "semantic-release-monorepo": "^7.0.5",

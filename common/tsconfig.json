@@ -4,7 +4,8 @@
     "allowJs": true,
     "strict": false,
     "baseUrl": "./",
-    "outDir": ".",
+    "outDir": "./lib",
+    "declaration": true,
     "removeComments": true,
     "sourceMap": true,
     "target": "es6",
@@ -17,7 +18,11 @@
       "node"
     ]
   },
-  "files": [
-    "src/types.ts"
+  "include": [
+    "src/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
   ]
 }
