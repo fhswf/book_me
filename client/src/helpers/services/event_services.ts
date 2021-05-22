@@ -75,14 +75,15 @@ export async function getActiveEvents(user_id: string) {
   return response;
 }
 
-export async function getAvailableTimes(day: unknown, url: string, userid: string) {
+export async function getAvailableTimes(timeMin: Date, timeMax: Date, url: string, userid: string) {
   const response = await axios.get(
     `${process.env.REACT_APP_API_URI}/events/getAvailable`,
     {
       params: {
-        day: day,
-        eventurl: url,
-        user: userid,
+        timeMin,
+        timeMax,
+        url,
+        userid,
       },
     }
   );
