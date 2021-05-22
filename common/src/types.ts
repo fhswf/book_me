@@ -98,12 +98,35 @@ type TimeRange = {
  */
 export class IntervalSet extends Array<TimeRange> {
 
+  constructor();
   constructor(timeMin: Date, timeMax: Date);
   constructor(other: TimeRange[]);
-  constructor();
+  constructor(timeMin: Date, timeMax: Date, slots: Slots);
   constructor(...args: any) {
     if (args.length == 0) {
       super()
+    }
+    else if (args.length == 3 && args[0] instanceof Date && args[1] instanceof Date) {
+      super()
+      let slots: Slots = args[2]
+      // Intersect with slots
+      let t = args[0]
+      while (t < args[1]) {
+        let day = t.getDay()
+        let s: Slot[] = slots[day];
+        s.forEach((slot) => {
+          const start_h = Number.parseInt(slot.start.substring(0, 2))
+          const start_m = Number.parseInt(slot.start.substring(3, 5))
+          const end_h = Number.parseInt(slot.end.substring(0, 2))
+          const end_m = Number.parseInt(slot.end.substring(3, 5))
+          const start = new Date(t)
+          const end = new Date(t)
+          start.setHours(start_h, start_m, 0, 0)
+          end.setHours(end_h, end_m, 0, 0)
+          this.push({ start, end })
+        })
+        t = new Date(t.getTime() + 1000 * 86400)
+      }
     }
     else if (args.length == 2 && args[0] instanceof Date && args[1] instanceof Date) {
       super();
@@ -205,7 +228,6 @@ export class IntervalSet extends Array<TimeRange> {
       let y = other[j]
       let start: Date = null
       let end: Date = null
-      console.log('x: %o, y: %o', x, y)
       // we start first
       if (x.start > y.start) {
         if (x.end > y.start) {
@@ -213,7 +235,6 @@ export class IntervalSet extends Array<TimeRange> {
           start = x.start
           end = x.end < y.end ? x.end : y.end
           if (start < end) {
-            console.log('add: %o, %o', start, end)
             result.push({ start, end })
           }
         }
@@ -226,17 +247,14 @@ export class IntervalSet extends Array<TimeRange> {
           start = y.start
           end = x.end < y.end ? x.end : y.end
           if (start < end) {
-            console.log('add: %o, %o', start, end)
             result.push({ start, end })
           }
         }
         i++
         continue
       }
-      console.log('intersect: %o', result)
     }
 
-    console.log('result: %o', result)
     return result
   }
 
