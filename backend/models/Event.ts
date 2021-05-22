@@ -4,7 +4,7 @@ import { Day, Event, Slot, Slots } from '@fhswf/bookme-common'
 
 
 
-export type EventDocument = Event & Document<Event>
+export interface EventDocument extends Event, Document<Event> { }
 
 const eventSchema = new Schema<EventDocument>({
   user: {

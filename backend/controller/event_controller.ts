@@ -36,8 +36,7 @@ export const getAvailableTimesForDay = (req: Request, res: Response): void => {
       try {
         freeBusy(userid, timeMin.toISOString(), timeMax.toISOString(), event)
           .then(res => {
-            let freeSlots = new IntervalSet(timeMin, timeMax);
-            console.log('freeSlots: %o', freeSlots)
+            let freeSlots = new IntervalSet(timeMin, timeMax, event.available);
             for (const key in res.data.calendars) {
               const calIntervals = new IntervalSet();
               let current = timeMin;
@@ -52,9 +51,7 @@ export const getAvailableTimesForDay = (req: Request, res: Response): void => {
               if (current < timeMax) {
                 calIntervals.push({ start: current, end: timeMax });
               }
-              console.log('freeBusy before: %s %j %j', key, freeSlots, calIntervals);
-              freeSlots = calIntervals.intersect(freeSlots)
-              console.log('intersection after %s: %j %j', key, freeSlots, calIntervals);
+              freeSlots = freeSlots.intersect(calIntervals)
             }
             console.log('freeBusy: %j', freeSlots);
             return freeSlots;
