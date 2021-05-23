@@ -30,16 +30,29 @@ describe('Slots', () => {
 })
 
 describe('Test for issue with freeBusy', () => {
-    let r1 = new IntervalSet(new Date("2021-05-25T12:43:00.000Z"), new Date("2021-05-27T12:43:00.000Z"))
-    let r2 = new IntervalSet([
-        { "start": new Date("2021-05-25T12:43:00.000Z"), "end": new Date("2021-05-26T11:00:00.000Z") },
-        { "start": new Date("2021-05-26T13:30:00.000Z"), "end": new Date("2021-05-26T15:00:00.000Z") },
-        { "start": new Date("2021-05-26T16:00:00.000Z"), "end": new Date("2021-05-26T16:30:00.000Z") },
-        { "start": new Date("2021-05-26T17:00:00.000Z"), "end": new Date("2021-05-27T12:43:00.000Z") }])
+    it('intersection', () => {
+        let r1 = new IntervalSet(new Date("2021-05-25T12:43:00.000Z"), new Date("2021-05-27T12:43:00.000Z"))
+        let r2 = new IntervalSet([
+            { "start": new Date("2021-05-25T12:43:00.000Z"), "end": new Date("2021-05-26T11:00:00.000Z") },
+            { "start": new Date("2021-05-26T13:30:00.000Z"), "end": new Date("2021-05-26T15:00:00.000Z") },
+            { "start": new Date("2021-05-26T16:00:00.000Z"), "end": new Date("2021-05-26T16:30:00.000Z") },
+            { "start": new Date("2021-05-26T17:00:00.000Z"), "end": new Date("2021-05-27T12:43:00.000Z") }])
 
-    r1 = r1.intersect(r2)
-    console.log(r1)
-    expect(r1.length).to.equal(4);
+        r1 = r1.intersect(r2)
+        expect(r1.length).to.equal(4);
+    })
+    it('constructor with strings', () => {
+        let r1 = new IntervalSet("2021-05-25T12:43:00.000Z", "2021-05-27T12:43:00.000Z")
+        let r2 = new IntervalSet([
+            { "start": "2021-05-25T12:43:00.000Z", "end": "2021-05-26T11:00:00.000Z" },
+            { "start": "2021-05-26T13:30:00.000Z", "end": "2021-05-26T15:00:00.000Z" },
+            { "start": "2021-05-26T16:00:00.000Z", "end": "2021-05-26T16:30:00.000Z" },
+            { "start": "2021-05-26T17:00:00.000Z", "end": "2021-05-27T12:43:00.000Z" }])
+
+        r1 = r1.intersect(r2)
+        console.log(r1)
+        expect(r1.length).to.equal(4);
+    })
 })
 
 describe('TimeIntervals', () => {

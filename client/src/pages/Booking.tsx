@@ -217,9 +217,9 @@ const Booking = (props: any) => {
     console.log("date: %o", newValue);
     if (user) {
       getAvailableTimes(newValue, addMonths(newValue, 1), event.url, user._id)
-        .then((res) => {
-          console.log("slots: %j", res.data);
-          setSlots(res.data);
+        .then((slots) => {
+          console.log("slots: %j", slots);
+          //setSlots(slots);
         })
         .catch((err) => {
           console.error("failed to get available times");
