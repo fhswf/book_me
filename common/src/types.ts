@@ -1,4 +1,4 @@
-
+import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz"
 
 /** Enum type representing a day of week.
  *  The ordering is compatible with the native `Date.prototype.getDay()`, which uses 0 for Sunday.
@@ -101,16 +101,17 @@ export class IntervalSet extends Array<TimeRange> {
   constructor();
   constructor(timeMin: Date, timeMax: Date);
   constructor(other: TimeRange[]);
-  constructor(timeMin: Date, timeMax: Date, slots: Slots);
+  constructor(timeMin: Date, timeMax: Date, slots: Slots, timeZone: string);
   constructor(...args: any) {
     if (args.length == 0) {
       super()
     }
-    else if (args.length == 3 && args[0] instanceof Date && args[1] instanceof Date) {
+    else if (args.length >= 3 && args[0] instanceof Date && args[1] instanceof Date) {
       super()
       let slots: Slots = args[2]
       // Intersect with slots
       let t = args[0]
+      let timezone = args.length >= 4 ? args[3] : 'Europe/Berlin'
       while (t < args[1]) {
         let day = t.getDay()
         let s: Slot[] = slots[day];
@@ -119,10 +120,12 @@ export class IntervalSet extends Array<TimeRange> {
           const start_m = Number.parseInt(slot.start.substring(3, 5))
           const end_h = Number.parseInt(slot.end.substring(0, 2))
           const end_m = Number.parseInt(slot.end.substring(3, 5))
-          const start = new Date(t)
-          const end = new Date(t)
+          let start = new Date(t)//utcToZonedTime(t, timezone)
+          let end = new Date(t)//utcToZonedTime(t, timezone)
           start.setHours(start_h, start_m, 0, 0)
           end.setHours(end_h, end_m, 0, 0)
+          start = zonedTimeToUtc(start, timezone)
+          end = zonedTimeToUtc(end, timezone)
           this.push({ start, end })
         })
         t = new Date(t.getTime() + 1000 * 86400)
