@@ -86,7 +86,7 @@ export interface User {
   pull_calendars: string[];
 };
 
-type TimeRange = {
+export type TimeRange = {
   start: Date;
   end: Date;
 }
@@ -128,8 +128,9 @@ export class IntervalSet extends Array<TimeRange> {
         t = new Date(t.getTime() + 1000 * 86400)
       }
     }
-    else if (args.length == 2 && args[0] instanceof Date && args[1] instanceof Date) {
+    else if (args.length == 2 && args[0]) {
       super();
+      args = args.map((x) => (typeof x == 'string' || x instanceof String) ? new Date(x as string) : x)
       if (args[0] > args[1]) {
         throw new RangeError('Illegal time interval, start > end');
       }
@@ -137,8 +138,13 @@ export class IntervalSet extends Array<TimeRange> {
         this.push({ start: args[0], end: args[1] });
       }
     }
-    else if (args[0] instanceof Array) {
-      super(...(args[0]))
+    else if (args.length == 1 && args[0] instanceof Array) {
+      let arr: TimeRange[] = args[0].map((x) => {
+        if (typeof x.start == 'string' || x.start instanceof String) x.start = new Date(x.start);
+        if (typeof x.end == 'string' || x.end instanceof String) x.end = new Date(x.end);
+        return x
+      })
+      super(...arr)
     }
     else if (args.length == 1) {
       super(args[0])

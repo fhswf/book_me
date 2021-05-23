@@ -19,6 +19,7 @@ import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import AddEvent from "./pages/AddEvent";
 import Planning from "./pages/Planning";
+import Schedule from "./pages/Schedule";
 import NotFound from "./pages/NotFound";
 import Booking from "./pages/Booking";
 import EditEvent from "./pages/EditEvent";
@@ -29,66 +30,127 @@ import Finished, { FinishedProps } from "./pages/Finished";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
 import { isAuthenticated } from "./helpers/helpers";
+import { createTheme, ThemeProvider } from "@material-ui/core";
+
+const theme = createTheme({
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          width: "100%",
+        },
+      },
+    },
+    /*
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          borderRadius: "50%",
+        },
+      },
+    },*/
+    MuiTypography: {
+      defaultProps: {
+        variantMapping: {
+          h1: "h3",
+          h2: "h4",
+          h3: "h5",
+          h4: "h5",
+          h5: "h6",
+          h6: "h6",
+        },
+      },
+    },
+  },
+  typography: {
+    // In Chinese and Japanese the characters are usually larger,
+    // so a smaller fontsize may be appropriate.
+    //fontSize: 12,
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+  },
+});
 
 ReactDOM.render(
   <React.StrictMode>
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <BrowserRouter basename="/bookme">
-        <Switch>
-          <Route exact path="/">
-            {isAuthenticated() ? (
-              <Redirect to="/app" />
-            ) : (
-              <Redirect to="/landing" />
-            )}
-          </Route>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter basename="/bookme">
+          <Switch>
+            <Route exact path="/">
+              {isAuthenticated() ? (
+                <Redirect to="/app" />
+              ) : (
+                <Redirect to="/landing" />
+              )}
+            </Route>
 
-          <PrivateRoute path="/app" exact component={App} />
-          <PrivateRoute path="/addevent" exact component={AddEvent} />
-          <PrivateRoute path="/editevent/:id" exact component={EditEvent} />
-          <PrivateRoute path="/integration" component={Calendarintegration} />
+            <PrivateRoute path="/app" exact component={App} />
+            <PrivateRoute path="/addevent" exact component={AddEvent} />
+            <PrivateRoute path="/editevent/:id" exact component={EditEvent} />
+            <PrivateRoute path="/integration" component={Calendarintegration} />
 
-          <Route
-            path="/users/:user_url/:url/:date"
-            exact
-            render={(props) => <Bookdetails {...props} />}
-          />
-          <Route
-            path="/booked"
-            exact
-            render={(props: FinishedProps) => <Finished {...props} />}
-          />
+            <Route
+              path="/users/:user_url/:url/:date"
+              exact
+              render={(props) => <Bookdetails {...props} />}
+            />
+            <Route
+              path="/booked"
+              exact
+              render={(props: FinishedProps) => <Finished {...props} />}
+            />
 
-          <Route
-            path="/register"
-            exact
-            render={(props) => <Register {...props} />}
-          />
-          <Route path="/login" exact render={(props) => <Login {...props} />} />
-          <Route
-            path="/landing"
-            exact
-            render={(props) => <Landing {...props} />}
-          />
-          <Route
-            path="/activate/:token"
-            exact
-            render={(props) => <Activate {...props} />}
-          />
-          <Route
-            path="/users/:user_url"
-            exact
-            render={(props) => <Planning {...props} />}
-          />
-          <Route
-            path="/users/:user_url/:url"
-            exact
-            render={(props) => <Booking {...props} />}
-          />
-          <Route path="*" component={NotFound} />
-          <Route path="/notfound" component={NotFound} />
-        </Switch>
-      </BrowserRouter>
+            <Route
+              path="/register"
+              exact
+              render={(props) => <Register {...props} />}
+            />
+            <Route
+              path="/login"
+              exact
+              render={(props) => <Login {...props} />}
+            />
+            <Route
+              path="/landing"
+              exact
+              render={(props) => <Landing {...props} />}
+            />
+            <Route
+              path="/activate/:token"
+              exact
+              render={(props) => <Activate {...props} />}
+            />
+            <Route
+              path="/schedule/:user_url/:url"
+              exact
+              render={(props) => <Schedule {...props} />}
+            />
+            <Route
+              path="/users/:user_url"
+              exact
+              render={(props) => <Planning {...props} />}
+            />
+            <Route
+              path="/users/:user_url/:url"
+              exact
+              render={(props) => <Booking {...props} />}
+            />
+            <Route path="*" component={NotFound} />
+            <Route path="/notfound" component={NotFound} />
+          </Switch>
+        </BrowserRouter>
+      </ThemeProvider>
     </LocalizationProvider>
   </React.StrictMode>,
   document.getElementById("root")

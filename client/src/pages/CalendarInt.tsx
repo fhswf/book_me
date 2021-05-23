@@ -3,8 +3,6 @@ import { useHistory } from "react-router-dom";
 import { signout } from "../helpers/helpers";
 import AppNavbar from "../components/AppNavbar";
 
-import "../styles/calendarint.css";
-
 // Material UI
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
