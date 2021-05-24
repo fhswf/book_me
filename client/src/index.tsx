@@ -25,7 +25,7 @@ import Booking from "./pages/Booking";
 import EditEvent from "./pages/EditEvent";
 import PrivateRoute from "./components/PrivateRoute";
 import Calendarintegration from "./pages/CalendarInt";
-import Bookdetails from "./pages/BookDetails";
+import BookDetails from "./pages/BookDetails";
 import Finished, { FinishedProps } from "./pages/Finished";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
@@ -100,11 +100,6 @@ ReactDOM.render(
             <PrivateRoute path="/editevent/:id" exact component={EditEvent} />
             <PrivateRoute path="/integration" component={Calendarintegration} />
 
-            <Route
-              path="/users/:user_url/:url/:date"
-              exact
-              render={(props) => <Bookdetails {...props} />}
-            />
             <Route
               path="/booked"
               exact

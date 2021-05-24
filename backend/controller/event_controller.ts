@@ -36,7 +36,7 @@ export const getAvailableTimesForDay = (req: Request, res: Response): void => {
       try {
         freeBusy(userid, timeMin.toISOString(), timeMax.toISOString(), event)
           .then(res => {
-            let freeSlots = new IntervalSet(timeMin, timeMax, event.available);
+            let freeSlots = new IntervalSet(timeMin, timeMax, event.available, "Europe/Berlin");
             for (const key in res.data.calendars) {
               const calIntervals = new IntervalSet();
               let current = timeMin;

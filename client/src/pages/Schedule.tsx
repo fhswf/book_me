@@ -1,5 +1,5 @@
 import React, { useState, useEffect, FormEvent } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { Link as RouterLink, useHistory, useParams } from "react-router-dom";
 import { StaticDatePicker, PickersDay } from "@material-ui/lab";
 
 import {
@@ -19,10 +19,15 @@ import {
   StepLabel,
   TextField,
   Typography,
+  Link,
 } from "@material-ui/core";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
-import { HourglassFull, Room } from "@material-ui/icons";
+import {
+  HourglassFull,
+  Room,
+  SettingsSystemDaydreamTwoTone,
+} from "@material-ui/icons";
 
 import { getUserByUrl } from "../helpers/services/user_services";
 import { getEventByUrlAndUser } from "../helpers/services/event_services";
@@ -41,7 +46,7 @@ import {
   endOfDay,
   endOfMonth,
 } from "date-fns";
-import Bookdetails from "./BookDetails";
+import BookDetails, { BookingFormData } from "./BookDetails";
 import { insertIntoGoogle } from "../helpers/services/google_services";
 import {
   EMPTY_EVENT,
@@ -131,15 +136,15 @@ const Schedule = (props: any) => {
   const history = useHistory();
   const classes = useStyles();
 
-  type Details = { name: string; email: string; description: string };
-
   const [user, setUser] = useState<UserDocument>();
   const [event, setEvent] = useState<Event>(EMPTY_EVENT);
+  const [timezone, setTimezone] = useState<string>("Europe/Berlin");
   const [selectedDate, setDate] = useState<Date | null>(null);
+  const [selectedTime, setTime] = useState<TimeRange | null>(null);
   const [beginDate, setBeginDate] = useState<Date>(new Date());
   const [slots, setSlots] = useState<IntervalSet>(new IntervalSet());
   const [daySlots, setDaySlots] = useState<IntervalSet>(new IntervalSet());
-  const [details, setDetails] = useState<Details>();
+  const [details, setDetails] = useState<BookingFormData | null>(null);
 
   useEffect(() => {
     getUserByUrl(data.user_url)
@@ -230,26 +235,6 @@ const Schedule = (props: any) => {
     );
   };
 
-  const getTimes = () => {
-    if (slots) {
-      let times = [];
-      for (let slot of slots) {
-        console.log("Slot: %o", slot);
-        let start = new Date(slot.start);
-        let end = new Date(slot.end);
-        console.log("start: %s, end: %s", start, end);
-        let s = start;
-        while (s < end) {
-          times.push(s);
-          s = addMinutes(s, event.duration);
-        }
-      }
-      return times;
-    } else {
-      return [];
-    }
-  };
-
   const handleMonthChange = (date: Date) => {
     setBeginDate(date);
   };
@@ -265,53 +250,136 @@ const Schedule = (props: any) => {
 
   const handleTime = (time: TimeRange) => {
     console.log("select slot: %o", time);
+    setTime(time);
+  };
+
+  const handleDetailChange = (data: BookingFormData) => {
+    console.log("detailchange: %o", data);
+    setDetails(data);
+  };
+
+  const handleSubmit = (e) => {
+    console.log("submit: %o", details);
+    e.preventDefault();
+    if (details.name && details.email) {
+      insertIntoGoogle(
+        user._id,
+        event,
+        selectedTime.start,
+        details.name,
+        details.email,
+        details.description
+      ).then(() => {
+        //toast.success("Event successfully booked!");
+        history.push({
+          pathname: `/booked`,
+          state: { userid: user._id, event, time: selectedTime.start },
+        });
+      });
+    } else {
+      //toast.error("Please fill in your name and email!");
+    }
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Container>
-        <Box className={classes.grid}>
-          <Box sx={{ gridArea: "header_l" }} justifyContent="center">
-            <Avatar
-              alt={user ? user.name : ""}
-              src={user ? user.picture_url : ""}
-              sx={{ width: 72, height: 72, margin: "auto" }}
-            />
-            <Typography variant="h5">
-              Meeting with {user ? user.name : ""}
+        {selectedTime ? (
+          <>
+            <Typography variant="h5">Confirm meeting</Typography>
+            <Typography>
+              {selectedDate.toLocaleDateString("de-DE", {
+                dateStyle: "medium",
+              })}{" "}
+              {selectedTime.start.toLocaleTimeString("de-DE", {
+                timeStyle: "short",
+              })}{" "}
+              –{" "}
+              {selectedTime.end.toLocaleTimeString("de-DE", {
+                timeStyle: "short",
+              })}
+              <Link onClick={() => setTime(null)}>Change</Link>
             </Typography>
-          </Box>
-          <Box sx={{ gridArea: "picker_l" }}>
-            <StaticDatePicker
-              displayStaticWrapperAs="desktop"
-              value={selectedDate}
-              className={classes.picker}
-              onChange={handleDateChange}
-              onMonthChange={handleMonthChange}
-              renderDay={renderPickerDay}
-              renderInput={(params) => (
-                <TextField {...params} variant="standard" />
-              )}
-            />
-          </Box>
 
-          <Box sx={{ gridArea: "header_r" }}>
-            <Typography variant="h5">Select a time</Typography>
+            <form onSubmit={handleSubmit}>
+              <BookDetails
+                userid={user._id}
+                username={user.name}
+                event={event}
+                start={selectedTime.start}
+                end={selectedTime.end}
+                onChange={handleDetailChange}
+              />
+              <Grid container justifyContent="space-between" padding={2}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => setTime(null)}
+                >
+                  Back
+                </Button>
+                <Button variant="contained" color="primary" type="submit">
+                  Confirm &amp; Book
+                </Button>
+              </Grid>
+            </form>
+          </>
+        ) : (
+          <Box className={classes.grid}>
+            <Box sx={{ gridArea: "header_l" }} justifyContent="center">
+              <Avatar
+                alt={user ? user.name : ""}
+                src={user ? user.picture_url : ""}
+                sx={{ width: 72, height: 72, margin: "auto" }}
+              />
+              <Typography variant="h5" textAlign="center">
+                Meeting with {user ? user.name : ""}
+              </Typography>
+            </Box>
+            <Box sx={{ gridArea: "picker_l" }}>
+              <StaticDatePicker
+                displayStaticWrapperAs="desktop"
+                value={selectedDate}
+                className={classes.picker}
+                onChange={handleDateChange}
+                onMonthChange={handleMonthChange}
+                renderDay={renderPickerDay}
+                renderInput={(params) => (
+                  <TextField {...params} variant="standard" />
+                )}
+              />
+            </Box>
+
+            <Box sx={{ gridArea: "header_r" }} alignSelf="end">
+              <Typography>
+                {selectedDate ? (
+                  <>
+                    The following times are available on{" "}
+                    {selectedDate.toLocaleDateString("de-DE", {
+                      dateStyle: "short",
+                    })}
+                    . You may pick one or choose a different date.
+                  </>
+                ) : (
+                  <>Please choose a date to check available times.</>
+                )}
+              </Typography>
+            </Box>
+            <Box
+              sx={{ gridArea: "picker_r" }}
+              display="flex"
+              flexWrap="wrap"
+              gap={2}
+              padding={2}
+            >
+              <ChooseTime
+                slots={daySlots}
+                duration={event.duration}
+                onSelect={handleTime}
+              />
+            </Box>
           </Box>
-          <Box
-            sx={{ gridArea: "picker_r" }}
-            display="flex"
-            flexWrap="wrap"
-            gap={2}
-            padding={2}
-          >
-            <ChooseTime
-              slots={daySlots}
-              duration={event.duration}
-              onSelect={handleTime}
-            />
-          </Box>
-        </Box>
+        )}
       </Container>
     </LocalizationProvider>
   );

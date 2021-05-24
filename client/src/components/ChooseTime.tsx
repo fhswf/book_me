@@ -45,7 +45,6 @@ const ChooseTime = (props: ChooseTimeProps) => {
   console.log("ChooseTime: %o", props.slots);
 
   const handleClick = (time: Date) => () => {
-    console.log("click: %o", time);
     setSelected({ start: time, end: addMinutes(time, props.duration) });
     props.onSelect({ start: time, end: addMinutes(time, props.duration) });
   };
@@ -57,7 +56,6 @@ const ChooseTime = (props: ChooseTimeProps) => {
       addMinutes(time, props.duration) < slot.end;
       time = addMinutes(time, props.step)
     ) {
-      console.log("ChooseTime: %o", time);
       times.push(time);
     }
     return times.map((time) => (
