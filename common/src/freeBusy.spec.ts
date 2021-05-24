@@ -27,7 +27,21 @@ describe('Slots', () => {
         expect(result.length).to.equal(6);
         expect(result[0].start instanceof Date).to.be.true;
     });
+    it('constructor should handle timezones', () => {
+        let result = new IntervalSet(new Date("2021-05-19T00:00:00.000Z"), new Date("2021-05-26T16:00:00.000Z"), slots, "Europe/Berlin");
+        expect(result.length).to.equal(2);
+        //console.log('result: %o, %o', result, result[0].start)
+        expect(result[0].start.getTime()).to.equal(new Date("2021-05-24T08:00:00.000Z").getTime());
+    });
+    it('constructor should handle timezones', () => {
+        let result = new IntervalSet(new Date("2021-05-19T00:00:00.000Z"), new Date("2021-05-26T16:00:00.000Z"), slots, "Africa/Abidjan");
+        expect(result.length).to.equal(2);
+        //console.log('result: %o, %o', result, result[0].start)
+        expect(result[0].start.getTime()).to.equal(new Date("2021-05-24T10:00:00.000Z").getTime());
+    });
+
 })
+
 
 describe('Test for issue with freeBusy', () => {
     it('intersection', () => {

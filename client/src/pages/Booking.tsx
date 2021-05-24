@@ -29,7 +29,7 @@ import { getEventByUrlAndUser } from "../helpers/services/event_services";
 import { getAvailableTimes } from "../helpers/services/event_services";
 import clsx from "clsx";
 import { addMonths, addMinutes, format } from "date-fns";
-import Bookdetails from "./BookDetails";
+import BookDetails from "./BookDetails";
 import { insertIntoGoogle } from "../helpers/services/google_services";
 import { EMPTY_EVENT, Event, Slot } from "@fhswf/bookme-common";
 import { UserDocument } from "../helpers/UserDocument";
@@ -445,15 +445,12 @@ const Booking = (props: any) => {
                   {activeStep > 1 ? (
                     <Grid item>
                       {user ? (
-                        <Bookdetails
+                        <BookDetails
                           userid={user._id}
                           username={user.name}
                           event={event}
-                          start={selectedTime.valueOf()}
-                          end={addMinutes(
-                            selectedTime,
-                            event.duration
-                          ).valueOf()}
+                          start={selectedTime}
+                          end={addMinutes(selectedTime, event.duration)}
                           onChange={handleDetailChange}
                         />
                       ) : (
