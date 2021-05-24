@@ -1,33 +1,20 @@
-import React, { useState, useEffect, FormEvent } from "react";
-import { Link as RouterLink, useHistory, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import { StaticDatePicker, PickersDay } from "@material-ui/lab";
 
-import {
-  createTheme,
-  makeStyles,
-  ThemeProvider,
-} from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import {
   Avatar,
   Box,
   Button,
   Container,
   Grid,
-  Paper,
-  Stepper,
-  Step,
-  StepLabel,
   TextField,
   Typography,
   Link,
 } from "@material-ui/core";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
-import {
-  HourglassFull,
-  Room,
-  SettingsSystemDaydreamTwoTone,
-} from "@material-ui/icons";
 
 import { getUserByUrl } from "../helpers/services/user_services";
 import { getEventByUrlAndUser } from "../helpers/services/event_services";
@@ -36,27 +23,24 @@ import clsx from "clsx";
 import {
   addDays,
   addMonths,
-  addMinutes,
-  format,
   isBefore,
   isAfter,
   isSameDay,
   startOfDay,
-  startOfMonth,
   endOfDay,
-  endOfMonth,
 } from "date-fns";
+import deLocale from "date-fns/locale/de";
 import BookDetails, { BookingFormData } from "./BookDetails";
 import { insertIntoGoogle } from "../helpers/services/google_services";
 import {
   EMPTY_EVENT,
   Event,
-  Slot,
   IntervalSet,
   TimeRange,
 } from "@fhswf/bookme-common";
 import { UserDocument } from "../helpers/UserDocument";
 import ChooseTime from "../components/ChooseTime";
+import { useTranslation, Trans } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   picker: {
@@ -135,6 +119,7 @@ const Schedule = (props: any) => {
   const data = useParams<{ user_url: string; url: string }>();
   const history = useHistory();
   const classes = useStyles();
+  const { t, i18n } = useTranslation();
 
   const [user, setUser] = useState<UserDocument>();
   const [event, setEvent] = useState<Event>(EMPTY_EVENT);
@@ -281,12 +266,14 @@ const Schedule = (props: any) => {
     }
   };
 
+  const userName = user ? user.name : "";
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <LocalizationProvider dateAdapter={AdapterDateFns} locale={deLocale}>
       <Container>
         {selectedTime ? (
           <>
-            <Typography variant="h5">Confirm meeting</Typography>
+            <Typography variant="h5">{t("Confirm meeting")}</Typography>
             <Typography>
               {selectedDate.toLocaleDateString("de-DE", {
                 dateStyle: "medium",
@@ -333,7 +320,7 @@ const Schedule = (props: any) => {
                 sx={{ width: 72, height: 72, margin: "auto" }}
               />
               <Typography variant="h5" textAlign="center">
-                Meeting with {user ? user.name : ""}
+                {t("Meeting with")} {userName}
               </Typography>
             </Box>
             <Box sx={{ gridArea: "picker_l" }}>
