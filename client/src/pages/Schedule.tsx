@@ -29,8 +29,9 @@ import {
   startOfDay,
   endOfDay,
 } from "date-fns";
-import deLocale from "date-fns/locale/de";
-import BookDetails, { BookingFormData } from "./BookDetails";
+//import de from "date-fns/locale/de";
+import { de, enUS } from "date-fns/locale";
+import BookDetails, { BookingFormData } from "../components/BookDetails";
 import { insertIntoGoogle } from "../helpers/services/google_services";
 import {
   EMPTY_EVENT,
@@ -41,6 +42,8 @@ import {
 import { UserDocument } from "../helpers/UserDocument";
 import ChooseTime from "../components/ChooseTime";
 import { useTranslation, Trans } from "react-i18next";
+
+const LOCALES = { en: enUS, de: de, "de-DE": de };
 
 const useStyles = makeStyles((theme) => ({
   picker: {
@@ -258,7 +261,7 @@ const Schedule = (props: any) => {
         //toast.success("Event successfully booked!");
         history.push({
           pathname: `/booked`,
-          state: { userid: user._id, event, time: selectedTime.start },
+          state: { user, event, time: selectedTime },
         });
       });
     } else {
@@ -268,24 +271,29 @@ const Schedule = (props: any) => {
 
   const userName = user ? user.name : "";
 
+  console.log("langue: %s", i18n.language);
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns} locale={deLocale}>
+    <LocalizationProvider
+      dateAdapter={AdapterDateFns}
+      locale={LOCALES[i18n.language]}
+    >
       <Container>
         {selectedTime ? (
           <>
             <Typography variant="h5">{t("Confirm meeting")}</Typography>
             <Typography>
-              {selectedDate.toLocaleDateString("de-DE", {
+              {selectedDate.toLocaleDateString(i18n.language, {
                 dateStyle: "medium",
               })}{" "}
-              {selectedTime.start.toLocaleTimeString("de-DE", {
+              {selectedTime.start.toLocaleTimeString(i18n.language, {
                 timeStyle: "short",
               })}{" "}
               –{" "}
-              {selectedTime.end.toLocaleTimeString("de-DE", {
+              {selectedTime.end.toLocaleTimeString(i18n.language, {
                 timeStyle: "short",
-              })}
-              <Link onClick={() => setTime(null)}>Change</Link>
+              })}{" "}
+              <Link onClick={() => setTime(null)}>{t("Change")}</Link>
             </Typography>
 
             <form onSubmit={handleSubmit}>
@@ -303,16 +311,16 @@ const Schedule = (props: any) => {
                   color="primary"
                   onClick={() => setTime(null)}
                 >
-                  Back
+                  {t("Back")}
                 </Button>
                 <Button variant="contained" color="primary" type="submit">
-                  Confirm &amp; Book
+                  {t("Confirm &amp; Book")}
                 </Button>
               </Grid>
             </form>
           </>
         ) : (
-          <Box className={classes.grid}>
+          <Box className={classes.grid} padding={2}>
             <Box sx={{ gridArea: "header_l" }} justifyContent="center">
               <Avatar
                 alt={user ? user.name : ""}
@@ -341,11 +349,16 @@ const Schedule = (props: any) => {
               <Typography>
                 {selectedDate ? (
                   <>
-                    The following times are available on{" "}
-                    {selectedDate.toLocaleDateString("de-DE", {
-                      dateStyle: "short",
-                    })}
-                    . You may pick one or choose a different date.
+                    <Trans i18nKey="availableSlots">
+                      The following times are available on
+                      {{
+                        date: selectedDate.toLocaleDateString(i18n.language, {
+                          day: "numeric",
+                          month: "long",
+                        }),
+                      }}
+                      . You may pick one or choose a different date.
+                    </Trans>
                   </>
                 ) : (
                   <>Please choose a date to check available times.</>

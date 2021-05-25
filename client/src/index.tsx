@@ -25,7 +25,7 @@ import Booking from "./pages/Booking";
 import EditEvent from "./pages/EditEvent";
 import PrivateRoute from "./components/PrivateRoute";
 import Calendarintegration from "./pages/CalendarInt";
-import BookDetails from "./pages/BookDetails";
+import BookDetails from "./components/BookDetails";
 import Finished, { FinishedProps } from "./pages/Finished";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
