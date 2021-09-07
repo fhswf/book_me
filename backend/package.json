@@ -45,7 +45,7 @@
     "mongoose": "^5.12.9",
     "nodemailer": "^6.4.14",
     "remark": "13.0.0",
-    "remark-html": "13.0.1"
+    "remark-html": "13.0.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^5.0.1",
