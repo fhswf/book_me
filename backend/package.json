@@ -42,7 +42,7 @@
     "ical-generator": "^1.15.2",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
-    "mongoose": "^5.12.9",
+    "mongoose": "^5.13.20",
     "nodemailer": "^6.4.14",
     "remark": "13.0.0",
     "remark-html": "13.0.1"
