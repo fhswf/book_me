@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bookme-backend
+  namespace: bookme
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,web-secure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/service.serversscheme: https
+spec:
+  ingressClassName: traefik-external
+  rules:
+  - host: www.ki.fh-swf.de
+    http:
+      paths:
+      - backend:
+          service:
+            name: bookme
+            port:
+              number: 5000
+        path: /meeting/api
+        pathType: Prefix
+status:
+  loadBalancer: {}

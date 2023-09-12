@@ -9,3 +9,4 @@ docker.env
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+k8s/bookme-secret.yaml

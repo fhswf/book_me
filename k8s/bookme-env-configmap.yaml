@@ -8,6 +8,6 @@ kind: ConfigMap
 metadata:
   creationTimestamp: null
   labels:
-    io.kompose.service: bookme-docker-env
-  name: docker-env
+    io.kompose.service: bookme-env
+  name: bookme-env
   namespace: bookme
