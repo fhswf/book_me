@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: frontend
+  name: frontend
+  namespace: bookme
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: frontend
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.network/traefik: "true"
+        io.kompose.service: frontend
+    spec:
+      containers:
+        - image: ghcr.io/fhswf/book_me/client:latest
+          name: client
+          ports:
+            - containerPort: 80
+          resources: {}
+      restartPolicy: Always
+status: {}

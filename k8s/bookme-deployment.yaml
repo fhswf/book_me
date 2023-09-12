@@ -37,23 +37,33 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   key: API_URL
-                  name: docker-env
+                  name: bookme-env
             - name: CLIENT_URL
               valueFrom:
                 configMapKeyRef:
                   key: CLIENT_URL
-                  name: docker-env
+                  name: bookme-env
             - name: MONGO_URI
               valueFrom:
                 configMapKeyRef:
                   key: MONGO_URI
-                  name: docker-env
+                  name: bookme-env
             - name: TZ
               valueFrom:
                 configMapKeyRef:
                   key: TZ
-                  name: docker-env
-          image: bookme
+                  name: bookme-env
+            - name: GOOGLE_ID
+              valueFrom:
+                secretKeyRef:
+                  key: CLIENT_ID
+                  name: bookme-secret
+            - name: GOOGLE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: CLIENT_SECRET
+                  name: bookme-secret
+          image: ghcr.io/fhswf/book_me/backend:latest
           name: bookme
           ports:
             - containerPort: 5000
