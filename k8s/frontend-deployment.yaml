@@ -18,7 +18,7 @@ spec:
         io.kompose.service: frontend
     spec:
       containers:
-        - image: ghcr.io/fhswf/book_me/client:latest
+        - image: ghcr.io/fhswf/book_me/frontend:latest
           name: client
           ports:
             - containerPort: 80
