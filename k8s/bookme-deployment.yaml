@@ -38,6 +38,11 @@ spec:
                 configMapKeyRef:
                   key: API_URL
                   name: bookme-env
+            - name: BASE_PATH
+              valueFrom:
+                configMapKeyRef:
+                  key: BASE_PATH
+                  name: bookme-env
             - name: CLIENT_URL
               valueFrom:
                 configMapKeyRef:
