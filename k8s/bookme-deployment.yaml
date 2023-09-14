@@ -48,6 +48,11 @@ spec:
                 configMapKeyRef:
                   key: CLIENT_URL
                   name: bookme-env
+            - name: JWT_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: JWT_SECRET_TOKEN
+                  name: bookme-secret
             - name: MONGO_URI
               valueFrom:
                 configMapKeyRef:
