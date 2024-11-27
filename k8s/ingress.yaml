@@ -26,3 +26,20 @@ spec:
               number: 5000
         path: /api
         pathType: Prefix
+  - host: appoint.fh-swf.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: client
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: bookme
+            port:
+              number: 5000
+        path: /api
+        pathType: Prefix
