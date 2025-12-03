@@ -72,7 +72,7 @@ describe('IntervalsSets', () => {
             5: [{ start: "08:00", end: "12:00" }],
             6: [{ start: "08:00", end: "12:00" }]
         }
-        let result = new IntervalSet(date1, date2, slots);
+        let result = new IntervalSet(date1, date2, slots, 'UTC');
         expect(result.length).toEqual(1);
         expect(result[0].start.getHours()).toEqual(8);
         expect(result[0].start.getMinutes()).toEqual(0);
