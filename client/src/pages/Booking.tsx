@@ -224,7 +224,7 @@ const Booking = () => {
                   >
                     {index + 1}
                   </Button>
-                  <span className="text-sm font-medium">{t(step.title)}</span>
+                  <span className="text-sm font-medium hidden md:block">{t(step.title)}</span>
                 </li>
                 {index < steps.length - 1 && (
                   <Separator className="flex-1" orientation="horizontal" />
