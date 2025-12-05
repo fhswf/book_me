@@ -1,3 +1,28 @@
+# common 1.0.0 (2025-12-05)
+
+
+### Bug Fixes
+
+* **build:** fix build of bookme-common ([2d4e274](https://github.com/fhswf/book_me/commit/2d4e27438e67b864bbb695181604e533136e248d))
+* **build:** fix CI build ([aef4bcb](https://github.com/fhswf/book_me/commit/aef4bcb6905e3b73079a726231681c19a3214564))
+* **build:** fix CI build on GitHub ([d27a4a0](https://github.com/fhswf/book_me/commit/d27a4a05b9d80a5358b18f9986ac75dd43bdc073))
+* deleting event types ([e7d07ca](https://github.com/fhswf/book_me/commit/e7d07caecb04fa8386bad559e0dfa123570c5e74))
+* freeBusy service corrected ([ff80003](https://github.com/fhswf/book_me/commit/ff8000327717a67a42b326c1acce906112bbb250))
+* Rename url field ([660773a](https://github.com/fhswf/book_me/commit/660773a1950ae368373651b0c6209c32f10187ab))
+* semantic release config ([b638ae1](https://github.com/fhswf/book_me/commit/b638ae1bf1f34ba6283a7ab61de5eaf406a27e20))
+* semantic-release config ([e6b7a13](https://github.com/fhswf/book_me/commit/e6b7a1326964a2a7b5f3d088386e60deb6a3b077))
+* semantic-release for common ([ecee172](https://github.com/fhswf/book_me/commit/ecee17292598b18157f25f9f82e2bc7c22b6f5e2))
+* timezone issue in interpretation of slots fixed ([fbc5722](https://github.com/fhswf/book_me/commit/fbc57220e7b4dfb377969014735c9b33be0686f9))
+* UI glitches fixed ([14783e1](https://github.com/fhswf/book_me/commit/14783e13cd00b7e3d05aac64354ca30157a679c0))
+* yarn build/dependency management & docker ([5b491e6](https://github.com/fhswf/book_me/commit/5b491e6b0005db98837286b411d8de9a13fdbb7a))
+
+
+### Features
+
+* common classes for handling free/busy intervals ([118f1ba](https://github.com/fhswf/book_me/commit/118f1ba7cc593681e4e3671f8a286c155d12b57e))
+* **event type:** add min/max timespan for events, add maximum number of events per day ([23fa858](https://github.com/fhswf/book_me/commit/23fa858bc575a67fef4d27908107434298040071))
+* **event type:** remove deprecated fields ([d81686f](https://github.com/fhswf/book_me/commit/d81686f3cc654e3a9388a5dbb055c9be3d21e9c1))
+
 # common 1.0.0 (2023-09-10)
 
 
