@@ -6,6 +6,7 @@
 import { EventDocument, EventModel } from "../models/Event.js";
 import { Event, IntervalSet } from "common";
 import { freeBusy, events } from "./google_controller.js";
+import { getBusySlots } from "./caldav_controller.js";
 import { ValidationError, validationResult } from "express-validator";
 import { errorHandler } from "../handlers/errorhandler.js";
 import { addMinutes, addDays, startOfHour, startOfDay } from 'date-fns';
@@ -34,21 +35,24 @@ function min<T>(a: T, b: T): T {
 export const getAvailableTimes = (req: Request, res: Response): void => {
   let timeMin = new Date(<string>req.query.timeMin);
   let timeMax = new Date(<string>req.query.timeMax);
-  const url = <string>req.query.url;
-  const userid = <string>req.query.userid;
-  logger.debug('getAvailableTimes: %s %s %s %s', timeMin, timeMax, url, userid);
+  const eventId = req.params.id;
+
+  logger.debug('getAvailableTimes: %s %s %s', timeMin, timeMax, eventId);
   EventModel
-    .findOne({ url: url, user: userid })
-    .select("available bufferbefore duration bufferafter minFuture maxFuture maxPerDay -_id")
+    .findById(eventId)
+    .select("available bufferbefore duration bufferafter minFuture maxFuture maxPerDay user")
     .exec()
     .then(event => {
+      if (!event) {
+        throw new Error("Event not found");
+      }
       // Calculate intersection of requested and 'feasible' time interval
       timeMin = max(timeMin, startOfHour(Date.now() + 1000 * event.minFuture));
       timeMax = min(timeMax, startOfHour(Date.now() + 1000 * event.maxFuture));
       logger.debug("Event: %o; timeMin: %s, timeMax: %s", event, timeMin, timeMax);
 
       // Request currently booked events. We need them for the maxPerDay restriction
-      return events(userid, timeMin.toISOString(), timeMax.toISOString())
+      return events(event.user as string, timeMin.toISOString(), timeMax.toISOString())
         .then(events => ({ events, event }));
     })
     .then(({ events, event }) => {
@@ -56,18 +60,23 @@ export const getAvailableTimes = (req: Request, res: Response): void => {
       logger.debug("blocked: %o", blocked);
       logger.debug("free: %o", blocked.inverse());
 
-      // Now query freeBusy service
-      return freeBusy(userid, timeMin.toISOString(), timeMax.toISOString())
-        .then(freeBusyResponse => ({ freeBusyResponse, event, blocked }));
+      // Now query freeBusy service and CalDAV
+      return Promise.all([
+        freeBusy(event.user as string, timeMin.toISOString(), timeMax.toISOString()),
+        getBusySlots(event.user as string, timeMin.toISOString(), timeMax.toISOString()).catch(err => {
+          logger.error('CalDAV getBusySlots failed', err);
+          return [];
+        })
+      ]).then(([freeBusyResponse, calDavSlots]) => ({ freeBusyResponse, calDavSlots, event, blocked }));
     })
-    .then(({ freeBusyResponse, event, blocked }) => {
-      let freeSlots = calculateFreeSlots(freeBusyResponse, event, timeMin, timeMax, blocked);
+    .then(({ freeBusyResponse, calDavSlots, event, blocked }) => {
+      let freeSlots = calculateFreeSlots(freeBusyResponse, calDavSlots, event, timeMin, timeMax, blocked);
       logger.debug('freeSlots before filtering: %j', freeSlots);
       freeSlots = new IntervalSet(freeSlots.filter(slot => (slot.end.getTime() - slot.start.getTime()) > event.duration * 60 * 1000));
       logger.debug('freeSlots after filtering: %j', freeSlots);
       res.status(200).json(freeSlots);
     })
-    .catch(err => {
+    .catch((err: unknown) => {
       logger.error('getAvailableTime: event not found or freeBusy failed: %o', err);
       res.status(400).json({ error: err });
     });
@@ -95,7 +104,7 @@ export const getAvailableTimes = (req: Request, res: Response): void => {
     return blocked;
   }
 
-  function calculateFreeSlots(response, event, timeMin, timeMax, blocked) {
+  function calculateFreeSlots(response, calDavSlots, event, timeMin, timeMax, blocked) {
     let freeSlots = new IntervalSet(timeMin, timeMax, event.available, "Europe/Berlin");
     freeSlots = freeSlots.intersect(blocked.inverse());
     for (const key in response.data.calendars) {
@@ -107,13 +116,31 @@ export const getAvailableTimes = (req: Request, res: Response): void => {
         const _end = addMinutes(new Date(busy.end), event.bufferafter);
         if (current < _start)
           calIntervals.push({ start: current, end: _start });
-        current = _end;
+        if (_end > current) current = _end;
       }
       if (current < timeMax) {
         calIntervals.push({ start: current, end: timeMax });
       }
       freeSlots = freeSlots.intersect(calIntervals);
     }
+
+    if (calDavSlots && calDavSlots.length > 0) {
+      calDavSlots.sort((a, b) => a.start.getTime() - b.start.getTime());
+      const calIntervals = new IntervalSet();
+      let current = timeMin;
+      for (const busy of calDavSlots) {
+        const _start = addMinutes(busy.start, -event.bufferbefore);
+        const _end = addMinutes(busy.end, event.bufferafter);
+        if (current < _start)
+          calIntervals.push({ start: current, end: _start });
+        if (_end > current) current = _end;
+      }
+      if (current < timeMax) {
+        calIntervals.push({ start: current, end: timeMax });
+      }
+      freeSlots = freeSlots.intersect(calIntervals);
+    }
+
     return freeSlots;
   }
 }
@@ -193,13 +220,43 @@ export const getEventListController = (req: Request, res: Response): void => {
 };
 
 /**
- * Middleware to fetch all active events of an given user
+ * Middleware to fetch a single event by ID
+ * @function
+ * @param {request} req
+ * @param {response} res
+ */
+export const getEventByIdController = (req: Request, res: Response): void => {
+  const eventid = req.params.id;
+  EventModel
+    .findById(eventid)
+    .exec()
+    .then(event => {
+      if (!event) {
+        res.status(404).json({ error: "Event not found" });
+      } else {
+        res.status(200).json(event);
+      }
+    })
+    .catch(err => {
+      res.status(400).json({ error: err });
+    });
+};
+
+/**
+ * Middleware to get public events (single by URL or list by user)
+ * @function
+ * @param {request} req
+ * @param {response} res
+ */
+/**
+ * Middleware to get active events for a user
  * @function
  * @param {request} req
  * @param {response} res
  */
 export const getActiveEventsController = (req: Request, res: Response): void => {
-  const userid = <string>req.query.user;
+  const userid = req.params.userId;
+
   EventModel
     .find({ user: userid, isActive: true })
     .exec()
@@ -209,45 +266,28 @@ export const getActiveEventsController = (req: Request, res: Response): void => 
     .catch(err => {
       res.status(400).json({ error: err });
     });
-};
+}
 
 /**
- * Middleware to get an event by id
+ * Middleware to get a single event by URL and user
  * @function
  * @param {request} req
  * @param {response} res
  */
-export const getEventByIdController = (req: Request, res: Response): void => {
-  const event_id = req.params.id;
-  EventModel
-    .findById({ _id: event_id })
-    .exec()
-    .then(event => {
-      logger.debug("getEvent: %s %o", event_id, event);
-      res.status(200).json(event);
-    })
-    .catch(err => {
-      res.status(400).json({ error: err });
-    });
-};
-
-/**
- * Middleware to get an event by the url
- * @function
- * @param {request} req
- * @param {response} res
- */
-export const getEventByUrl = (req: Request, res: Response): void => {
-  const userid = <string>req.query.user;
-  const url = <string>req.query.url;
+export const getEventByUrlController = (req: Request, res: Response): void => {
+  const userid = req.params.userId;
+  const url = req.params.eventUrl;
 
   EventModel
     .findOne({ url: url, user: userid })
     .exec()
     .then(event => {
-      res.status(200).json(event);
+      if (!event) {
+        res.status(404).json({ error: "Event not found" });
+      } else {
+        res.status(200).json(event);
+      }
     })
-
     .catch(err => { res.status(400).json({ error: err }); });
 }
 
@@ -277,4 +317,108 @@ export const updateEventController = (req: Request, res: Response): void => {
       res.status(400).json({ error: err });
     });
 
+};
+/**
+ * Middleware to insert an event (Google or CalDav)
+ * @function
+ * @param {request} req
+ * @param {response} res
+ */
+import { checkFree, insertGoogleEvent } from "./google_controller.js";
+import { createCalDavEvent } from "./caldav_controller.js";
+import { UserModel } from "../models/User.js";
+import { calendar_v3 } from 'googleapis';
+import Schema$Event = calendar_v3.Schema$Event;
+
+export const insertEvent = (req: Request, res: Response): void => {
+  const starttime = new Date(Number.parseInt(req.body.starttime));
+  const eventId = req.params.id;
+  logger.debug("insertEvent: %s %o", req.body.starttime, starttime);
+
+  EventModel.findById(eventId).then(eventDoc => {
+    if (!eventDoc) {
+      res.status(404).json({ error: "Event not found" });
+      return;
+    }
+    const endtime = addMinutes(starttime, eventDoc.duration);
+    const userId = eventDoc.user as string;
+
+    checkFree(eventDoc, userId, starttime, endtime)
+      .then(free => {
+        if (!free) {
+          res.status(400).json({ error: "requested slot not available" });
+          return;
+        }
+
+        UserModel.findOne({ _id: { $eq: userId } })
+          .then(user => {
+            if (!user) {
+              res.status(404).json({ error: "User not found" });
+              return;
+            }
+
+            const event: Schema$Event = {
+              summary: <string>eventDoc.name + " mit " + <string>req.body.name,
+              location: <string>eventDoc.location,
+              description: String(eventDoc.description) + "\n" + (req.body.description as string),
+              start: {
+                dateTime: starttime.toISOString(),
+                timeZone: "Europe/Berlin",
+              },
+              end: {
+                dateTime: endtime.toISOString(),
+                timeZone: "Europe/Berlin",
+              },
+              organizer: {
+                displayName: user.name,
+                email: user.email,
+                id: user._id as string
+              },
+              attendees: [
+                {
+                  displayName: req.body.name as string,
+                  email: req.body.email as string,
+                }
+              ],
+              source: {
+                title: "Appointment",
+                url: "https://appoint.gawron.cloud",
+              },
+              guestsCanModify: true,
+              guestsCanInviteOthers: true,
+            };
+
+            // Check if push_calendar is a CalDav URL (heuristic: starts with http/https)
+            if (user.push_calendar && (user.push_calendar.startsWith('http') || user.push_calendar.startsWith('/'))) {
+              createCalDavEvent(user, event)
+                .then((evt) => {
+                  logger.debug('CalDav insert returned %j', evt);
+                  res.json({ success: true, message: "Event wurde gebucht (CalDav)", event: evt });
+                })
+                .catch(error => {
+                  logger.error('CalDav insert failed', error);
+                  res.status(400).json({ error: error instanceof Error ? error.message : 'Failed to create event on CalDav server' });
+                });
+            } else {
+              // Fallback to Google Calendar
+              insertGoogleEvent(user, event)
+                .then((evt) => {
+                  logger.debug('insert returned %j', evt)
+                  res.json({ success: true, message: "Event wurde gebucht", event: evt });
+                })
+                .catch(error => {
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  res.status(400).json({ error });
+                })
+            }
+          })
+
+      })
+      .catch(error => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        res.status(400).json({ error });
+      })
+  }).catch(err => {
+    res.status(400).json({ error: err });
+  });
 };
