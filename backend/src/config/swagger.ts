@@ -18,12 +18,16 @@ const options: swaggerJsdoc.Options = {
         },
         servers: [
             {
-                url: 'https://appoint.gawron.cloud',
+                url: 'https://appointme.fh-swf.cloud',
                 description: 'Production server'
             },
             {
+                url: 'https://appointme.gawron.cloud',
+                description: 'Staging server'
+            },
+            {
                 url: 'http://localhost:5000',
-                description: 'Development server'
+                description: 'Development server (local)'
             }
         ],
         components: {
