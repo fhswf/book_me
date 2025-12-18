@@ -107,6 +107,10 @@ const userSchema = new Schema<UserDocument>(
       type: Boolean,
       default: false
     },
+    roles: {
+      type: [String],
+      default: []
+    },
     defaultAvailable: {
       [Day.SUNDAY]: {
         type: Array,
