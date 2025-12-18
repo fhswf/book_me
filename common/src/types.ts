@@ -40,6 +40,7 @@ export type Event = {
   duration: number;
   isActive: boolean;
   url: string;
+  allowed_roles?: string[];
   tags?: string[];
 
   bufferafter: number;
@@ -112,6 +113,7 @@ export interface User {
   pull_calendars: string[];
   welcome?: string;
   send_invitation_email?: boolean;
+  roles?: string[];
   defaultAvailable?: Slots;
 };
 
