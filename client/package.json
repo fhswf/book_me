@@ -42,7 +42,7 @@
     "@testing-library/dom": "^9.3.1",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^13.2.1",
-    "@types/react": "^18.2.21",
+    "@types/react": "^19.2.7",
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
