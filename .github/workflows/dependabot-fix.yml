@@ -1,0 +1,43 @@
+name: Dependabot Lockfile Fixer
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-lockfile:
+    name: Fix Lockfile
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Yarn
+        run: corepack enable && corepack prepare yarn@4.5.0 --activate
+
+      - name: Yarn Install
+        run: |
+          yarn install
+          if [ -n "$(git status --porcelain yarn.lock)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add yarn.lock
+            git commit -m "chore: fix yarn.lock for dependabot"
+            git push
+          else
+            echo "No changes to yarn.lock"
+          fi
+        env:
+          YARN_ENABLE_IMMUTABLE_INSTALLS: false
