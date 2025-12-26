@@ -7131,14 +7131,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^13.2.1":
-  version: 13.5.0
-  resolution: "@testing-library/user-event@npm:13.5.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.12.5"
+"@testing-library/user-event@npm:^14.6.1":
+  version: 14.6.1
+  resolution: "@testing-library/user-event@npm:14.6.1"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: 10/e2bdf2b2375d1399a4fd45195705ab0be05f5e3e8220ecbfc26cba98985e45cb505e4e11ed4d909a7052ce90d1e83751cfe21bb1b70fa82d2a2c268370432d8b
+  checksum: 10/34b74fff56a0447731a94b40d4cf246deb8dbc1c1e3aec93acd1c3377a760bb062e979f1572bb34ec164ad28ee2a391744b42d0d6d6cc16c4ce527e5e09610e1
   languageName: node
   linkType: hard
 
@@ -10138,7 +10136,7 @@ __metadata:
     "@testing-library/dom": "npm:^9.3.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^14.0.0"
-    "@testing-library/user-event": "npm:^13.2.1"
+    "@testing-library/user-event": "npm:^14.6.1"
     "@types/eslint": "npm:^9.6.1"
     "@types/jsdom": "npm:^27"
     "@types/opentype.js": "npm:^1"
